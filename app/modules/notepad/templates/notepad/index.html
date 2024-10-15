@@ -1,0 +1,28 @@
+{% extends "base_template.html" %}
+
+{% block title %}View my notepads{% endblock %}
+
+{% block content %}
+
+{% if notepads %}
+    <ul>
+    {% for notepad in notepads %}
+        <li>
+            <strong><a href="{{ url_for('notepad.edit_notepad', notepad_id=notepad.id) }}">{{ notepad.title }}</a></strong> - {{ notepad.body }}
+            <a href="{{ url_for('notepad.edit_notepad', notepad_id=notepad.id) }}">Edit</a>
+            <form method="POST" action="{{ url_for('notepad.delete_notepad', notepad_id=notepad.id) }}">
+                {{ form.hidden_tag() }}
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no notepads.</p>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('notepad.scripts') }}"></script>
+{% endblock %}
