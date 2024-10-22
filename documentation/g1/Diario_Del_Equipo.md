@@ -36,6 +36,7 @@
 - González Martínez, David
 - Heras Pérez, Raúl
 - Mellado Díaz, Luis
+- Trenado González, Sergio
 
 ---
 
@@ -59,6 +60,7 @@
 - González Martínez, David
 - Heras Pérez, Raúl
 - Mellado Díaz, Luis
+- Trenado González, Sergio
 
 **Introducción:**
 Esta es una reunión previa a la reunión 1. Esta reunión 0 sirve como pequeña presentación para el grupo y arranque del trabajo. Se han comentado brevemente algunos aspectos de organización y aún estamos a la espera de poder contrastar lo hablado el día de hoy con jamón-hub-2.
@@ -92,6 +94,7 @@ Se han leido y discutiod las tareas pendientes para la Milestone1. Podemos desta
 - González Martínez, David
 - Heras Pérez, Raúl
 - Mellado Díaz, Luis
+- Trenado González, Sergio
 
 **Introducción:**
 Esta reunión trata los acuerdos tomados para el Acta Fundacional.
