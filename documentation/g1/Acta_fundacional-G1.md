@@ -262,7 +262,7 @@ Del mismo modo, se establece una frecuencia de dos días naturales para realizar
 
 ### Mensajes de commits:
 
-El proyecto utilizará [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/), una especificación que tiene como objetivo hacer que los mensajes de commit sean legibles tanto para humanos como para máquinas. La información correspondiente a este apartado se ha extraído de la página oficial. Por lo tanto, los commits deben seguir la siguiente estructura:
+El proyecto utilizará [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/), una especificación que tiene como objetivo hacer que los mensajes de commit sean legibles tanto para humanos como para máquinas. La información correspondiente a este apartado se ha extraído de la página oficial. Se escribirá en inglés. Por tanto, los commits deben seguir la siguiente estructura:
 
 ```xml
     <type>(<scope>): <subject>
@@ -285,7 +285,7 @@ Explicación:
 
 - `<scope>` es el area afectado por el cambio del commit. Este atributo es opcional. Por ejemplo, `api`, `lang`, o `owner`.
 
-- `<subject>` contiene el mensaje del commit, o en otras palabras, la descripción corta del cambio realizado. Incluirá la palabra clave 'Closes' y el ID de la issue, para poder cerrar automáticamente la _issue_ al aceptar la :pull request_ correspondiente. Este atributo es **obligatorio**.
+- `<subject>` contiene el mensaje del commit, o en otras palabras, la descripción corta del cambio realizado. Incluirá la palabra clave 'Closes' y el ID de la issue, para poder cerrar automáticamente la _issue_ al aceptar la :pull request_ correspondiente. Se usará minúscula al comienzo, y no se usará punto al final. Empezaremos por un verbo en imperativo, a poder ser. Este atributo es **obligatorio**. 
 
 - `<body>` contiene una explicación más detallada de la motivación del cambio y/o cómo este contrasta con el código anterior. Este atributo es opcional.
 
@@ -294,14 +294,14 @@ Explicación:
 Ejemplo:
 
 ```
-feat(user-profile): Añadir foto de perfil en frontend. Closes #123
+feat(user-profile): add prophile picture in backend. Closes #123
 
-Añade una funcionalidad nueva que permite a los usuarios subir una foto de perfil para su cuenta. 
-Este commit incluye la implementación en backend. La parte de frontend se realizará pronto.
+It adds a new feature that allows users to upload prophile pictures by themselves.
+This commit includes the backend implementation. The frontend one will be made soon.
 
-autor: Pepe Rodríguez<pRodri@example.com>
-revisado por: Pepe Benítez <pBeni@example.com>
-probado por: Pepe Martínez <pMarti@example.com>
+author: Pepe Rodríguez<pRodri@example.com>
+reviewed by: Pepe Benítez <pBeni@example.com>
+tested by: Pepe Martínez <pMarti@example.com>
 ```
 
 Se hará uso de un _hook_ para controlar que no se realiza un commit con mensaje erróneo.
