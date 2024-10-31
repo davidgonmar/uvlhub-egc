@@ -96,7 +96,8 @@
 ### _Work Items_ a realizar
 
 **HIGH:**
- - **Fakenodo:** implementación de un stub denominado "Fakenodo" que reemplazará la API de Zenodo, permitiendo simular su funcionalidad sin depender de un servicio externo real.
+ - **Fakenodo:** implementación de un stub denominado "Fakenodo" que reemplazará la API de Zenodo, permitiendo simular su funcionalidad sin depender de un servicio externo real. Ambos equipos trabajarán en Fakenodo.
+ - **AI integration:** implementación de una inteligencia artificial en la aplicación. En principio se usará una IA de OpenAI. Los usuarios, podrán solicitar, mediante su API, información a la IA sobre  modelos UVL.
  - **Advanced search:** funcionalidad de búsqueda avanzada que permitirá a los usuarios filtrar modelos según criterios específicos.
 
 **MEDIUM:**
@@ -139,6 +140,7 @@ La mayoría de los integrantes de los dos equipos habíamos trabajado juntos alg
 ### _Work Items_ a realizar por jamon-hub-2
 
 **HIGH:**
+ - **Fakenodo:** implementación de un stub denominado "Fakenodo" que reemplazará la API de Zenodo, permitiendo simular su funcionalidad sin depender de un servicio externo real. Ambos equipos trabajarán en Fakenodo.
  - **Staging Area:** implementación de un espacio temporal que permite a los usuarios almacenar datasets antes de ser subidos a Zenodo.  
  - **Search Queries:** desarrollo de funcionalidades avanzadas que permiten a los usuarios realizar consultas específicas para filtrar y descargar modelos según criterios personalizados.
 
@@ -154,7 +156,7 @@ La mayoría de los integrantes de los dos equipos habíamos trabajado juntos alg
 ### Solapamientos de _Work Items_ entre ambos grupos
 Al cooperar los dos equipos, se han identificados múltiples conflictos y solapamientos en los **Work Items** (WIs), por lo que una eficaz coordinación será clave para el éxito del proyecto. Se destacan especialmente los siguientes:
 
-- **'Fakenodo'** (G1). Aunque este WI era originalmente mandatorio para todos los equipos, al cooperar ambos equipos, solo uno de los dos lo puede realizar. Se acordó que sería el grupo 1.
+- **'Fakenodo'**. Este WI es mandatorio para los dos equipos, y ambos han de realizarlo conjuntamente.
 
 - **'Advanced Search'** (G1) vs. **'Search Queries'** (G2). Ambos WIs se centran en la búsqueda y filtrado de modelos, lo que puede generar conflictos en la implementación de criterios de búsqueda.
   
@@ -368,9 +370,9 @@ Cuando una QA no aprueba una tarea, se crea su revisión y se centrará en ésta
 
 ### Etiquetas de _issues_
 Se usarán las siguientes etiquetas para definir un cambio:
- - Tipo de issue: `task`, `review`, `QA`, `incidencia`,
- - Tipo de cambio: `documentation`, `feat`, `fix`, `refactor`, `style`, `test`, `database`, `meeting`, `build`, `hotfix`,
- - `backend` y `frontend`.
+ - Tipo de issue: `task`, `review`, `QA` y `incidencia`.
+ - Tipo de cambio: `documentation`, `feat`, `fix`, `refactor`, `style`, `test`, `database`, `meeting`, `build` y `hotfix`.
+ - Área del sistema: `backend` y `frontend`.
 
 
 ### Nomenclatura de _issues_
