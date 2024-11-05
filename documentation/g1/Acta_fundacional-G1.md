@@ -17,7 +17,7 @@
 
 ### Enlaces de interés:
 - **Repositorio de código:** https://github.com/davidgonmar/uvlhub-egc
-- **Sistema desplegado:** N/A
+- **Sistema desplegado:** https://uvlhub-egc.onrender.com/
 
 
 
@@ -335,8 +335,6 @@ Una _issue_ representará una solicitud de cambio para el sistema. Consideraremo
 
  - **Actividades de WIs:** creadas por el equipo durante la planificación para satisfacer los WIs.
    - **Tarea:** actividad principal a realizar par logar un WI.
-   - **QA:** actividad de control de calidad de una tarea o revisión supuestamente acabada, antes de que sea desplegada a producción. Aprueba o falla.
-   - **Revisión:** actividad de revisión de una tarea que no ha pasado su QA correspondiente.
  - **Incidencias:** creadas por el equipo o por usuarios para reportar un problema con el funcionamiento.
 
 Las actividades de documentación, como la actualización del 'Diario del equipo' no se representará mediante issues.
@@ -349,28 +347,27 @@ Cada _issue_ será asignada a un único miembro del equipo para su ejecución. S
 ### Prioridad de _issues_
 Se utilizará la siguiente clasificación para definir la prioridad de las _issues_:
 
- - **P0:** para revisiones.
+ - **P0:** para incidencias.
  - **P1:** para tareas.
- - **P2:** para QAs.
 
 
 ### Estados de _issues_
-Una _issue_ pasará por cuatro estados. En GitHub Projects serán representados mediante columnas.
+Una _issue_ de tarea pasará por cuatro estados. En GitHub Projects serán representados mediante columnas.
 
-| Estado               | Descripción                                                                                           |
-|----------------------|-------------------------------------------------------------------------------------------------------|
-| **_TODO_**           | Para tareas, QAs o revisiones sin empezar. <br> Para QAs o revisiones falladas.                       |
-| **_In Progress_**    | Para tareas, QAs o revisiones en las que se está trabajando.                                          |
-| **_Pending Review_** | Para tareas o revisiones supuestamente acabadas sin causar errores de integración, que esperan su QA. |
-| **_Failed QA_**      | Para tareas falladas cuya revisión no ha aprobado.                                                    |
-| **_Done_**           | Para tareas, QAs o revisiones aprobadas. <br> Para tareas cuyas revisiones hayan aprobado.            |
+| Estado                      | Descripción                                                                                                 |
+|-----------------------------|-------------------------------------------------------------------------------------------------------------|
+| **_TODO_**                  | Para tareas sin empezar.                                                                                    |
+| **_In Progress_**           | Para tareas en las que se está trabajando.                                                                  |
+| **_Pending Review_**        | Para tareas supuestamente acabadas sin errores de integración, cuya _pull request_ aún no ha sido revisada. |
+| **_Failed Pull Request_**   | Para tareas cuya _pull request_ no ha sido aprobada.                                                        |
+| **_Done_**                  | Para tareas aprobadas.                                                                                      |
 
-Cuando una QA no aprueba una tarea, se crea su revisión y se centrará en ésta, no en la tarea original. Cuando la revision esté aprobada, las tres pasarán a _Done_.
+Si una pull request no se acepta, e trasladará a la columna del estado _Failed Pull Request_. Una vez que las correcciones sean realizadas, pasará al estado _Done_.
 
 
 ### Etiquetas de _issues_
 Se usarán las siguientes etiquetas para definir un cambio:
- - Tipo de issue: `task`, `review`, `QA` y `incidencia`.
+ - Tipo de issue: `task`, e `incidencia`.
  - Tipo de cambio: `documentation`, `feat`, `fix`, `refactor`, `style`, `test`, `database`, `meeting`, `build` y `hotfix`.
  - Área del sistema: `backend` y `frontend`.
 
@@ -385,30 +382,6 @@ Ejemplo:
 
 ```
 Tarea 13-1: Cambiar diseño de botones.
-```
-<br>
-
-Los títulos de las **QAs** seguirán el patrón:
-
-```
-QA <número_tarea><-_número_subtarea>: <Nombre_tarea>.
-```
-Ejemplo:
-
-```
-QA 13-2: Cambiar diseño de botones.
-```
-<br>
-
-Los títulos de las **revisiones** seguirán el patrón:
-
-```
-Review <número_tarea><-_número_subtarea>: <Nombre_tarea>.
-```
-Ejemplo:
-
-```
-Review 13: Cambiar diseño de botones.
 ```
 
 
