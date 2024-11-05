@@ -58,7 +58,7 @@
 
 ### Enlaces de interés:
 - **Repositorio de código**: [https://github.com/davidgonmar/uvlhub-egc](https://github.com/davidgonmar/uvlhub-egc)  
-- **Sistema desplegado**: N/A
+- **Sistema desplegado**: [https://uvlhub-egc.onrender.com/](https://uvlhub-egc.onrender.com/)
 
 ---
 
@@ -260,8 +260,6 @@ Una _issue_ representará una solicitud de cambio en el sistema. Los tipos de _i
 
 - **Actividades derivadas de WIs:** creadas por el equipo durante la planificación para cumplir con los _Work Items_.
   - **Tarea:** actividad principal necesaria para completar un WI.
-  - **QA:** actividad de control de calidad que evalúa una tarea o revisión que se considera completada antes de su despliegue en producción. Esta actividad puede aprobar o rechazar la entrega.
-  - **Revisión:** actividad de verificación de una tarea que no ha superado su correspondiente QA.
 - **Incidencias:** reportadas por el equipo o usuarios para notificar problemas en el funcionamiento del sistema.
 
 Las actividades de documentación, como la actualización del 'Diario del equipo' no se representará mediante issues.
@@ -272,27 +270,25 @@ Cada _issue_ será asignada a un único miembro del equipo, quien será responsa
 ### Priorización de issues:
 Se utilizará la siguiente clasificación para definir la prioridad de las _issues_:
 
-- **P0:** Revisiones.
+- **P0:** Incidencias.
 - **P1:** Tareas.
-- **P2:** QA.
 
 ### Estados de issues:
 Las _issues_ pasarán por los siguientes estados. En GitHub Projects, estos se representarán mediante columnas.
 
 | Estado           | Descripción                                                                                         |
 |------------------|-----------------------------------------------------------------------------------------------------|
-| **_TODO_**           | Tareas, QAs o revisiones que aún no han comenzado. También aplica para QAs o revisiones fallidas.  |
-| **_In Progress_**    | Tareas, QAs o revisiones que están en proceso.                                                    |
-| **_Pending Review_** | Tareas o revisiones finalizadas que no han causado errores de integración, y están a la espera de QA.|
-| **_Failed QA_**      | Tareas cuya revisión no ha sido aprobada en QA.                                                   |
-| **_Done_**           | Tareas, QAs o revisiones que han sido aprobadas o completadas.                                    |
+| **_TODO_**           | Tareas que aún no han comenzado. |
+| **_In Progress_**    | Tareas que estén en proceso.                                                    |
+| **_Failed Pull Request_**      | Tareas cuya _pull request_ no ha sido aprobada.                                                   |
+| **_Done_**           | Tareas que han sido aprobadas o completadas.                                    |
 
-Si una tarea falla en QA, se creará su correspondiente _review_ y el foco se trasladará a esta revisión. Una vez que la revisión sea aprobada, tanto la tarea original como la revisión y el QA pasarán al estado _Done_.
+Si una pull request no se acepta, e trasladará a la columna del estado _Failed Pull Request_. Una vez que las correcciones sean realizadas, pasará al estado _Done_.
 
 ### Etiquetas de issues:
 Las siguientes etiquetas se utilizarán para clasificar los cambios en las _issues_:
 
-- Tipos de actividad: `task`, `review`, `QA`, `incidencia`, `documentation`, `meeting`.
+- Tipos de actividad: `task`, `incidencia`, `documentation`, `meeting`.
 - Tipos de cambio: `feat`, `fix`, `refactor`, `style`, `test`, `database`, `build`, `hotfix`.
 - Áreas del sistema: `backend`, `frontend`.
 
@@ -306,31 +302,6 @@ Ejemplo:
 
 ```
 Tarea 13-1: Cambiar diseño de botones.
-```
-
-<br>
-
-Los títulos de las **QAs** seguirán el patrón:
-
-```
-QA <número_tarea><-_número_subtarea>: <Nombre_tarea>.
-```
-
-Ejemplo:
-
-```
-QA 13-2: Cambiar diseño de botones.
-```
-
-<br>
-
-Los títulos de las **revisiones** seguirán el patrón:
-```
-Review <número_tarea><-_número_subtarea>: <Nombre_tarea>.
-```
-Ejemplo:
-```
-Review 13: Cambiar diseño de botones.
 ```
 
 ### Estandarización de incidencias:
