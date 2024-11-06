@@ -92,6 +92,23 @@ Se decidió que al inicio de cada sprint el equipo descompondrá los Work Items 
 ### ACTA 2024-02
 
 **Asistentes:**
+- Castillo Cebolla, Rafael
+- Vento Conesa, Adriana
+
+**Introducción:**
+Esta reunión trata los acuerdos tomados entre los coordinadores de ambos grupos de jamon-hub de cara a la segunda _milestone_. 
+
+**Acuerdos tomados:**
+- **Acuerdo 2024-02-01:** Definir las tareas a realizar en la segunda iteración, con el fin de anticipar y gestionar los posibles conflictos que puedan surgir.
+- **Acuerdo 2024-02-02:** Eliminación de los _issues_ de QA, los cuales serán reemplazados por las revisiones de las _pull requests_, ya que estas cumplen una función equivalente.
+- **Acuerdo 2024-02-03:** Eliminación de los _issues_ de revisión. A partir de ahora, se utilizarán las tareas originales para este propósito.
+- **Acuerdo 2024-02-04:** Comenzar el estudio del WI 'Fakenodo', aunque no se garantiza que se pueda completar para la _milestone_ 2.
+- **Acuerdo 2024-02-05:** Eliminación del _workflow_ de _lint_.
+- **Acuerdo 2024-02-06:** Propuestas para nuevos _workflows_. El grupo 2 comenzará a probar algunos de ellos, mientras que el grupo 1 podrá iniciarse también en este proceso.
+
+### ACTA 2024-03
+
+**Asistentes:**
 
 - Barrera Garrancho, María del Carmen
 - García Martínez, Carlos
@@ -106,7 +123,7 @@ En esta reunión, se definieron los Work Items (WIs) que se implementarán duran
 
 **Acuerdos tomados:**
 
-- **Acuerdo 2024-02-01: Work Items para M2.**  
+- **Acuerdo 2024-03-01: Work Items para M2.**  
   Se decidió trabajar en los siguientes WIs para M2:
   - **LOW**:
     - **Remember my password**: Implementación de una funcionalidad que permita a los usuarios recordar su contraseña en caso de olvidarla. Reemplazamos, por tanto, el anterior concepto que teníamos sobre este WI.
@@ -114,17 +131,14 @@ En esta reunión, se definieron los Work Items (WIs) que se implementarán duran
   - **MEDIUM**:
     - **Improve UI**: Rediseño de la interfaz gráfica de usuario para mejorar la experiencia del usuario.
 
-- **Acuerdo 2024-02-02: Divisiones de tareas.**  
+- **Acuerdo 2024-03-02: Divisiones de tareas.**  
   Los WIs seleccionados serán desglosados en tareas más pequeñas, tal como se acordó en la reunión anterior. Cada miembro del equipo tomará tareas relacionadas con diferentes aspectos del proyecto para asegurar que todos trabajen en diversas áreas.
 
-- **Acuerdo 2024-02-03: Lluvia de ideas para implementación de WIs.**  
+- **Acuerdo 2024-03-03: Lluvia de ideas para implementación de WIs.**  
   Durante la reunión se realizó una lluvia de ideas sobre la implementación de cada WI, con el objetivo de identificar las mejores soluciones y posibles dificultades. Las discusiones incluyeron:
     - **Remember my password**: Se discutieron diversos aspectos de la implementación, como la configuración del servidor de correos, el diseño del frontend y el proceso de generación del código de verificación. Además, se aclaró el alcance de este WI, ya que en reuniones anteriores había dudas sobre su funcionamiento y objetivos específicos.
     - **Register developer**: Se abordaron los campos necesarios para el registro de desarrolladores y cómo integrarlos con el sistema de gestión de usuarios existente. 
     - **Improve UI**: Se discutieron posibles mejoras en el diseño, enfocándose en la usabilidad y la optimización de la navegación.
 
-- **Acuerdo 2024-02-04: Asignación de tareas.**  
+- **Acuerdo 2024-03-04: Asignación de tareas.**  
   Se asignaron tareas específicas a cada miembro del equipo para asegurar que el progreso fuera adecuado. Las tareas fueron distribuidas según la experiencia y la disponibilidad de cada miembro. Se utilizará la herramienta de gestión de tareas acordada para llevar el seguimiento de cada una de ellas.
-
-
-
