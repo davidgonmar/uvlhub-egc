@@ -1,6 +1,6 @@
 import random
 import smtplib
-from tkinter import *
+
 
 
 class EmailService():
