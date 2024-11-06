@@ -14,6 +14,8 @@
 2. [Resumen de total de reuniones empleadas en el equipo](#2-resumen-de-total-de-reuniones-empleadas-en-el-equipo)
 3. [Actas de acuerdos](#3-actas-de-acuerdos)
    - [ACTA 2024-01](#acta-2024-01)
+   - [ACTA 2024-02](#acta-2024-02)
+   - [ACTA 2024-03](#acta-2024-03)
 
 ---
 
