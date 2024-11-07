@@ -107,11 +107,13 @@ jobs:
         run: |
           if [[ -z "${{ secrets.MY_GITHUB_TOKEN }}" ]]; then
             echo "MY_GITHUB_TOKEN is not available. Skipping PR comment."
-            exit 0
+            echo "token_exists=false" >> $GITHUB_ENV
+          else
+            echo "token_exists=true" >> $GITHUB_ENV
           fi
 
       - name: Comment on PR with Coverage Report
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && env.token_exists == 'true'
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.MY_GITHUB_TOKEN }}
