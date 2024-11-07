@@ -1,14 +1,22 @@
+import os
 from flask import render_template, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user
+
 
 from app.modules.auth import auth_bp
 from app.modules.auth.forms import SignupForm, LoginForm
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
+from app.modules.auth.email_service import EmailService, generate_otp
 
+
+email = os.getenv('EMAIL')
+password = os.getenv('EMAIL_PASS')
+code = generate_otp()
 
 authentication_service = AuthenticationService()
 user_profile_service = UserProfileService()
+email_service = EmailService(email,password, code)
 
 
 @auth_bp.route("/signup/", methods=["GET", "POST"])
@@ -24,6 +32,8 @@ def show_signup_form():
 
         try:
             user = authentication_service.create_with_profile(**form.data)
+            #Para enviar email, es provisional y no deberia ir aquí pero era para probar backend
+            email_service.connecting_sender(email)
         except Exception as exc:
             return render_template("auth/signup_form.html", form=form, error=f'Error creating user: {exc}')
 
