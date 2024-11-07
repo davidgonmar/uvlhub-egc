@@ -28,7 +28,7 @@ def create_new_chat(client):
 #Esto es provisional, esta puest en el .env pero esta por ahora. Quien haga la otra parte que lo quite.
 # Habria que hacerlo asi llamando a las variables de entorno en routes.py al hacer el POST -> client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
 
-api_key = "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"
+api_key = ""
 client = OpenAI(api_key=api_key)
 
 chatbot = ChatbotService(client)
