@@ -59,6 +59,7 @@
    - [Gestión de tareas](#gestión-de-tareas)  
    - [Política de ramas](#política-de-ramas)  
    - [Frecuencia de _commit_ y _merge_](#frecuencia-de-commit-y-merge)  
+   - [Cierre de tareas: merge de _pull requests_ y borrado de ramas](#cierre-de-tareas-merge-de-pull-requests-y-borrado-de-ramas)
    - [Mensajes de _commits_](#mensajes-de-commits)  
    - [Versionado del producto](#versionado-del-producto)  
 5. [Gestión de _Work Items_](#5-gestión-de-work-items)
@@ -244,22 +245,30 @@ Ambos equipos usarán _issues_ y _projects_ de GitHub para gestionar la realizac
 Dado que GitFlow no es una opción viable, el equipo ha decidido adoptar un enfoque alternativo: crear una rama para cada tarea a realizar. Salvo excepciones, las ramas seguirán el siguiente patrón:
 
 ```
-g1/task_<número_de_issue>/<nombre_de_issue>
+g1/task_<número_de_tarea>/<nombre_de_issue>
 ```
 
 La sección "*g1*" se utiliza para diferenciar las ramas del grupo 1 de aquellas del grupo 2. Por ejemplo, una rama podría verse así:
 
 ```
-g1/task_328/cambiar_tipografía
+g1/task_38/cambiar_tipografía
 ```
 
-Entre las excepciones, se incluye la rama `main`, que funcionará como la rama principal destinada al despliegue, la rama `build`, que se empleará para realizar cambios específicos en la configuración del entorno, y la rama `g1/documentation`, que se usará para añadir la documentación del grupo 1.
+Entre las excepciones, se incluye la rama `main`, que funcionará como la rama principal destinada al despliegue, la rama `build`, que se empleará para realizar cambios específicos en la configuración del entorno, y la rama `g1/documentation`, que se usará para añadir la documentación del grupo 1. 
 
 
 ### Frecuencia de _commit_ y _merge_
 Con el propósito de facilitar la integración continua, el equipo ha acordado realizar un mínimo de un commit cada dos días naturales, excluyendo el sábado y el domingo. El _commit_ ha de incluir todo los cambios listos para producción. Si ningún cambio está listo para ser integrado y desplegado, se permite realizar un commit vacío.
 
 Del mismo modo, se establece una frecuencia de dos días naturales para realizar _merge_ de una rama a la rama `main`, para poder así incluir los _commits_ listos para producción.
+
+
+### Cierre de tareas: merge de _pull requests_ y borrado de ramas:
+El encargado de una tarea creará sus propias _pull requests_. Él mismo, o en su defecto, los coordinadores, asignarán a un revisor entre los miembros del proyecto, para revisar cualitativamente el contenido de la misma y el cumplimiento con los requisitos.
+
+Si el revisor aprueba la _pull request_, éste se encargará en el momento de hacer _merge_. Si no la aprueba, el revisor dejará abierta la _pull request_, y escribirá sus comentarios en ella. Se notificará al encargado de la tarea para que revise los errores. Una vez supuestamente arreglados, los cambios aparecerán en la misma _pull request_, y se volverá a empezar este ciclo.
+
+Una vez se le ha hecho _merge_ a una tarea y se ha cerrado, el encargado de la tarea para la cual se ha creado la rama, se encargará de borrar la rama.
 
 
 ### Mensajes de commits:
@@ -367,7 +376,7 @@ Si una pull request no se acepta, e trasladará a la columna del estado _Failed 
 
 ### Etiquetas de _issues_
 Se usarán las siguientes etiquetas para definir un cambio:
- - Tipo de issue: `task`, e `incidencia`.
+ - Tipo de issue: `task` e `incidencia`.
  - Tipo de cambio: `documentation`, `feat`, `fix`, `refactor`, `style`, `test`, `database`, `meeting`, `build` y `hotfix`.
  - Área del sistema: `backend` y `frontend`.
 
