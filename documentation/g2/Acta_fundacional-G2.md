@@ -66,14 +66,15 @@
 
 ### Datos de contacto:
 
-| **Nombre Completo**                | **UVUS** | **Email**                       |
-|------------------------------------|----------|---------------------------------|
-|Barrera Garrancho, María del Carmen | marbargar8  | marbargar8@alum.us.es      |
-| García Martínez, Carlos            |cargarmar18| cargarmar18@alum.us.es          |
-| García Sebastián, Javier           | javgarseb  | javgarseb@alum.us.es        |
-| Meana Iturri, Claudia              | clameaitu| clameaitu@alum.us.es       |
-| Pérez Gutiérrez, Lucía             | lucpergut| lucpergut@alum.us.es      |
-| Vento Conesa, Adriana              | adrvencon| adrvencon@alum.us.es     |
+| **Nombre Completo**                | **UVUS**    | **Email**                        | **GitHub User** |
+|------------------------------------|------------|----------------------------------|---------------------|
+| Barrera Garrancho, María del Carmen | marbargar8 | marbargar8@alum.us.es            | Playeira01          |
+| García Martínez, Carlos            | cargarmar18 | cargarmar18@alum.us.es           | Cargarmar18         |
+| García Sebastián, Javier           | javgarseb  | javgarseb@alum.us.es             | JaviGarcia1           |
+| Meana Iturri, Claudia              | clameaitu  | clameaitu@alum.us.es             | clameaitu           |
+| Pérez Gutiérrez, Lucía             | lucpergut  | lucpergut@alum.us.es             | LuciaPG           |
+| Vento Conesa, Adriana              | adrvencon  | adrvencon@alum.us.es             | adrvencon           |
+
 
 ### Work Items (WIs) a realizar:
 
