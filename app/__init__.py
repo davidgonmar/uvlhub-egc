@@ -21,6 +21,9 @@ migrate = Migrate()
 
 
 def create_app(config_name='development'):
+
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
     app = Flask(__name__)
 
     # Load configuration according to environment

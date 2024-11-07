@@ -8,6 +8,8 @@ from app.modules.profile.models import UserProfile
 from app.modules.profile.repositories import UserProfileRepository
 from core.configuration.configuration import uploads_folder_name
 from core.services.BaseService import BaseService
+from app import db 
+
 
 
 class AuthenticationService(BaseService):
@@ -79,3 +81,30 @@ class AuthenticationService(BaseService):
 
     def temp_folder_by_user(self, user: User) -> str:
         return os.path.join(uploads_folder_name(), "temp", str(user.id))
+
+    def get_or_create_user_from_github(self, github_id, github_email, name=None, surname=None):
+        user = self.repository.get_by_github_id(github_id)
+        if not user:
+            print("Creating new user")
+
+            if not github_email:
+                github_email = f"user_{github_id}@example.com"  # O cualquier otra lógica que desees
+
+            user_data = {
+                "email": github_email,
+                "github_id": github_id,
+                "password": None  # Establece la contraseña como None
+            }
+
+            user = self.create(commit=False, **user_data)
+
+            profile_data = {
+                "name": name or "Default Name",  # Puedes usar un nombre por defecto o uno proporcionado
+                "surname": surname or "Default Surname",  # Igualmente para el apellido
+                "user_id": user.id
+            }
+
+            self.user_profile_repository.create(**profile_data)
+            self.repository.session.commit()
+        return user
+
