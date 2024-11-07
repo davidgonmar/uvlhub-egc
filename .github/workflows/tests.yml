@@ -58,6 +58,7 @@ jobs:
           pytest app/modules/ --cov=app/modules/ --cov-report=xml:coverage.xml --ignore-glob='*selenium*'
 
       - name: Get Coverage Percentage
+        if: github.event_name == 'pull_request'
         id: coverage
         run: |
           coverage=$(python -c 'import xml.etree.ElementTree as ET
@@ -78,6 +79,7 @@ jobs:
           echo "coverage=$coverage" >> $GITHUB_ENV
 
       - name: Parse Coverage and Format for Comment
+        if: github.event_name == 'pull_request'
         id: parse-coverage
         run: |
           IFS=',' read -r -a coverage_array <<< "${{ env.coverage }}"
@@ -101,6 +103,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Comment on PR with Coverage Report
+        if: github.event_name == 'pull_request'
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
