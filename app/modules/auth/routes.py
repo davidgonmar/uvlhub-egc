@@ -4,11 +4,10 @@ from flask_login import current_user, login_user, logout_user
 
 
 from app.modules.auth import auth_bp
-from app.modules.auth.forms import SignupForm, LoginForm
+from app.modules.auth.forms import SignupForm, LoginForm, ForgotPasswordForm
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
 from app.modules.auth.email_service import EmailService, generate_otp
-
 
 email = os.getenv('EMAIL')
 password = os.getenv('EMAIL_PASS')
@@ -17,7 +16,6 @@ code = generate_otp()
 authentication_service = AuthenticationService()
 user_profile_service = UserProfileService()
 email_service = EmailService(email,password, code)
-
 
 @auth_bp.route("/signup/", methods=["GET", "POST"])
 def show_signup_form():
@@ -43,7 +41,6 @@ def show_signup_form():
 
     return render_template("auth/signup_form.html", form=form)
 
-
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -58,6 +55,20 @@ def login():
 
     return render_template('auth/login_form.html', form=form)
 
+@auth_bp.route("/forgotpassword/", methods=["GET", "POST"])
+def show_forgotpassword_form():
+    if current_user.is_authenticated:
+        return redirect(url_for('public.index'))
+
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        if authentication_service.is_email_available(email):
+            return render_template("auth/forgotpassword_form.html", form=form, error=f'The email address {email} is not registered.')
+        else:
+            email_service.connecting_sender(email)
+        return redirect(url_for('public.index'))
+    return render_template("auth/forgotpassword_form.html", form=form)
 
 @auth_bp.route('/logout')
 def logout():
