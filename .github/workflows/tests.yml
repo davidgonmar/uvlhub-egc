@@ -102,8 +102,16 @@ jobs:
           echo -e "$formatted_coverage" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
+      - name: Check if Token Exists Before Commenting
+        if: github.event_name == 'pull_request'
+        run: |
+          if [[ -z "${{ secrets.MY_GITHUB_TOKEN }}" ]]; then
+            echo "MY_GITHUB_TOKEN is not available. Skipping PR comment."
+            exit 0
+          fi
+
       - name: Comment on PR with Coverage Report
-        if: github.event_name == 'pull_request' && secrets.MY_GITHUB_TOKEN != ''
+        if: github.event_name == 'pull_request'
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.MY_GITHUB_TOKEN }}
