@@ -103,10 +103,10 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Comment on PR with Coverage Report
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && secrets.MY_GITHUB_TOKEN != ''
         uses: peter-evans/create-or-update-comment@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             ## Test Coverage Report
