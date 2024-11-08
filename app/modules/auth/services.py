@@ -79,3 +79,6 @@ class AuthenticationService(BaseService):
 
     def temp_folder_by_user(self, user: User) -> str:
         return os.path.join(uploads_folder_name(), "temp", str(user.id))
+
+    def get_user_by_email(self, email: str) -> User | None:
+        return self.repository.get_by_email(email)
