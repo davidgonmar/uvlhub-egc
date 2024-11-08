@@ -72,6 +72,21 @@ def show_forgotpassword_form():
         return redirect(url_for('auth.validate_code'))
     return render_template("auth/forgotpassword_form.html", form=form)
 
+@auth_bp.route("/validatecode/", methods=["GET", "POST"])
+def validate_code():
+    if current_user.is_authenticated:
+        return redirect(url_for('public.index'))
+
+    formCode = CodeForm()
+    if formCode.validate_on_submit():
+        entered_code = formCode.code.data
+        stored_code = session.get('otp_code')
+        if entered_code == stored_code:
+            return redirect(url_for('auth.reset_password'))
+        else:
+            return render_template('auth/validatecode_form.html', form=formCode, error="Invalid code. Please try again.")
+    return render_template('auth/validatecode_form.html', form=formCode)
+
 @auth_bp.route('/logout')
 def logout():
     logout_user()
