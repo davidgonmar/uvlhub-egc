@@ -82,3 +82,13 @@ class AuthenticationService(BaseService):
 
     def get_user_by_email(self, email: str) -> User | None:
         return self.repository.get_by_email(email)
+    
+    def reset_password(self, email: str, new_password: str) -> bool:
+        user = self.get_user_by_email(email)
+        if user is None:
+            raise ValueError(f"User with email {email} does not exist.")
+
+        user.set_password(new_password)
+        self.repository.session.commit()
+
+        return True
