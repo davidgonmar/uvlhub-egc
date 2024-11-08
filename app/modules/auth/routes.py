@@ -87,6 +87,29 @@ def validate_code():
             return render_template('auth/validatecode_form.html', form=formCode, error="Invalid code. Please try again.")
     return render_template('auth/validatecode_form.html', form=formCode)
 
+@auth_bp.route('/resetpassword/', methods=['GET', 'POST'])
+def reset_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('public.index'))
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        new_password = form.password.data
+        confirm_password = form.confirm_password.data
+
+        if new_password != confirm_password:
+            return render_template("auth/resetpassword_form.html", form=form, error="Passwords do not match.")
+        try:
+            email = session.get('otp_email')
+            authentication_service.reset_password(email, new_password)
+            user = authentication_service.get_user_by_email(email)
+            login_user(user, remember=True)
+            return redirect(url_for('public.index'))
+        except Exception as exc:
+            return render_template("auth/resetpassword_form.html", form=form, error=f"Error resetting password: {exc}")
+
+    return render_template("auth/resetpassword_form.html", form=form)
+
 @auth_bp.route('/logout')
 def logout():
     logout_user()
