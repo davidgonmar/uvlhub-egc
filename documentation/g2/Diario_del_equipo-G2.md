@@ -38,11 +38,11 @@
 
 ## 2. Resumen de total de reuniones empleadas en el equipo
 
-- **Total de reuniones (TR):** 2
+- **Total de reuniones (TR):** 3
 - **Total de reuniones presenciales (TRP):** 1
-- **Total de reuniones virtuales (TRV):** 1
+- **Total de reuniones virtuales (TRV):** 2
 - **Total de tiempo empleado en reuniones presenciales (TTRP):** 1h 30min
-- **Total de tiempo empleado en reuniones virtuales (TTRV):** 1h 30min
+- **Total de tiempo empleado en reuniones virtuales (TTRV):** 2h
 
 ---
 
