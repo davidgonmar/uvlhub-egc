@@ -20,4 +20,9 @@ class LoginForm(FlaskForm):
 
 class ForgotPasswordForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Continue')
+    
+
+class CodeForm(FlaskForm):
+    code = StringField('Code', validators=[DataRequired(), Length(max=6)])
+    submit = SubmitField('Validate')
