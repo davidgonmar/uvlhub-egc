@@ -26,3 +26,9 @@ class ForgotPasswordForm(FlaskForm):
 class CodeForm(FlaskForm):
     code = StringField('Code', validators=[DataRequired(), Length(max=6)])
     submit = SubmitField('Validate')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired()])
+    submit = SubmitField('Validate')
