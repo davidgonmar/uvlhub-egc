@@ -1,10 +1,10 @@
 import os
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, session
 from flask_login import current_user, login_user, logout_user
 
 
 from app.modules.auth import auth_bp
-from app.modules.auth.forms import SignupForm, LoginForm, ForgotPasswordForm
+from app.modules.auth.forms import SignupForm, LoginForm, ForgotPasswordForm, CodeForm, ResetPasswordForm
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
 from app.modules.auth.email_service import EmailService, generate_otp
@@ -66,8 +66,10 @@ def show_forgotpassword_form():
         if authentication_service.is_email_available(email):
             return render_template("auth/forgotpassword_form.html", form=form, error=f'The email address {email} is not registered.')
         else:
+            session['otp_code'] = code
+            session['otp_email'] = email
             email_service.connecting_sender(email)
-        return redirect(url_for('public.index'))
+        return redirect(url_for('auth.validate_code'))
     return render_template("auth/forgotpassword_form.html", form=form)
 
 @auth_bp.route('/logout')
