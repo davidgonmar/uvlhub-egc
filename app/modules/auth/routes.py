@@ -6,16 +6,15 @@ from app.modules.auth import auth_bp
 from app.modules.auth.forms import SignupForm, LoginForm, ForgotPasswordForm, CodeForm, ResetPasswordForm, SignupCodeForm
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
-from app.modules.auth.email_service import EmailService, generate_otp
+from app.modules.auth.services import EmailService
 
 
 email = os.getenv('EMAIL')
 password = os.getenv('EMAIL_PASS')
-code = generate_otp()
 
 authentication_service = AuthenticationService()
 user_profile_service = UserProfileService()
-email_service = EmailService(email, password, code)
+email_service = EmailService(email, password)
 
 
 @auth_bp.route("/signup/", methods=["GET", "POST"])
@@ -25,20 +24,19 @@ def show_signup_form():
 
     form = SignupForm()
     code_validation_form = SignupCodeForm()
-
     if form.validate_on_submit():
         session['temp_user_data'] = form.data
 
         email = form.email.data
         if not authentication_service.is_email_available(email):
             return render_template("auth/signup_form.html", form=form, error=f'Email {email} in use')
-
         try:
-            email_service.connecting_sender(email)
+            code = authentication_service.generate_signup_verification_token(email)
+            msg = "Your verification code is: " + code + ". Please enter this code to complete the registration."
+            email_service.send_mail(email, msg, "Verification Code")
             return render_template("auth/signup_code_validation_form.html", form=code_validation_form)
         except Exception as exc:
-            return render_template("auth/signup_form.html", form=form, error=f'Error creating user: {exc}')
-
+            return render_template("auth/signup_form.html", form=form, error=f'Could not send email to {email}')
     return render_template("auth/signup_form.html", form=form)
 
 
@@ -50,8 +48,19 @@ def validate_code():
     code_validation_form = SignupCodeForm()
     if code_validation_form.validate_on_submit():
         try:
-            temp_user_data = session.get('temp_user_data')
-            session.pop('temp_user_data', None)
+            temp_user_data = session.get('temp_user_data', None)
+            if not temp_user_data:
+                return render_template("auth/signup_code_validation_form.html",
+                                       form=code_validation_form, error='Invalid session data: did not find temp_user_data')
+            submitted_code = code_validation_form.code.data
+            email = temp_user_data.get('email')
+            if not email:
+                return render_template("auth/signup_code_validation_form.html",
+                                       form=code_validation_form, error='Invalid session data: email not found')
+            if not authentication_service.validate_signup_verification_token(email, submitted_code):
+                return render_template("auth/signup_code_validation_form.html",
+                                       form=code_validation_form, error='Invalid code')
+            
             user = authentication_service.create_with_profile(**temp_user_data)
 
         except Exception as exc:
