@@ -35,7 +35,6 @@ def show_signup_form():
             email_service.connecting_sender(email, code)
             return render_template("auth/signup_code_validation_form.html", form=code_validation_form)
         except Exception as exc:
-            print(exc)
             return render_template("auth/signup_form.html", form=form, error=f'Could not send email to {email}')
     return render_template("auth/signup_form.html", form=form)
 

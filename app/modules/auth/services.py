@@ -20,7 +20,7 @@ class AuthenticationService(BaseService):
         self.su_token_repository = SignUpVerificationTokenRepository()
 
     def generate_signup_verification_token(self, email: str) -> str:
-        # if there is a token for this email, delete it
+        # there can only be one token per email at a time
         if token := self.su_token_repository.get_by_email(email):
             self.su_token_repository.delete(token.id)
         token = secrets.token_hex(3) # 6 characters
@@ -31,12 +31,9 @@ class AuthenticationService(BaseService):
         token_instance = self.su_token_repository.get_by_email(email)
         if token_instance is None:
             return False
-        now = datetime.now(timezone.utc)
-        created_at = token_instance.created_at.replace(tzinfo=timezone.utc)
-        # both as utc
-        created_at = created_at.timestamp()
-        now = now.timestamp()
-        if now - created_at > MAX_VERIFICATION_TOKEN_AGE:
+        now = datetime.now(timezone.utc).timestamp()
+        created_at = token_instance.created_at.replace(tzinfo=timezone.utc).timestamp()
+        if (now - created_at) > MAX_VERIFICATION_TOKEN_AGE:
             self.su_token_repository.delete(token_instance)
             return False
         if token_instance.token == token:
