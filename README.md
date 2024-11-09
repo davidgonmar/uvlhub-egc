@@ -1,7 +1,7 @@
 <div align="center">
 
-  <a href="">[![Pytest Testing Suite](https://github.com/diverso-lab/uvlhub/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/diverso-lab/uvlhub/actions/workflows/tests.yml)</a>
-  <a href="">[![Commits Syntax Checker](https://github.com/diverso-lab/uvlhub/actions/workflows/commits.yml/badge.svg?branch=main)](https://github.com/diverso-lab/uvlhub/actions/workflows/commits.yml)</a>
+  <a href="">[![Pytest Testing Suite](https://github.com/davidgonmar/uvlhub-egc/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/davidgonmar/uvlhub-egc/actions/workflows/tests.yml)</a>
+  <a href="">[![Commits Syntax Checker](https://github.com/davidgonmar/uvlhub-egc/actions/workflows/commits.yml/badge.svg?branch=main)](https://github.com/davidgonmar/uvlhub-egc/actions/workflows/commits.yml)</a>
   
 </div>
 
