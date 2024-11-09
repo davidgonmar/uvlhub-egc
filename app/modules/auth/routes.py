@@ -1,13 +1,13 @@
 import os
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, session
 from flask_login import current_user, login_user, logout_user
 
-
 from app.modules.auth import auth_bp
-from app.modules.auth.forms import SignupForm, LoginForm, ForgotPasswordForm
+from app.modules.auth.forms import SignupForm, SignupCodeForm, LoginForm, ForgotPasswordForm
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
 from app.modules.auth.email_service import EmailService, generate_otp
+
 
 email = os.getenv('EMAIL')
 password = os.getenv('EMAIL_PASS')
@@ -15,7 +15,8 @@ code = generate_otp()
 
 authentication_service = AuthenticationService()
 user_profile_service = UserProfileService()
-email_service = EmailService(email,password, code)
+email_service = EmailService(email, password, code)
+
 
 @auth_bp.route("/signup/", methods=["GET", "POST"])
 def show_signup_form():
@@ -23,23 +24,45 @@ def show_signup_form():
         return redirect(url_for('public.index'))
 
     form = SignupForm()
+    code_validation_form = SignupCodeForm()
+
     if form.validate_on_submit():
+        session['temp_user_data'] = form.data
+
         email = form.email.data
         if not authentication_service.is_email_available(email):
             return render_template("auth/signup_form.html", form=form, error=f'Email {email} in use')
 
         try:
-            user = authentication_service.create_with_profile(**form.data)
-            #Para enviar email, es provisional y no deberia ir aquí pero era para probar backend
             email_service.connecting_sender(email)
+            return render_template("auth/signup_code_validation_form.html", form=code_validation_form)
         except Exception as exc:
             return render_template("auth/signup_form.html", form=form, error=f'Error creating user: {exc}')
 
-        # Log user
+    return render_template("auth/signup_form.html", form=form)
+
+
+@auth_bp.route("/signup/code-validation", methods=["GET", "POST"])
+def validate_code():
+    if current_user.is_authenticated:
+        return redirect(url_for('public.index'))
+
+    code_validation_form = SignupCodeForm()
+    if code_validation_form.validate_on_submit():
+        try:
+            temp_user_data = session.get('temp_user_data')
+            session.pop('temp_user_data', None)
+            user = authentication_service.create_with_profile(**temp_user_data)
+
+        except Exception as exc:
+            return render_template("auth/signup_code_validation_form.html",
+                                   form=code_validation_form, error=f'Error creating user: {exc}')
+
         login_user(user, remember=True)
         return redirect(url_for('public.index'))
 
-    return render_template("auth/signup_form.html", form=form)
+    return render_template("auth/signup_code_validation_form.html", form=code_validation_form)
+
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -55,6 +78,7 @@ def login():
 
     return render_template('auth/login_form.html', form=form)
 
+
 @auth_bp.route("/forgotpassword/", methods=["GET", "POST"])
 def show_forgotpassword_form():
     if current_user.is_authenticated:
@@ -69,6 +93,7 @@ def show_forgotpassword_form():
             email_service.connecting_sender(email)
         return redirect(url_for('public.index'))
     return render_template("auth/forgotpassword_form.html", form=form)
+
 
 @auth_bp.route('/logout')
 def logout():
