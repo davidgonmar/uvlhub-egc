@@ -93,12 +93,12 @@ def show_forgotpassword_form():
             session['otp_code'] = code
             session['otp_email'] = email
             email_service.connecting_sender(email)
-        return redirect(url_for('auth.validate_code'))
+        return redirect(url_for('auth.validate_password_code'))
     return render_template("auth/forgotpassword_form.html", form=form)
 
   
 @auth_bp.route("/validatecode/", methods=["GET", "POST"])
-def validate_code():
+def validate_password_code():
     if current_user.is_authenticated:
         return redirect(url_for('public.index'))
 
