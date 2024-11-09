@@ -61,7 +61,7 @@ def validate_code():
         login_user(user, remember=True)
         return redirect(url_for('public.index'))
 
-    return render_template("auth/signup_form.html", form=code_validation_form)
+    return render_template("auth/signup_code_validation_form.html", form=code_validation_form)
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
