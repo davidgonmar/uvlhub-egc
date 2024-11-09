@@ -28,7 +28,6 @@ def create_new_chat(client):
         
 
 client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
-client = OpenAI(api_key=api_key)
 
 chatbot = ChatbotService(client)
 create_new_chat(chatbot.client)
