@@ -8,6 +8,7 @@ from core.configuration.configuration import uploads_folder_name
 from core.services.BaseService import BaseService
 from flask import current_app as app  # Importar el logger de Flask
 
+
 class AuthenticationService(BaseService):
     def __init__(self):
         super().__init__(UserRepository())
@@ -87,6 +88,19 @@ class AuthenticationService(BaseService):
     def temp_folder_by_user(self, user: User) -> str:
         return os.path.join(uploads_folder_name(), "temp", str(user.id))
 
+    def get_user_by_email(self, email: str) -> User | None:
+        return self.repository.get_by_email(email)
+
+    def reset_password(self, email: str, new_password: str) -> bool:
+        user = self.get_user_by_email(email)
+        if user is None:
+            raise ValueError(f"User with email {email} does not exist.")
+
+        user.set_password(new_password)
+        self.repository.session.commit()
+
+        return True
+
     def get_or_create_user(self, google_user_info):
         app.logger.info(f"Google user info received: {google_user_info}")  # Log para ver la info del usuario de Google
         email = google_user_info.get("email")
@@ -101,7 +115,7 @@ class AuthenticationService(BaseService):
         if user:
             app.logger.info(f"User with Google ID {google_id} already exists: {user.email}")  # Log si el usuario ya existe
             return user
-        
+
         # Si no existe, crear un nuevo usuario
         user_data = {
             "email": email,
@@ -121,8 +135,5 @@ class AuthenticationService(BaseService):
         self.repository.session.commit()  # Confirmar los cambios
 
         app.logger.info(f"User created with Google ID: {user.email}")  # Log de usuario creado
-        
+
         return user
-    def get_user_by_email(self, email: str):
-        # Buscar al usuario por email usando el repositorio
-        return self.repository.get_by_email(email)

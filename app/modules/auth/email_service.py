@@ -2,7 +2,6 @@ import random
 import smtplib
 
 
-
 class EmailService():
     def __init__(self, sender, password, code):
         self.sender = sender
@@ -31,5 +30,5 @@ class EmailService():
 
 
 def generate_otp():
-        randomCode = ''.join(str(random.randint(0, 9)) for i in range(6))
-        return str(randomCode)
+    random_code = ''.join(str(random.randint(0, 9)) for i in range(6))
+    return str(random_code)
