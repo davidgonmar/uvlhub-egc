@@ -10,6 +10,7 @@ from core.configuration.configuration import uploads_folder_name
 from core.services.BaseService import BaseService
 import secrets
 from datetime import datetime, timezone
+import smtplib
 
 MAX_VERIFICATION_TOKEN_AGE = 60 * 10 # 10 minutes
 
@@ -118,3 +119,19 @@ class AuthenticationService(BaseService):
         self.repository.session.commit()
 
         return True
+    
+
+class EmailService():
+    def __init__(self, sender: str, password: str):
+        self.sender = sender
+        self.password = password
+
+    def send_mail(self, receiver: str, message: str, subject: str = ""):
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(self.sender, self.password)
+        msg = f'Subject: {subject}\n\n{message}'
+        server.sendmail(self.sender, receiver, msg)
+        server.quit()
+
+        

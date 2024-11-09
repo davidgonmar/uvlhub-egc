@@ -6,7 +6,7 @@ from app.modules.auth import auth_bp
 from app.modules.auth.forms import SignupForm, LoginForm, ForgotPasswordForm, CodeForm, ResetPasswordForm, SignupCodeForm
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
-from app.modules.auth.email_service import EmailService
+from app.modules.auth.services import EmailService
 
 
 email = os.getenv('EMAIL')
@@ -32,7 +32,8 @@ def show_signup_form():
             return render_template("auth/signup_form.html", form=form, error=f'Email {email} in use')
         try:
             code = authentication_service.generate_signup_verification_token(email)
-            email_service.connecting_sender(email, code)
+            msg = "Your verification code is: " + code + ". Please enter this code to complete the registration."
+            email_service.send_mail(email, msg, "Verification Code")
             return render_template("auth/signup_code_validation_form.html", form=code_validation_form)
         except Exception as exc:
             return render_template("auth/signup_form.html", form=form, error=f'Could not send email to {email}')
