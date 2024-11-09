@@ -3,17 +3,46 @@ from flask_login import login_user
 from flask_login import current_user
 
 from app.modules.auth.models import User
-from app.modules.auth.repositories import UserRepository
+from app.modules.auth.repositories import UserRepository, SignUpVerificationTokenRepository
 from app.modules.profile.models import UserProfile
 from app.modules.profile.repositories import UserProfileRepository
 from core.configuration.configuration import uploads_folder_name
 from core.services.BaseService import BaseService
+import secrets
+from datetime import datetime, timezone
 
+MAX_VERIFICATION_TOKEN_AGE = 60 * 10 # 10 minutes
 
 class AuthenticationService(BaseService):
     def __init__(self):
         super().__init__(UserRepository())
         self.user_profile_repository = UserProfileRepository()
+        self.su_token_repository = SignUpVerificationTokenRepository()
+
+    def generate_signup_verification_token(self, email: str) -> str:
+        # if there is a token for this email, delete it
+        if token := self.su_token_repository.get_by_email(email):
+            self.su_token_repository.delete(token.id)
+        token = secrets.token_hex(3) # 6 characters
+        self.su_token_repository.create(email=email, token=token)
+        return token
+    
+    def validate_signup_verification_token(self, email: str, token: str, delete = True) -> bool:
+        token_instance = self.su_token_repository.get_by_email(email)
+        if token_instance is None:
+            return False
+        now = datetime.now(timezone.utc)
+        created_at = token_instance.created_at.replace(tzinfo=timezone.utc)
+        # both as utc
+        created_at = created_at.timestamp()
+        now = now.timestamp()
+        if now - created_at > MAX_VERIFICATION_TOKEN_AGE:
+            self.su_token_repository.delete(token_instance)
+            return False
+        if token_instance.token == token:
+            (lambda: self.su_token_repository.delete(token_instance) if delete else lambda: None)()
+            return True
+        return False
 
     def login(self, email, password, remember=True):
         user = self.repository.get_by_email(email)
