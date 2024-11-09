@@ -2,9 +2,8 @@ import os
 from flask import render_template, redirect, url_for, request, session
 from flask_login import current_user, login_user, logout_user
 
-
 from app.modules.auth import auth_bp
-from app.modules.auth.forms import SignupForm, SignupCodeForm, LoginForm
+from app.modules.auth.forms import SignupForm, SignupCodeForm, LoginForm, ForgotPasswordForm
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
 from app.modules.auth.email_service import EmailService, generate_otp
@@ -62,7 +61,7 @@ def validate_code():
         login_user(user, remember=True)
         return redirect(url_for('public.index'))
 
-    return render_template("auth/signup_code_validation_form.html", form=code_validation_form)
+    return render_template("auth/signup_form.html", form=code_validation_form)
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -78,6 +77,22 @@ def login():
         return render_template("auth/login_form.html", form=form, error='Invalid credentials')
 
     return render_template('auth/login_form.html', form=form)
+
+
+@auth_bp.route("/forgotpassword/", methods=["GET", "POST"])
+def show_forgotpassword_form():
+    if current_user.is_authenticated:
+        return redirect(url_for('public.index'))
+
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        if authentication_service.is_email_available(email):
+            return render_template("auth/forgotpassword_form.html", form=form, error=f'The email address {email} is not registered.')
+        else:
+            email_service.connecting_sender(email)
+        return redirect(url_for('public.index'))
+    return render_template("auth/forgotpassword_form.html", form=form)
 
 
 @auth_bp.route('/logout')
