@@ -1,16 +1,14 @@
-import os
-
-from flask import Flask
-
-from flask_sqlalchemy import SQLAlchemy
-from dotenv import load_dotenv
-from flask_migrate import Migrate
-
 from core.configuration.configuration import get_app_version
 from core.managers.module_manager import ModuleManager
 from core.managers.config_manager import ConfigManager
 from core.managers.error_handler_manager import ErrorHandlerManager
 from core.managers.logging_manager import LoggingManager
+from app.modules.chatbot.routes import chatbot_bp
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from dotenv import load_dotenv
+import os
 
 # Load environment variables
 load_dotenv()
@@ -18,7 +16,6 @@ load_dotenv()
 # Create the instances
 db = SQLAlchemy()
 migrate = Migrate()
-
 
 def create_app(config_name='development'):
     app = Flask(__name__)
@@ -54,6 +51,9 @@ def create_app(config_name='development'):
     error_handler_manager = ErrorHandlerManager(app)
     error_handler_manager.register_error_handlers()
 
+    # Register the chatbot blueprint
+    #app.register_blueprint(chatbot_bp, url_prefix="/chatbot")
+
     # Injecting environment variables into jinja context
     @app.context_processor
     def inject_vars_into_jinja():
@@ -65,6 +65,5 @@ def create_app(config_name='development'):
         }
 
     return app
-
 
 app = create_app()
