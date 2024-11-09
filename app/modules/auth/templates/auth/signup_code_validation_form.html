@@ -1,0 +1,64 @@
+{% extends "base_template.html" %}
+
+{% block title %} Sign-up code validation {% endblock %}
+
+{% block content %}
+
+    <h1 class="h2 mb-3"> Sign-up <b/> code validation </b> </h1>
+
+    <div class="row">
+        <div class="col-5">
+
+            <form method="post" action="{{ url_for('auth.validate_code') }}" novalidate>
+                {{ form.hidden_tag() }}
+
+                <div class="row">
+                    <div class="mt-3">
+                        <div class="col-lg-6 col-12">
+                            A verification code has been sent to your email.
+                        </div>
+                        <div class="col-lg-6 col-12">
+                            Please, introduce it here.
+                        </div>
+                        <br>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-xs-12">
+                        <div class="mb-3">
+                            {{ form.code.label(class="form-label") }} *
+                            {{ form.code(class="form-control",placeholder="Enter code") }}
+                            {% for error in form.code.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                        {% if error %}
+                            <div class="mt-3">
+                                <p style="color: red;"><strong>Error:</strong> {{ error }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('auth.scripts') }}"></script>
+{% endblock %}

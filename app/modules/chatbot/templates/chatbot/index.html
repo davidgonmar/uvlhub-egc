@@ -1,0 +1,26 @@
+{% extends "base_template.html" %}
+
+{% block title %}View Chatbot{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <h2>Romeo Assistant</h2>
+    <div class="input-group">
+        <input type="text" placeholder="Escribe tu mensaje aquí..." id="chatInput">
+        <button onclick="enviarMensaje()">Enviar</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('chatbot.scripts') }}"></script>
+<script>
+    function enviarMensaje() {
+        const mensaje = document.getElementById("chatInput").value;
+        if (mensaje) {
+            alert("Mensaje enviado: " + mensaje);
+            document.getElementById("chatInput").value = "";
+        }
+    }
+</script>
+{% endblock %}
