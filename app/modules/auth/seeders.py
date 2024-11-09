@@ -5,14 +5,14 @@ from core.seeders.BaseSeeder import BaseSeeder
 
 class AuthSeeder(BaseSeeder):
 
-    priority = 1  # Higher priority
+    priority = 1 
 
     def run(self):
 
-        # Seeding users
+        # Seeding users with google_id
         users = [
-            User(email='user1@example.com', password='1234'),
-            User(email='user2@example.com', password='1234'),
+            User(email='user1@example.com', password='1234', google_id='google_id_1'),
+            User(email='user2@example.com', password='1234', google_id='google_id_2'),
         ]
 
         # Inserted users with their assigned IDs are returned by `self.seed`.
