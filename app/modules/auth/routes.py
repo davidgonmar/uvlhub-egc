@@ -29,7 +29,7 @@ user_profile_service = UserProfileService()
 email_service = EmailService(email, password, code)
 
 
-auth_bp.route("/signup/", methods=["GET", "POST"])
+@auth_bp.route("/signup/", methods=["GET", "POST"])
 def show_signup_form():
     if current_user.is_authenticated:
         return redirect(url_for('public.index'))
