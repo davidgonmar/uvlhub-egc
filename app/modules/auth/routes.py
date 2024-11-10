@@ -1,5 +1,5 @@
 import os
-from flask import render_template, redirect, url_for, request, session
+from flask import render_template, redirect, url_for, request, session, flash
 from flask_login import current_user, login_user, logout_user
 
 from app.modules.auth import auth_bp
@@ -94,32 +94,51 @@ def show_forgotpassword_form():
         return redirect(url_for('public.index'))
 
     form = ForgotPasswordForm()
+    formCode = CodeForm()
     if form.validate_on_submit():
         email = form.email.data
         if authentication_service.is_email_available(email):
             return render_template("auth/forgotpassword_form.html", form=form, error=f'The email address {email} is not registered.')
-        else:
-            session['otp_code'] = code
-            session['otp_email'] = email
-            email_service.connecting_sender(email)
-        return redirect(url_for('auth.validate_password_code'))
+        try:
+            otp_code = authentication_service.generate_resetpassword_verification_token(email)
+            msg = f"Your OTP code is: {otp_code}. Please use this to reset your password."
+            email_service.send_mail(email, msg, "Password Reset OTP")
+            
+            session['temp_user_data'] = {'email': email}
+            
+            return render_template("auth/validatecode_form.html", form=formCode)
+        
+        except Exception as exc:
+            return render_template("auth/forgotpassword_form.html", form=form, error=f"Error sending OTP: {exc}")
+
     return render_template("auth/forgotpassword_form.html", form=form)
 
   
-@auth_bp.route("/validatecode/", methods=["GET", "POST"])
-def validate_password_code():
+@auth_bp.route("/forgotpassword/code-validation", methods=["GET", "POST"])
+def validate_forgotpassword_code():
     if current_user.is_authenticated:
         return redirect(url_for('public.index'))
 
-    formCode = CodeForm()
-    if formCode.validate_on_submit():
-        entered_code = formCode.code.data
-        stored_code = session.get('otp_code')
-        if entered_code == stored_code:
-            return redirect(url_for('auth.reset_password'))
-        else:
-            return render_template('auth/validatecode_form.html', form=formCode, error="Invalid code. Please try again.")
-    return render_template('auth/validatecode_form.html', form=formCode)
+    form = CodeForm()
+    formPassword = ResetPasswordForm()
+    if form.validate_on_submit():
+        try:
+            temp_user_data = session.get('temp_user_data', None)
+            if not temp_user_data:
+                return render_template("auth/validatecode_form.html", form=form, error="Invalid session data: did not find temp_user_data")
+
+            email = temp_user_data.get('email')
+            entered_code = form.code.data
+
+            if not authentication_service.validate_resetpassword_verification_token(email, entered_code):
+                return render_template("auth/validatecode_form.html", form=form, error="Invalid OTP code. Please try again.")
+            
+            return render_template("auth/resetpassword_form.html", form=formPassword)
+
+        except Exception as exc:
+            return render_template("auth/validatecode_form.html", form=form, error=f"Error validating OTP: {exc}")
+
+    return render_template("auth/validatecode_form.html", form=form)
 
   
 @auth_bp.route('/resetpassword/', methods=['GET', 'POST'])
@@ -128,6 +147,10 @@ def reset_password():
         return redirect(url_for('public.index'))
 
     form = ResetPasswordForm()
+
+    temp_user_data = session.get('temp_user_data', None)
+    if not temp_user_data:
+        return render_template("auth/resetpassword_form.html", form=form, error="Invalid session data: did not find temp_user_data")
     if form.validate_on_submit():
         new_password = form.password.data
         confirm_password = form.confirm_password.data
@@ -135,11 +158,12 @@ def reset_password():
         if new_password != confirm_password:
             return render_template("auth/resetpassword_form.html", form=form, error="Passwords do not match.")
         try:
-            email = session.get('otp_email')
+            email = temp_user_data.get('email')
             authentication_service.reset_password(email, new_password)
-            user = authentication_service.get_user_by_email(email)
-            login_user(user, remember=True)
+
+            session.pop('temp_user_data', None)
             return redirect(url_for('public.index'))
+
         except Exception as exc:
             return render_template("auth/resetpassword_form.html", form=form, error=f"Error resetting password: {exc}")
 
