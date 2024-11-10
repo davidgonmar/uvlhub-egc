@@ -7,6 +7,8 @@ class UserProfile(db.Model):
     orcid = db.Column(db.String(19), unique=True, nullable=True)
     github = db.Column(db.String(39))
     orcid = db.Column(db.String(19))
+    github = db.Column(db.String(39))
+    orcid = db.Column(db.String(19))
     affiliation = db.Column(db.String(100))
     name = db.Column(db.String(100), nullable=False)
     surname = db.Column(db.String(100), nullable=False)
