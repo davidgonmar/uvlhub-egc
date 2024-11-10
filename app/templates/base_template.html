@@ -71,6 +71,12 @@ chico sundermann">
                     </a>
                 </li>
 
+                <li class="sidebar-item {{ 'active' if request.endpoint == 'chatbot.index' else '' }}">
+                    <a class="sidebar-link" href="{{ url_for('chatbot.index') }}">
+                        <i class="align-middle" data-feather="message-circle"></i> <span class="align-middle">Romeo</span>
+                    </a>
+                </li>
+
                 {% if current_user.is_anonymous %}
 
                     <li class="sidebar-header">

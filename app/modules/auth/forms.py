@@ -10,6 +10,11 @@ class SignupForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     is_developer = BooleanField('Developer')
     submit = SubmitField('Submit')
+    
+
+class SignupCodeForm(FlaskForm):
+    code = StringField('Code', validators=[DataRequired(), Length(min=6, max=6)])
+    submit = SubmitField('Validate')
 
 
 class LoginForm(FlaskForm):
@@ -21,4 +26,15 @@ class LoginForm(FlaskForm):
 
 class ForgotPasswordForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Continue')
+    
+
+class CodeForm(FlaskForm):
+    code = StringField('Code', validators=[DataRequired(), Length(max=6)])
+    submit = SubmitField('Validate')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired()])
+    submit = SubmitField('Validate')
