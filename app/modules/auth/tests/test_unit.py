@@ -8,6 +8,9 @@ from app.modules.profile.repositories import UserProfileRepository
 from unittest.mock import patch, MagicMock
 from app.modules.auth.models import User
 from app.modules.auth.services import *
+from datetime import datetime, timedelta
+from app.modules.auth.repositories import ResetPasswordVerificationTokenRepository
+from app.modules.auth.models import ResetPasswordVerificationToken
 
 @pytest.fixture(scope="module")
 def test_client(test_client):
@@ -33,17 +36,17 @@ def mock_user():
     return user
 
 @pytest.fixture
+def mock_repo():
+    return ResetPasswordVerificationTokenRepository()
+
+@pytest.fixture
 def auth_service():
-    """
-    Fixture to initialize the AuthenticationService.
-    """
     return AuthenticationService()
 
 @pytest.fixture
-def mock_smtp_server():
-    """Fixture to mock the SMTP server."""
-    mock_server = MagicMock()
-    return mock_server
+def valid_email():
+    return "testuser@example.com"
+
 
 def test_login_success(test_client):
     response = test_client.post(
@@ -176,71 +179,161 @@ def test_reset_password_after_user_creation(auth_service, mock_user):
 
     assert result is True
     assert mock_user.check_password("newpassword123")
-'''
-def test_generate_otp():
-    otp = generate_otp()
-    assert len(otp) == 6
-    assert otp.isdigit()
 
-def test_send_otp_email(mock_smtp_server):
-    """Test sending OTP email."""
-    
-    # Prepare the EmailService object with mock data
-    email_service = EmailService(sender="test@example.com", password="password", code="123456")
+def test_generate_resetpassword_verification_token(auth_service, valid_email, mock_repo):
+    token = auth_service.generate_resetpassword_verification_token(valid_email)
 
-    # Mock the 'sendmail' method to prevent actual email sending
-    with patch.object(mock_smtp_server, 'sendmail') as mock_sendmail:
-        email_service.sending_mail(receiver="receiver@example.com", server=mock_smtp_server)
+    assert len(token) == 6
+    assert token.isalnum()
 
-        # Ensure that the 'sendmail' method is called once
-        mock_sendmail.assert_called_once_with(
-            "test@example.com",  # Sender
-            "receiver@example.com",  # Receiver
-            "Hello! \n This is your OTP: 123456."  # The message
-        )
+    token_instance = mock_repo.get_by_email(valid_email)
+    assert token_instance is not None
+    assert token_instance.token == token
 
-def test_check_otp_valid():
-    """Test OTP validation with correct entry."""
-    
-    # Prepare EmailService with a mock OTP
-    email_service = EmailService(sender="test@example.com", password="password", code="123456")
-    
-    # Simulate correct OTP entry
-    class OTPEntry:
-        def get(self):
-            return "123456"
-    
-    otp_entry = OTPEntry()
-    with patch("builtins.print") as mock_print:
-        email_service.check_otp(otp_entry)
-        mock_print.assert_called_with("OKKKKKKKKKKKKKKKKKKKKKKKK")  # Expected success message
+def test_validate_resetpassword_verification_token_success(auth_service, valid_email):
+    mock_repo = MagicMock()
 
-def test_check_otp_invalid():
-    """Test OTP validation with incorrect entry."""
+    token = auth_service.generate_resetpassword_verification_token(valid_email)
     
-    email_service = EmailService(sender="test@example.com", password="password", code="123456")
-    
-    class OTPEntry:
-        def get(self):
-            return "654321"  # Incorrect OTP
-    
-    otp_entry = OTPEntry()
-    with patch("builtins.print") as mock_print:
-        email_service.check_otp(otp_entry)
-        mock_print.assert_called_with("NOOOOOOOOOOOOOOOOOOOOOOOO")  # Expected failure message
+    mock_token_instance = MagicMock()
+    mock_token_instance.token = token
+    mock_token_instance.created_at = datetime.now(timezone.utc)
+    mock_repo.get_by_email.return_value = mock_token_instance
 
-def test_check_otp_invalid_format():
-    """
-    Test that invalid OTP formats (e.g., non-numeric or empty strings) are handled appropriately.
-    """
-    email_service = EmailService(sender="test@example.com", password="password", code="123456")
+    auth_service.su_token_repository = mock_repo
+
+    is_valid = auth_service.validate_resetpassword_verification_token(valid_email, token)
     
-    class OTPEntry:
-        def get(self):
-            return "abcxyz"  # Invalid OTP format
+    assert is_valid is True
+
+    mock_repo.delete.assert_called_once_with(mock_token_instance)
+
+    mock_repo.get_by_email.return_value = None 
+
+    token_instance = mock_repo.get_by_email(valid_email)
+    assert token_instance is None 
+
+def test_validate_resetpassword_verification_invalid_token(auth_service, valid_email):
+    mock_repo = MagicMock()
+
+    token = auth_service.generate_resetpassword_verification_token(valid_email)
     
-    otp_entry = OTPEntry()
-    with patch("builtins.print") as mock_print:
-        email_service.check_otp(otp_entry)
-        mock_print.assert_called_with("NOOOOOOOOOOOOOOOOOOOOOOOO")  # Expected failure message for invalid OTP
-'''
+    mock_token_instance = MagicMock()
+    mock_token_instance.token = token
+    mock_token_instance.created_at = datetime.now(timezone.utc)
+    mock_repo.get_by_email.return_value = mock_token_instance
+
+    auth_service.su_token_repository = mock_repo
+
+    invalid_token = "token_invalido"
+
+    is_valid = auth_service.validate_resetpassword_verification_token(valid_email, invalid_token)
+    
+    assert is_valid is False
+
+    mock_repo.delete.assert_not_called()
+
+    mock_repo.get_by_email.return_value = mock_token_instance 
+    token_instance = mock_repo.get_by_email(valid_email)
+    assert token_instance is not None  
+    assert token_instance.token == token 
+
+
+def test_generate_resetpassword_verification_token(auth_service, valid_email, mock_repo):
+    token = auth_service.generate_resetpassword_verification_token(valid_email)
+
+    assert len(token) == 6
+    assert token.isalnum()
+
+    token_instance = mock_repo.get_by_email(valid_email)
+    assert token_instance is not None
+    assert token_instance.token == token
+
+
+def test_validate_resetpassword_verification_token_success(auth_service, valid_email):
+    mock_repo = MagicMock()
+
+    token = auth_service.generate_resetpassword_verification_token(valid_email)
+    
+    mock_token_instance = MagicMock()
+    mock_token_instance.token = token
+    mock_token_instance.created_at = datetime.now(timezone.utc)
+    mock_token_instance.id = 1  
+    mock_repo.get_by_email.return_value = mock_token_instance
+
+    auth_service.rp_token_repository = mock_repo
+
+    is_valid = auth_service.validate_resetpassword_verification_token(valid_email, token)
+    
+    assert is_valid is True
+
+    mock_repo.delete.assert_called_once_with(mock_token_instance)  
+
+    mock_repo.get_by_email.return_value = None  
+    token_instance = mock_repo.get_by_email(valid_email)
+    assert token_instance is None 
+
+
+def test_validate_resetpassword_verification_invalid_token(auth_service, valid_email):
+    mock_repo = MagicMock()
+
+    token = auth_service.generate_resetpassword_verification_token(valid_email)
+    
+    mock_token_instance = MagicMock()
+    mock_token_instance.token = token
+    mock_token_instance.created_at = datetime.now(timezone.utc)
+    mock_repo.get_by_email.return_value = mock_token_instance
+
+    auth_service.rp_token_repository = mock_repo
+
+    invalid_token = "token_invalido"
+
+    is_valid = auth_service.validate_resetpassword_verification_token(valid_email, invalid_token)
+    
+    assert is_valid is False
+
+    mock_repo.delete.assert_not_called()
+
+    token_instance = mock_repo.get_by_email(valid_email)
+    assert token_instance is not None
+    assert token_instance.token == token
+
+
+def test_validate_resetpassword_verification_token_expired(auth_service, valid_email):
+    mock_repo = MagicMock()
+
+    token = auth_service.generate_resetpassword_verification_token(valid_email)
+    
+    mock_token_instance = MagicMock()
+    mock_token_instance.token = token
+    mock_token_instance.created_at = datetime.now(timezone.utc) - timedelta(minutes=15)  
+    mock_repo.get_by_email.return_value = mock_token_instance
+
+    auth_service.rp_token_repository = mock_repo
+
+    is_valid = auth_service.validate_resetpassword_verification_token(valid_email, token)
+    
+    assert is_valid is False
+
+    mock_repo.delete.assert_called_once_with(mock_token_instance)
+
+
+def test_generate_resetpassword_verification_token_replace_old(auth_service, valid_email):
+    mock_repo = MagicMock()
+
+    old_token = "old_token_123"
+    mock_token_instance = MagicMock()
+    mock_token_instance.token = old_token
+    mock_token_instance.created_at = datetime.now(timezone.utc) - timedelta(minutes=5)  
+    mock_token_instance.id = 1  
+    mock_repo.get_by_email.return_value = mock_token_instance  
+
+    auth_service.rp_token_repository = mock_repo
+
+    new_token = auth_service.generate_resetpassword_verification_token(valid_email)
+
+    assert new_token != old_token
+
+    mock_repo.delete.assert_called_once_with(mock_token_instance.id)
+
+    mock_repo.create.assert_called_once_with(email=valid_email, token=new_token)
