@@ -37,10 +37,10 @@ class AuthenticationService(BaseService):
         now = datetime.now(timezone.utc).timestamp()
         created_at = token_instance.created_at.replace(tzinfo=timezone.utc).timestamp()
         if (now - created_at) > MAX_VERIFICATION_TOKEN_AGE:
-            self.su_token_repository.delete(token_instance)
+            self.su_token_repository.delete(token_instance.id)
             return False
         if token_instance.token == token:
-            (lambda: self.su_token_repository.delete(token_instance) if delete else lambda: None)()
+            (lambda: self.su_token_repository.delete(token_instance.id) if delete else lambda: None)()
             return True
         return False
 
