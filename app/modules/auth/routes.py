@@ -1,5 +1,5 @@
 import os
-from flask import render_template, redirect, url_for, request, session
+from flask import render_template, redirect, url_for, request, session, current_app
 from flask_login import current_user, login_user, logout_user
 
 from app.modules.auth import auth_bp
@@ -7,6 +7,11 @@ from app.modules.auth.forms import SignupForm, LoginForm, ForgotPasswordForm, Co
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
 from app.modules.auth.email_service import EmailService, generate_otp
+
+
+from app.modules.auth.models import User
+from app.modules.profile.models import UserProfile
+from app import db
 
 
 email = os.getenv('EMAIL')
@@ -141,3 +146,75 @@ def reset_password():
 def logout():
     logout_user()
     return redirect(url_for('public.index'))
+
+@auth_bp.before_app_request
+def before_request():
+    current_app.orcid_service = AuthenticationService()
+
+@auth_bp.route('/orcid/login')
+def login_orcid():
+    redirect_uri = url_for('auth.authorize_orcid', _external=True, _scheme='http')
+    return current_app.orcid_service.orcid_client.authorize_redirect(redirect_uri)
+
+@auth_bp.route('/orcid/authorize')
+def authorize_orcid():
+    token = current_app.orcid_service.orcid_client.authorize_access_token()
+    resp = current_app.orcid_service.orcid_client.get('https://orcid.org/oauth/userinfo', token=token)
+    user_info = resp.json()
+
+    orcid_id = user_info['sub']
+    full_profile = current_app.orcid_service.get_orcid_full_profile(orcid_id, token)
+
+    # Acceder a la afiliación
+    affiliation_group = full_profile.get('activities-summary', {}).get('employments', {}).get('affiliation-group', [])
+    if affiliation_group:
+        employment_summary = affiliation_group[0].get('summaries', [{}])[0].get('employment-summary', {})
+        organization = employment_summary.get('organization', {})
+        affiliation = organization.get('name', '')
+    else:
+        affiliation = ''
+
+    # Obtener información disponible del perfil público de ORCID
+    given_name = user_info.get('given_name', '')
+    family_name = user_info.get('family_name', '')
+    surname = family_name if family_name else ""
+
+    
+    # Obtener el correo electrónico del perfil completo
+    email = ''
+    email_data = full_profile.get('person', {}).get('emails', {}).get('email', [])
+    if email_data:
+        email = email_data[0].get('email', '')
+
+    # Verificar si el ORCID iD ya está registrado
+    user_record = User.query.filter_by(orcid_id=orcid_id).first()
+    
+    if user_record:
+        # Si el registro existe, obtener el perfil del usuario asociado
+        profile = UserProfile.query.filter_by(id=user_record.id).first()
+        if profile:
+            user = User.query.get(profile.user_id)
+            login_user(user)
+            return redirect('/')
+    else:
+        # Crear usuario y perfil
+        user = User()
+        user.set_password(orcid_id)  # Usar el ORCID como contraseña
+        user.email = email
+        user.orcid_id=orcid_id
+        db.session.add(user)
+        db.session.commit()
+
+        profile = UserProfile(
+            user_id=user.id,
+            name=given_name,
+            surname=surname,
+            affiliation=affiliation,
+            orcid=orcid_id
+        )
+        db.session.add(profile)
+        db.session.commit()
+        db.session.commit()
+
+        login_user(user)
+        return redirect('/')

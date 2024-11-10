@@ -2,6 +2,10 @@ import os
 from flask_login import login_user
 from flask_login import current_user
 
+from flask import current_app
+from app import db
+from authlib.integrations.flask_client import OAuth
+
 from app.modules.auth.models import User
 from app.modules.auth.repositories import UserRepository
 from app.modules.profile.models import UserProfile
@@ -14,6 +18,9 @@ class AuthenticationService(BaseService):
     def __init__(self):
         super().__init__(UserRepository())
         self.user_profile_repository = UserProfileRepository()
+        self.client_id = os.getenv("ORCID_CLIENT_ID")
+        self.client_secret = os.getenv("ORCID_CLIENT_SECRET")
+        self.oauth, self.orcid_client = self.configure_oauth(current_app)
 
     def login(self, email, password, remember=True):
         user = self.repository.get_by_email(email)
@@ -92,3 +99,28 @@ class AuthenticationService(BaseService):
         self.repository.session.commit()
 
         return True
+    
+    def configure_oauth(self, app):
+        oauth = OAuth(app)
+        orcid = oauth.register(
+            name='orcid',
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            access_token_url='https://orcid.org/oauth/token',
+            authorize_url='https://orcid.org/oauth/authorize',
+            client_kwargs={
+                'scope': '/authenticate',
+                'token_endpoint_auth_method': 'client_secret_post'
+            }
+        )
+        return oauth, orcid
+
+    def get_orcid_full_profile(self, orcid_id, token):
+        # Nota: La URL y la autorización deben estar correctos según la documentación y el alcance de ORCID
+        url = f'https://pub.orcid.org/v3.0/{orcid_id}/record'
+        headers = {
+            'Authorization': f'Bearer {token["access_token"]}',
+            'Accept': 'application/json'
+        }
+        resp = self.orcid_client.get(url, headers=headers)
+        return resp.json() if resp.ok else {}

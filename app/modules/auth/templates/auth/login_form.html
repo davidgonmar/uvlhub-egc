@@ -52,14 +52,17 @@
 
                     </div>
 
-                    <div class="row">
-
-                        <div class="col-lg-6 col-12">
-                            {{ form.submit(class="btn btn-primary") }}
+                    <div class="row mt-4">
+                        <div class="col-auto">
+                            {{ form.submit(class="btn btn-primary btn-block") }}
                         </div>
-
+                        <div class="col-auto">
+                            <a href="{{url_for('auth.login_orcid')}}" class="btn btn-info" style="border-radius: 5px; display: flex; align-items: center; ">
+                                <img src="https://dirago.me/wp-content/uploads/2023/08/orcid_w.png" alt="ORCID logo" style="width:20px; vertical-align:middle; margin-right:10px;">
+                                Login with ORCID
+                            </a>
+                        </div>
                     </div>
-
                     <div class="row">
 
                         {% if error %}
@@ -83,6 +86,7 @@
                     </div>
 
                 </form>
+                
 
     </div>
 </div>
