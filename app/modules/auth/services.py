@@ -3,7 +3,7 @@ from flask_login import login_user
 from flask_login import current_user
 
 from app.modules.auth.models import User
-from app.modules.auth.repositories import UserRepository, SignUpVerificationTokenRepository
+from app.modules.auth.repositories import UserRepository, SignUpVerificationTokenRepository, ResetPasswordVerificationTokenRepository
 from app.modules.profile.models import UserProfile
 from app.modules.profile.repositories import UserProfileRepository
 from core.configuration.configuration import uploads_folder_name
@@ -19,6 +19,7 @@ class AuthenticationService(BaseService):
         super().__init__(UserRepository())
         self.user_profile_repository = UserProfileRepository()
         self.su_token_repository = SignUpVerificationTokenRepository()
+        self.rp_token_repository = ResetPasswordVerificationTokenRepository()
 
     def generate_signup_verification_token(self, email: str) -> str:
         # there can only be one token per email at a time
@@ -41,6 +42,13 @@ class AuthenticationService(BaseService):
             (lambda: self.su_token_repository.delete(token_instance) if delete else lambda: None)()
             return True
         return False
+    
+    def generate_resetpassword_verification_token(self, email: str) -> str:
+        if token := self.rp_token_repository.get_by_email(email):
+            self.rp_token_repository.delete(token.id)
+        token = secrets.token_hex(3)
+        self.rp_token_repository.create(email=email, token=token)
+        return token
 
     def login(self, email, password, remember=True):
         user = self.repository.get_by_email(email)
