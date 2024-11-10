@@ -44,3 +44,14 @@ class SignUpVerificationToken(db.Model):
 
     def __repr__(self):
         return f'<SignUpVerificationToken {self.email}>'
+    
+
+class ResetPasswordVerificationToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    email = db.Column(db.String(256), nullable=False, unique=True)
+    token = db.Column(db.String(256), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f'<ResetPasswordVerificationToken {self.email}>'
