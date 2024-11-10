@@ -49,6 +49,20 @@ class AuthenticationService(BaseService):
         token = secrets.token_hex(3)
         self.rp_token_repository.create(email=email, token=token)
         return token
+    
+    def validate_resetpassword_verification_token(self, email: str, token: str, delete = True) -> bool:
+        token_instance = self.rp_token_repository.get_by_email(email)
+        if token_instance is None:
+            return False
+        now = datetime.now(timezone.utc).timestamp()
+        created_at = token_instance.created_at.replace(tzinfo=timezone.utc).timestamp()
+        if (now - created_at) > MAX_VERIFICATION_TOKEN_AGE:
+            self.rp_token_repository.delete(token_instance)
+            return False
+        if token_instance.token == token:
+            (lambda: self.rp_token_repository.delete(token_instance) if delete else lambda: None)()
+            return True
+        return False
 
     def login(self, email, password, remember=True):
         user = self.repository.get_by_email(email)
