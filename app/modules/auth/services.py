@@ -12,7 +12,9 @@ import secrets
 from datetime import datetime, timezone
 import smtplib
 
-MAX_VERIFICATION_TOKEN_AGE = 60 * 10 # 10 minutes
+
+MAX_VERIFICATION_TOKEN_AGE = 60 * 10  # 10 minutes
+
 
 class AuthenticationService(BaseService):
     def __init__(self):
@@ -24,11 +26,11 @@ class AuthenticationService(BaseService):
         # there can only be one token per email at a time
         if token := self.su_token_repository.get_by_email(email):
             self.su_token_repository.delete(token.id)
-        token = secrets.token_hex(3) # 6 characters
+        token = secrets.token_hex(3)  # 6 characters
         self.su_token_repository.create(email=email, token=token)
         return token
-    
-    def validate_signup_verification_token(self, email: str, token: str, delete = True) -> bool:
+
+    def validate_signup_verification_token(self, email: str, token: str, delete=True) -> bool:
         token_instance = self.su_token_repository.get_by_email(email)
         if token_instance is None:
             return False
@@ -41,6 +43,9 @@ class AuthenticationService(BaseService):
             (lambda: self.su_token_repository.delete(token_instance) if delete else lambda: None)()
             return True
         return False
+
+    def get_max_verification_token_age(self):
+        return MAX_VERIFICATION_TOKEN_AGE
 
     def login(self, email, password, remember=True):
         user = self.repository.get_by_email(email)
@@ -109,7 +114,7 @@ class AuthenticationService(BaseService):
 
     def get_user_by_email(self, email: str) -> User | None:
         return self.repository.get_by_email(email)
-    
+
     def reset_password(self, email: str, new_password: str) -> bool:
         user = self.get_user_by_email(email)
         if user is None:
@@ -119,7 +124,7 @@ class AuthenticationService(BaseService):
         self.repository.session.commit()
 
         return True
-    
+
 
 class EmailService():
     def __init__(self, sender: str, password: str):
@@ -133,5 +138,3 @@ class EmailService():
         msg = f'Subject: {subject}\n\n{message}'
         server.sendmail(self.sender, receiver, msg)
         server.quit()
-
-        
