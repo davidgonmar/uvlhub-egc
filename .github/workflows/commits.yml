@@ -2,17 +2,34 @@ name: Commits Syntax Checker
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, build]
     types: [opened, reopened, edited, review_requested, synchronize]
   push:
     branches:
-      - "main"
+      - main
+      - build
+      - '**'
   workflow_call:
 
 jobs:
   check:
     name: Conventional Commits
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
-      - uses: webiny/action-conventional-commits@v1.0.3
+
+      - name: Check if commit is a merge commit
+        id: check_merge_commit
+        run: |
+          if git log -1 --pretty=%B | grep -q '^Merge'; then
+            echo "Merge commit detected, skipping commit syntax check."
+            echo "skip_commit_check=true" >> $GITHUB_ENV
+          else
+            echo "No merge commit, running conventional commit check."
+            echo "skip_commit_check=false" >> $GITHUB_ENV
+          fi
+
+      - name: Run Conventional Commits Check
+        if: env.skip_commit_check != 'true'
+        uses: webiny/action-conventional-commits@v1.0.3
