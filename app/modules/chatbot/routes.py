@@ -1,6 +1,5 @@
-from flask import render_template
 from app.modules.chatbot import chatbot_bp
-from flask import Blueprint, render_template, request, jsonify
+from flask import render_template, request, jsonify
 from openai import OpenAI
 import os
 
