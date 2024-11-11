@@ -125,11 +125,6 @@ def show_forgotpassword_form():
 
     return render_template("auth/forgotpassword_form.html", form=form)
 
-
-
-@auth_bp.route("/validatecode/", methods=["GET", "POST"])
-def validate_password_code():
-
   
 @auth_bp.route("/forgotpassword/code-validation", methods=["GET", "POST"])
 def validate_forgotpassword_code():
