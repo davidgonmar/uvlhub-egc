@@ -15,9 +15,6 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-# Replace the client ID and client secret below with your own
-CLIENT_ID = '577750841250-mhpk4bhkfeb664ttr32408rke9gomcf7.apps.googleusercontent.com'
-CLIENT_SECRET = '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'
 
 # The authorization URL and redirect URL must match the ones you specified when you created the OAuth client ID
 AUTH_URL = 'https://accounts.google.com/o/oauth2/auth'
