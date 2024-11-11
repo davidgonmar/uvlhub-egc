@@ -73,16 +73,6 @@
                         {% endfor %}
                     </div>
 
-                    <div class="col-6">
-                        {{ form.github.label(class="form-label") }}
-                        {% set github_value = form.github.data if form.github.data else (current_user.profile.github  if current_user.profile.github else '') %}
-                        {{ form.github(class="form-control", placeholder="Enter your github", required=true, value=github_value) }}
-                        {% for error in form.github.errors %}
-                            <span style="color: red;">{{ error }}</span>
-                            <br>
-                        {% endfor %}
-                    </div>
-
                 </div>
 
                 <div class="row form-group mt-3">

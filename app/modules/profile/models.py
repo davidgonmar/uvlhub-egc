@@ -8,7 +8,6 @@ class UserProfile(db.Model):
     affiliation = db.Column(db.String(100))
     name = db.Column(db.String(100), nullable=False)
     surname = db.Column(db.String(100), nullable=False)
-    is_developer = db.Column(db.Boolean, default=False, nullable=False)
 
     def save(self):
         if not self.id:
