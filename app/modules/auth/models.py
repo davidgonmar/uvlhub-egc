@@ -6,12 +6,14 @@ from sqlalchemy.sql import expression
 
 from app import db
 
+import pytz
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-
+    orcid_id = db.Column(db.String(19), unique=True, nullable=True)
     email = db.Column(db.String(256), unique=True, nullable=False)
-    password = db.Column(db.String(256), nullable=False)
+    password = db.Column(db.String(256), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     is_developer = db.Column(db.Boolean, default=False, nullable=False)
 
@@ -35,6 +37,7 @@ class User(db.Model, UserMixin):
     def temp_folder(self) -> str:
         from app.modules.auth.services import AuthenticationService
         return AuthenticationService().temp_folder_by_user(self)
+    
 
 
 class SignUpVerificationToken(db.Model):

@@ -25,7 +25,7 @@ class AuthSeeder(BaseSeeder):
         for user, name in zip(seeded_users, names):
             profile_data = {
                 "user_id": user.id,
-                "orcid": "",
+                "orcid": None,
                 "affiliation": "Some University",
                 "name": name[0],
                 "surname": name[1],
