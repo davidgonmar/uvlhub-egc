@@ -7,10 +7,9 @@ class UserRepository(BaseRepository):
         super().__init__(User)
 
     def create(self, commit: bool = True, **kwargs):
-        password = kwargs.pop("password", None)  # Usa None como valor predeterminado
+        password = kwargs.pop("password", None)
         instance = self.model(**kwargs)
-        
-        # Solo establece la contraseña si no es None
+
         if password:
             instance.set_password(password)
         
@@ -25,6 +24,14 @@ class UserRepository(BaseRepository):
 
     def get_by_email(self, email: str):
         return self.model.query.filter_by(email=email).first()
+    
+    def get_by_orcid_id(self, orcid_id: str):
+        return self.model.query.filter_by(orcid_id=orcid_id).first()
+
+
+    def get_by_google_id(self, google_id: str):
+        # Permite buscar usuarios mediante su Google ID
+        return self.model.query.filter_by(google_id=google_id).first()
 
     def get_by_github_id(self, github_id):
         return User.query.filter_by(github_id=github_id).first()

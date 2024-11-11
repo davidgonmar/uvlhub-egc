@@ -8,7 +8,6 @@
 
 <div class="row">
     <div class="col-12">
-
         <form action="" method="post" novalidate>
             {{ form.hidden_tag() }}
 
@@ -18,7 +17,7 @@
                         {{ form.email.label(class="form-label") }}
                         {{ form.email(class="form-control", placeholder="Enter email") }}
                         {% for error in form.email.errors %}
-                        <span style="color: red;">{{ error }}</span>
+                            <span style="color: red;">{{ error }}</span>
                         {% endfor %}
                     </div>
                 </div>
@@ -30,7 +29,7 @@
                         {{ form.password.label(class="form-label") }}
                         {{ form.password(class="form-control", placeholder="Enter password") }}
                         {% for error in form.password.errors %}
-                        <span style="color: red;">{{ error }}</span>
+                            <span style="color: red;">{{ error }}</span>
                         {% endfor %}
                     </div>
                 </div>
@@ -53,14 +52,29 @@
                 {% endif %}
             </div>
 
-            <!-- Botones en la misma línea -->
             <div class="row mt-4">
                 <div class="col-auto">
                     {{ form.submit(class="btn btn-primary btn-block") }}
                 </div>
-                <div class="col-auto">
-                    <a href="{{ url_for('auth.github_login') }}" class="btn btn-dark btn-block">
+            </div>
+
+            <!-- Botones de login alineados en la misma fila -->
+            <div class="row mt-4">
+                <div class="col">
+                    <a href="{{ url_for('auth.github_login') }}" class="btn btn-dark btn-block" style="display: flex; align-items: center;">
                         <i class="fab fa-github"></i> Login with GitHub
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{{ url_for('auth.login_orcid') }}" class="btn btn-info btn-block" style="display: flex; align-items: center;">
+                        <img src="https://dirago.me/wp-content/uploads/2023/08/orcid_w.png" alt="ORCID logo" style="width:20px; vertical-align:middle; margin-right:10px;">
+                        Login with ORCID
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{{ url_for('auth.google_login') }}" class="btn btn-outline-secondary btn-block" style="display: flex; align-items: center;">
+                        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" style="width:20px; vertical-align:middle; margin-right:10px;">
+                        Login with Google
                     </a>
                 </div>
             </div>
@@ -72,6 +86,7 @@
                     </div>
                 </div>
             </div>
+
         </form>
 
     </div>

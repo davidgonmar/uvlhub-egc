@@ -1,7 +1,15 @@
 import os
-from flask import render_template, redirect, url_for, request, session, flash
+
+
+
+from flask import render_template, redirect, url_for, request, session, current_app, flash
+
 from flask_login import current_user, login_user, logout_user
 from flask_dance.contrib.github import make_github_blueprint, github
+from google_auth_oauthlib.flow import Flow
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
 from app.modules.auth import auth_bp
 from app.modules.auth.forms import SignupForm, LoginForm, ForgotPasswordForm, CodeForm, ResetPasswordForm, SignupCodeForm
 from app.modules.auth.services import AuthenticationService
@@ -9,6 +17,20 @@ from app.modules.profile.services import UserProfileService
 
 # Servicios
 from app.modules.auth.services import EmailService
+
+
+CLIENT_SECRETS_FILE = os.getenv("GOOGLE_CLIENT_SECRETS_FILE")
+CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+SCOPES = [
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "openid"
+]
+
+from app.modules.auth.models import User
+from app.modules.profile.models import UserProfile
+from app import db
 
 
 email = os.getenv('EMAIL')
@@ -98,7 +120,7 @@ def login():
 
     return render_template('auth/login_form.html', form=form)
 
-  
+
 @auth_bp.route("/forgotpassword/", methods=["GET", "POST"])
 def show_forgotpassword_form():
     if current_user.is_authenticated:
@@ -127,6 +149,7 @@ def show_forgotpassword_form():
   
 @auth_bp.route("/forgotpassword/code-validation", methods=["GET", "POST"])
 def validate_forgotpassword_code():
+
     if current_user.is_authenticated:
         return redirect(url_for('public.index'))
 
@@ -151,7 +174,7 @@ def validate_forgotpassword_code():
 
     return render_template("auth/validatecode_form.html", form=form)
 
-  
+
 @auth_bp.route('/resetpassword/', methods=['GET', 'POST'])
 def reset_password():
     if current_user.is_authenticated:
@@ -180,10 +203,11 @@ def reset_password():
 
     return render_template("auth/resetpassword_form.html", form=form)
 
-  
+
 @auth_bp.route('/logout')
 def logout():
     logout_user()
+    session.clear()
     return redirect(url_for('public.index'))
 
 
@@ -230,3 +254,129 @@ def github_callback():
     login_user(user)  # Inicia sesión con el usuario creado
 
     return redirect(url_for("public.index"))
+@auth_bp.route('/login/google')
+def google_login():
+    session.permanent = True
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE,
+        scopes=SCOPES,
+        redirect_uri=REDIRECT_URI
+    )
+    authorization_url, state = flow.authorization_url(prompt='consent')
+    session['state'] = state
+    return redirect(authorization_url)
+
+
+@auth_bp.route('/auth/google/callback')
+def google_callback():
+
+    if 'state' not in session or request.args.get('state') != session['state']:
+        flash("State value does not match. Possible CSRF attack.", "error")
+        return redirect(url_for("auth.login"))
+
+    session.pop('state', None)
+
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE,
+        scopes=SCOPES,
+        redirect_uri=REDIRECT_URI
+    )
+
+    try:
+        flow.fetch_token(authorization_response=request.url)
+    except Exception as e:
+        flash(f"Error al obtener el token de Google: {e}", "error")
+        return redirect(url_for("auth.login"))
+
+    credentials = flow.credentials
+    token = credentials.id_token
+
+    try:
+        id_info = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+    except ValueError as e:
+        flash(f"Error de verificación de token: {e}", "error")
+        return redirect(url_for("auth.login"))
+
+    try:
+        existing_user = authentication_service.get_user_by_email(id_info['email'])
+        if existing_user:
+            login_user(existing_user)
+        else:
+            user = authentication_service.get_or_create_user(id_info)
+            login_user(user)
+    except Exception as exc:
+        flash(f"Error durante la creación del usuario: {exc}", "error")
+
+    return redirect(url_for('public.index'))
+
+@auth_bp.before_app_request
+def before_request():
+    current_app.orcid_service = AuthenticationService()
+
+@auth_bp.route('/orcid/login')
+def login_orcid():
+    redirect_uri = url_for('auth.authorize_orcid', _external=True, _scheme='http')
+    return current_app.orcid_service.orcid_client.authorize_redirect(redirect_uri)
+
+@auth_bp.route('/orcid/authorize')
+def authorize_orcid():
+    token = current_app.orcid_service.orcid_client.authorize_access_token()
+    resp = current_app.orcid_service.orcid_client.get('https://orcid.org/oauth/userinfo', token=token)
+    user_info = resp.json()
+
+    orcid_id = user_info['sub']
+    full_profile = current_app.orcid_service.get_orcid_full_profile(orcid_id, token)
+
+    # Acceder a la afiliación
+    affiliation_group = full_profile.get('activities-summary', {}).get('employments', {}).get('affiliation-group', [])
+    if affiliation_group:
+        employment_summary = affiliation_group[0].get('summaries', [{}])[0].get('employment-summary', {})
+        organization = employment_summary.get('organization', {})
+        affiliation = organization.get('name', '')
+    else:
+        affiliation = ''
+
+    # Obtener información disponible del perfil público de ORCID
+    given_name = user_info.get('given_name', '')
+    family_name = user_info.get('family_name', '')
+    surname = family_name if family_name else ""
+
+    
+    # Obtener el correo electrónico del perfil completo
+    email = ''
+    email_data = full_profile.get('person', {}).get('emails', {}).get('email', [])
+    if email_data:
+        email = email_data[0].get('email', '')
+
+    # Verificar si el ORCID iD ya está registrado
+    user_record = User.query.filter_by(orcid_id=orcid_id).first()
+    
+    if user_record:
+        # Si el registro existe, obtener el perfil del usuario asociado
+        profile = UserProfile.query.filter_by(id=user_record.id).first()
+        if profile:
+            user = User.query.get(profile.user_id)
+            login_user(user)
+            return redirect('/')
+    else:
+        # Crear usuario y perfil
+        user = User()
+        user.set_password(orcid_id)  # Usar el ORCID como contraseña
+        user.email = email
+        user.orcid_id=orcid_id
+        db.session.add(user)
+        db.session.commit()
+
+        profile = UserProfile(
+            user_id=user.id,
+            name=given_name,
+            surname=surname,
+            affiliation=affiliation,
+            orcid=orcid_id
+        )
+        db.session.add(profile)
+        db.session.commit()
+        db.session.commit()
+
+        login_user(user)
+        return redirect('/')
