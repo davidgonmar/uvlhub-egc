@@ -14,8 +14,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(256), nullable=True)  # O puede ser nullable si no usas contraseña.
 
     orcid_id = db.Column(db.String(19), unique=True, nullable=True)
-    email = db.Column(db.String(256), unique=True, nullable=False)
-    password = db.Column(db.String(256), nullable=True)
+    
 
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     
