@@ -1,10 +1,14 @@
 import os
+
+from flask_login import login_user, current_user
+
 from flask_login import login_user
 from flask_login import current_user
 
-from flask import current_app
+from flask import current_app as app
 from app import db
 from authlib.integrations.flask_client import OAuth
+
 
 from app.modules.auth.models import User
 from app.modules.auth.repositories import UserRepository, SignUpVerificationTokenRepository, ResetPasswordVerificationTokenRepository
@@ -12,9 +16,11 @@ from app.modules.profile.models import UserProfile
 from app.modules.profile.repositories import UserProfileRepository
 from core.configuration.configuration import uploads_folder_name
 from core.services.BaseService import BaseService
+
 import secrets
 from datetime import datetime, timezone
 import smtplib
+
 
 MAX_VERIFICATION_TOKEN_AGE = 60 * 10 # 10 minutes
 
@@ -24,7 +30,7 @@ class AuthenticationService(BaseService):
         self.user_profile_repository = UserProfileRepository()
         self.client_id = os.getenv("ORCID_CLIENT_ID")
         self.client_secret = os.getenv("ORCID_CLIENT_SECRET")
-        self.oauth, self.orcid_client = self.configure_oauth(current_app)
+        self.oauth, self.orcid_client = self.configure_oauth(app)
         self.su_token_repository = SignUpVerificationTokenRepository()
         self.rp_token_repository = ResetPasswordVerificationTokenRepository()
 
@@ -75,7 +81,9 @@ class AuthenticationService(BaseService):
         user = self.repository.get_by_email(email)
         if user is not None and user.check_password(password):
             login_user(user, remember=remember)
+            app.logger.info(f"User logged in: {user.email} - Authenticated: {current_user.is_authenticated}")  # Mejor usar logger
             return True
+        app.logger.warning(f"Login failed for user: {email}")  # Log para cuando el login falla
         return False
 
     def is_email_available(self, email: str) -> bool:
@@ -112,8 +120,11 @@ class AuthenticationService(BaseService):
             profile_data["user_id"] = user.id
             self.user_profile_repository.create(**profile_data)
             self.repository.session.commit()
+
+            app.logger.info(f"User created: {user.email}")  # Log de usuario creado
         except Exception as exc:
             self.repository.session.rollback()
+            app.logger.error(f"Error creating user: {exc}")  # Log de error
             raise exc
         return user
 
@@ -121,17 +132,21 @@ class AuthenticationService(BaseService):
         if form.validate():
             updated_instance = self.update(user_profile_id, **form.data)
             return updated_instance, None
-
+        app.logger.warning(f"Profile update failed: {form.errors}")  # Log si el formulario tiene errores
         return None, form.errors
 
     def get_authenticated_user(self) -> User | None:
         if current_user.is_authenticated:
+            app.logger.info(f"Authenticated user: {current_user.email}")  # Log de usuario autenticado
             return current_user
+        app.logger.warning("No authenticated user found.")  # Log si no hay usuario autenticado
         return None
 
     def get_authenticated_user_profile(self) -> UserProfile | None:
         if current_user.is_authenticated:
+            app.logger.info(f"Authenticated user profile: {current_user.profile.name}")  # Log del perfil
             return current_user.profile
+        app.logger.warning("No authenticated user profile found.")  # Log si no hay perfil autenticado
         return None
 
     def temp_folder_by_user(self, user: User) -> str:
@@ -139,7 +154,7 @@ class AuthenticationService(BaseService):
 
     def get_user_by_email(self, email: str) -> User | None:
         return self.repository.get_by_email(email)
-    
+
     def reset_password(self, email: str, new_password: str) -> bool:
         user = self.get_user_by_email(email)
         if user is None:
@@ -149,6 +164,46 @@ class AuthenticationService(BaseService):
         self.repository.session.commit()
 
         return True
+
+
+
+    def get_or_create_user(self, google_user_info):
+        app.logger.info(f"Google user info received: {google_user_info}")  # Log para ver la info del usuario de Google
+        email = google_user_info.get("email")
+        google_id = google_user_info.get("sub")  # Obtener google_id
+
+        if not email or not google_id:
+            raise ValueError("Email and google_id are required from Google user info.")
+
+        # Primero intentar encontrar al usuario por google_id
+        user = self.repository.get_by_google_id(google_id)
+
+        if user:
+            app.logger.info(f"User with Google ID {google_id} already exists: {user.email}")  # Log si el usuario ya existe
+            return user
+
+        # Si no existe, crear un nuevo usuario
+        user_data = {
+            "email": email,
+            "google_id": google_id,  # Guardar google_id
+            "password": ""  # No se usa contraseña para inicios de sesión sociales
+        }
+
+        user = self.create(commit=False, **user_data)  # Crear usuario sin confirmar en la base de datos
+        self.repository.session.add(user)  # Agregar a la sesión
+
+        profile_data = {
+            "name": google_user_info.get("given_name", ""),
+            "surname": google_user_info.get("family_name", ""),
+        }
+        profile_data["user_id"] = user.id
+        self.user_profile_repository.create(**profile_data)  # Crear el perfil del usuario
+        self.repository.session.commit()  # Confirmar los cambios
+
+        app.logger.info(f"User created with Google ID: {user.email}")  # Log de usuario creado
+
+        return user
+
     
     def configure_oauth(self, app):
         oauth = OAuth(app)
@@ -175,6 +230,7 @@ class AuthenticationService(BaseService):
         resp = self.orcid_client.get(url, headers=headers)
         return resp.json() if resp.ok else {}
 
+
 class EmailService():
     def __init__(self, sender: str, password: str):
         self.sender = sender
@@ -188,4 +244,3 @@ class EmailService():
         server.sendmail(self.sender, receiver, msg)
         server.quit()
 
-        

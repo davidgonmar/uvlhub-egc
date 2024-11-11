@@ -40,7 +40,7 @@ def test_edit_profile_page_get(test_client):
     assert b"Edit profile" in response.data, "The expected content is not present on the page"
 
     logout(test_client)
-    
+
 def test_edit_post(test_client):
     """
     Tests access to the profile editing page via a GET request.

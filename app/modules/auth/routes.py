@@ -1,6 +1,13 @@
 import os
+
+
+
 from flask import render_template, redirect, url_for, request, session, current_app, flash
+
 from flask_login import current_user, login_user, logout_user
+from google_auth_oauthlib.flow import Flow
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
 from app.modules.auth import auth_bp
 from app.modules.auth.forms import SignupForm, LoginForm, ForgotPasswordForm, CodeForm, ResetPasswordForm, SignupCodeForm
@@ -8,6 +15,15 @@ from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
 from app.modules.auth.services import EmailService
 
+
+CLIENT_SECRETS_FILE = os.getenv("GOOGLE_CLIENT_SECRETS_FILE")
+CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+SCOPES = [
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "openid"
+]
 
 from app.modules.auth.models import User
 from app.modules.profile.models import UserProfile
@@ -92,7 +108,7 @@ def login():
 
     return render_template('auth/login_form.html', form=form)
 
-  
+
 @auth_bp.route("/forgotpassword/", methods=["GET", "POST"])
 def show_forgotpassword_form():
     if current_user.is_authenticated:
@@ -121,6 +137,7 @@ def show_forgotpassword_form():
   
 @auth_bp.route("/forgotpassword/code-validation", methods=["GET", "POST"])
 def validate_forgotpassword_code():
+
     if current_user.is_authenticated:
         return redirect(url_for('public.index'))
 
@@ -145,7 +162,7 @@ def validate_forgotpassword_code():
 
     return render_template("auth/validatecode_form.html", form=form)
 
-  
+
 @auth_bp.route('/resetpassword/', methods=['GET', 'POST'])
 def reset_password():
     if current_user.is_authenticated:
@@ -174,10 +191,67 @@ def reset_password():
 
     return render_template("auth/resetpassword_form.html", form=form)
 
-  
+
 @auth_bp.route('/logout')
 def logout():
     logout_user()
+    session.clear()
+    return redirect(url_for('public.index'))
+
+
+@auth_bp.route('/login/google')
+def google_login():
+    session.permanent = True
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE,
+        scopes=SCOPES,
+        redirect_uri=REDIRECT_URI
+    )
+    authorization_url, state = flow.authorization_url(prompt='consent')
+    session['state'] = state
+    return redirect(authorization_url)
+
+
+@auth_bp.route('/auth/google/callback')
+def google_callback():
+
+    if 'state' not in session or request.args.get('state') != session['state']:
+        flash("State value does not match. Possible CSRF attack.", "error")
+        return redirect(url_for("auth.login"))
+
+    session.pop('state', None)
+
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE,
+        scopes=SCOPES,
+        redirect_uri=REDIRECT_URI
+    )
+
+    try:
+        flow.fetch_token(authorization_response=request.url)
+    except Exception as e:
+        flash(f"Error al obtener el token de Google: {e}", "error")
+        return redirect(url_for("auth.login"))
+
+    credentials = flow.credentials
+    token = credentials.id_token
+
+    try:
+        id_info = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+    except ValueError as e:
+        flash(f"Error de verificación de token: {e}", "error")
+        return redirect(url_for("auth.login"))
+
+    try:
+        existing_user = authentication_service.get_user_by_email(id_info['email'])
+        if existing_user:
+            login_user(existing_user)
+        else:
+            user = authentication_service.get_or_create_user(id_info)
+            login_user(user)
+    except Exception as exc:
+        flash(f"Error durante la creación del usuario: {exc}", "error")
+
     return redirect(url_for('public.index'))
 
 @auth_bp.before_app_request
