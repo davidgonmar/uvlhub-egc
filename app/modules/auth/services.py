@@ -15,7 +15,7 @@ from app.modules.profile.models import UserProfile
 from app.modules.profile.repositories import UserProfileRepository
 from core.configuration.configuration import uploads_folder_name
 from core.services.BaseService import BaseService
-from app import db 
+from app import db
 
 import secrets
 from datetime import datetime, timezone
