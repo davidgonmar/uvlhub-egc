@@ -45,12 +45,25 @@ class User(db.Model, UserMixin):
         if self.password:
             return check_password_hash(self.password, password)
         return False  # Si no hay contraseña, devolver False
+        if self.password:
+            return check_password_hash(self.password, password)
+        return False  # Si no hay contraseña, devolver False
 
     def temp_folder(self) -> str:
         from app.modules.auth.services import AuthenticationService
         return AuthenticationService().temp_folder_by_user(self)
     
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    def get_id(self):
+        return str(self.id)
     @property
     def is_authenticated(self):
         return True
@@ -82,4 +95,5 @@ class ResetPasswordVerificationToken(db.Model):
 
     def __repr__(self):
         return f'<ResetPasswordVerificationToken {self.email}>'
+
 
