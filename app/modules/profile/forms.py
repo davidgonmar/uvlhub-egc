@@ -23,7 +23,7 @@ class UserProfileForm(FlaskForm):
         github_username_available,
         is_developer
     ])
-    
+
     orcid = StringField('ORCID', validators=[
         Optional(),
         Length(min=19, max=19, message='ORCID must have 16 numbers separated by dashes'),

@@ -47,7 +47,7 @@ def test_edit_post(test_client):
     """
     login_response = login(test_client, "user@example.com", "test1234")
     assert login_response.status_code == 200, "Login was unsuccessful."
-    
+
     response = test_client.post(
         "/profile/edit",
         data=dict(name="Foo",
