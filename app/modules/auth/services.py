@@ -30,7 +30,7 @@ class AuthenticationService(BaseService):
         self.user_profile_repository = UserProfileRepository()
         self.client_id = os.getenv("ORCID_CLIENT_ID")
         self.client_secret = os.getenv("ORCID_CLIENT_SECRET")
-        self.oauth, self.orcid_client = self.configure_oauth(current_app)
+        self.oauth, self.orcid_client = self.configure_oauth(app)
         self.su_token_repository = SignUpVerificationTokenRepository()
         self.rp_token_repository = ResetPasswordVerificationTokenRepository()
 
