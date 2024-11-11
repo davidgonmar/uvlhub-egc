@@ -3,14 +3,11 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
+import pytz
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
- 
-    # Datos básicos
-    email = db.Column(db.String(256), unique=True, nullable=False)
-    password = db.Column(db.String(256), nullable=True)  # O puede ser nullable si no usas contraseña.
-
  
     # Datos básicos
     email = db.Column(db.String(256), unique=True, nullable=False)
@@ -21,7 +18,6 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(256), nullable=True)
 
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
-    is_developer = db.Column(db.Boolean, default=False, nullable=False)
     
     # Nuevo campo para el Google ID
     google_id = db.Column(db.String(256), unique=True, nullable=True)  # Para autenticar por Google
