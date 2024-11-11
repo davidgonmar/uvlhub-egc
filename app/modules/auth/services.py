@@ -6,7 +6,6 @@ from flask_login import login_user
 from flask_login import current_user
 
 from flask import current_app as app
-from app import db
 from authlib.integrations.flask_client import OAuth
 
 
