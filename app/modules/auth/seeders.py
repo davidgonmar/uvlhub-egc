@@ -4,12 +4,10 @@ from core.seeders.BaseSeeder import BaseSeeder
 
 
 class AuthSeeder(BaseSeeder):
-
-    priority = 1  # Higher priority
-
+    priority = 1
     def run(self):
 
-        # Seeding users
+        # Seeding users with google_id
         users = [
             User(email='user1@example.com', password='1234'),
             User(email='user2@example.com', password='1234'),
