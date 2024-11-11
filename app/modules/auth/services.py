@@ -1,5 +1,15 @@
 import os
+
 from flask_login import login_user, current_user
+
+from flask_login import login_user
+from flask_login import current_user
+
+from flask import current_app
+from app import db
+from authlib.integrations.flask_client import OAuth
+
+
 from app.modules.auth.models import User
 from app.modules.auth.repositories import UserRepository, SignUpVerificationTokenRepository, ResetPasswordVerificationTokenRepository
 from app.modules.profile.models import UserProfile
@@ -18,6 +28,9 @@ class AuthenticationService(BaseService):
     def __init__(self):
         super().__init__(UserRepository())
         self.user_profile_repository = UserProfileRepository()
+        self.client_id = os.getenv("ORCID_CLIENT_ID")
+        self.client_secret = os.getenv("ORCID_CLIENT_SECRET")
+        self.oauth, self.orcid_client = self.configure_oauth(current_app)
         self.su_token_repository = SignUpVerificationTokenRepository()
         self.rp_token_repository = ResetPasswordVerificationTokenRepository()
 
@@ -152,6 +165,7 @@ class AuthenticationService(BaseService):
         return True
 
 
+
     def get_or_create_user(self, google_user_info):
         app.logger.info(f"Google user info received: {google_user_info}")  # Log para ver la info del usuario de Google
         email = google_user_info.get("email")
@@ -189,6 +203,33 @@ class AuthenticationService(BaseService):
 
         return user
 
+    
+    def configure_oauth(self, app):
+        oauth = OAuth(app)
+        orcid = oauth.register(
+            name='orcid',
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            access_token_url='https://orcid.org/oauth/token',
+            authorize_url='https://orcid.org/oauth/authorize',
+            client_kwargs={
+                'scope': '/authenticate',
+                'token_endpoint_auth_method': 'client_secret_post'
+            }
+        )
+        return oauth, orcid
+
+    def get_orcid_full_profile(self, orcid_id, token):
+        # Nota: La URL y la autorización deben estar correctos según la documentación y el alcance de ORCID
+        url = f'https://pub.orcid.org/v3.0/{orcid_id}/record'
+        headers = {
+            'Authorization': f'Bearer {token["access_token"]}',
+            'Accept': 'application/json'
+        }
+        resp = self.orcid_client.get(url, headers=headers)
+        return resp.json() if resp.ok else {}
+
+
 class EmailService():
     def __init__(self, sender: str, password: str):
         self.sender = sender
@@ -201,5 +242,4 @@ class EmailService():
         msg = f'Subject: {subject}\n\n{message}'
         server.sendmail(self.sender, receiver, msg)
         server.quit()
-
 

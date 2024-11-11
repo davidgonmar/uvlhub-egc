@@ -3,13 +3,20 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
+import pytz
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    
+ 
     # Datos básicos
     email = db.Column(db.String(256), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=True)  # O puede ser nullable si no usas contraseña.
+
+    orcid_id = db.Column(db.String(19), unique=True, nullable=True)
+    email = db.Column(db.String(256), unique=True, nullable=False)
+    password = db.Column(db.String(256), nullable=True)
+
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     
     # Nuevo campo para el Google ID
@@ -38,6 +45,7 @@ class User(db.Model, UserMixin):
     def temp_folder(self) -> str:
         from app.modules.auth.services import AuthenticationService
         return AuthenticationService().temp_folder_by_user(self)
+    
 
     @property
     def is_authenticated(self):

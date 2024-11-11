@@ -24,6 +24,9 @@ class UserRepository(BaseRepository):
 
     def get_by_email(self, email: str):
         return self.model.query.filter_by(email=email).first()
+    
+    def get_by_orcid_id(self, orcid_id: str):
+        return self.model.query.filter_by(orcid_id=orcid_id).first()
 
 
     def get_by_google_id(self, google_id: str):
