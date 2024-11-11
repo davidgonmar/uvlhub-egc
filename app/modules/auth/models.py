@@ -2,29 +2,29 @@ from datetime import datetime, timezone
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
-
 import pytz
+
+
 
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
  
-    # Datos básicos
     email = db.Column(db.String(256), unique=True, nullable=False)
-    password = db.Column(db.String(256), nullable=True)  # O puede ser nullable si no usas contraseña.
+    password = db.Column(db.String(256), nullable=True)
 
-    orcid_id = db.Column(db.String(19), unique=True, nullable=True)
+    orcid_id = db.Column(db.String(19), unique=True, nullable=True) # Para autenticar por GitHub
+    github_id = db.Column(db.String(100), unique=True, nullable=True)  # Para autenticar por GitHub
+    google_id = db.Column(db.String(256), unique=True, nullable=True)  # Para autenticar por Google
     
 
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
-    
-    # Nuevo campo para el Google ID
-    google_id = db.Column(db.String(256), unique=True, nullable=True)  # Para autenticar por Google
+        
     
     # Relaciones con otros modelos
     data_sets = db.relationship('DataSet', backref='user', lazy=True)
     profile = db.relationship('UserProfile', backref='user', uselist=False)
-
+    
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if 'password' in kwargs and kwargs['password']:
