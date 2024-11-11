@@ -1,0 +1,73 @@
+{% extends "base_template.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resetpassword.css') }}">
+<h1 class="h2 mb-3 text-center" style="font-size: 3rem;"><b>Forgot your password?</b></h1>
+
+<div class="d-flex justify-content-center align-items-center container">
+    <div class="col-12 col-md-6 col-lg-6">
+
+        <div class="mt-3 mb-3">
+            <div  class="col-12" style="font-size: 1rem; margin-left: 100px;">
+                Enter the one time password sent to your email address.
+            </div>
+        </div>
+
+        <div class="mt-3"></div>
+        <div class="row">
+
+            <div class="col-12">
+
+                <form action="{{ url_for('auth.validate_forgotpassword_code') }}" method="post" novalidate>
+                            {{ form.hidden_tag() }}
+
+                            <div class="row justify-content-center">
+
+                                <div class="col-md-6 col-lg-6 col-xs-12">
+                                    <div class="mb-3">
+                                        {{ form.code(class="form-control input-font-large",placeholder="Enter code") }}
+                                        {% for error in form.code.errors %}
+                                        <span style="color: red;">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                          
+
+                            <div class="row justify-content-center">
+
+                                {% if error %}
+
+                                <div class="mt-3 col-lg-6 col-12">
+                                    <span style="color: red;">{{ error }}</span>
+                                </div>
+
+                                {% endif %}
+
+                            </div>
+
+                            </div>
+                            <div class="mt-3"></div>
+                            <div class="row justify-content-end">
+
+                                <div class="col-lg-6 col-12  ">
+                                    {{ form.submit(class="btn btn-primary bigger-button", style="margin-left: 100px;") }}
+                                </div>
+
+                            </div>
+
+                        </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('auth.scripts') }}"></script>
+{% endblock %}
