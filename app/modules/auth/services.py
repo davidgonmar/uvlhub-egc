@@ -16,7 +16,7 @@ from app.modules.profile.models import UserProfile
 from app.modules.profile.repositories import UserProfileRepository
 from core.configuration.configuration import uploads_folder_name
 from core.services.BaseService import BaseService
-from flask import current_app as app  # Importar el logger de Flask
+
 import secrets
 from datetime import datetime, timezone
 import smtplib
