@@ -205,7 +205,6 @@ def google_login():
 
 @auth_bp.route('/auth/google/callback')
 def google_callback():
-    app.logger.info(f"Recibiendo respuesta de Google: {request.args}")
 
     if 'state' not in session or request.args.get('state') != session['state']:
         flash("State value does not match. Possible CSRF attack.", "error")
@@ -221,14 +220,12 @@ def google_callback():
 
     try:
         flow.fetch_token(authorization_response=request.url)
-        app.logger.info("Token de Google obtenido correctamente.")
     except Exception as e:
         flash(f"Error al obtener el token de Google: {e}", "error")
         return redirect(url_for("auth.login"))
 
     credentials = flow.credentials
     token = credentials.id_token
-    app.logger.info(f"ID Token recibido: {token}")
 
     try:
         id_info = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
