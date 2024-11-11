@@ -4,9 +4,7 @@ from core.seeders.BaseSeeder import BaseSeeder
 
 
 class AuthSeeder(BaseSeeder):
-
-    priority = 1 
-
+    priority = 1
     def run(self):
 
         # Seeding users with google_id
