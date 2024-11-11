@@ -7,9 +7,14 @@ class UserRepository(BaseRepository):
         super().__init__(User)
 
     def create(self, commit: bool = True, **kwargs):
-        password = kwargs.pop("password")
+        # Extrae la contraseña solo si existe, ya que podría no estar presente en usuarios de Google
+        password = kwargs.pop("password", None)
         instance = self.model(**kwargs)
-        instance.set_password(password)
+
+        # Si se proporciona una contraseña, establece la contraseña
+        if password:
+            instance.set_password(password)
+        
         self.session.add(instance)
         if commit:
             self.session.commit()
@@ -22,6 +27,11 @@ class UserRepository(BaseRepository):
     
     def get_by_orcid_id(self, orcid_id: str):
         return self.model.query.filter_by(orcid_id=orcid_id).first()
+
+
+    def get_by_google_id(self, google_id: str):
+        # Permite buscar usuarios mediante su Google ID
+        return self.model.query.filter_by(google_id=google_id).first()
 
 
 class SignUpVerificationTokenRepository(BaseRepository):
@@ -62,3 +72,4 @@ class ResetPasswordVerificationTokenRepository(BaseRepository):
 
     def get_by_token(self, token: str):
         return self.model.query.filter_by(token=token).first()
+

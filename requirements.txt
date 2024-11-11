@@ -36,6 +36,10 @@ Flask-SQLAlchemy==3.1.1
 Flask-WTF==1.2.1
 gevent==24.2.1
 geventhttpclient==2.3.1
+google-auth 
+google-auth-oauthlib 
+google-auth-httplib2 
+google-api-python-client
 graphviz==0.20.3
 greenlet==3.0.3
 gunicorn==22.0.0
