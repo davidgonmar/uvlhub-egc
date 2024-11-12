@@ -95,7 +95,7 @@ class ForgotPasswordBehavior(TaskSet):
                     return
 
                 csrf_token = get_csrf_token(response)
-                
+
                 new_password = fake.password()
                 response = self.client.post("/resetpassword/", data={
                     "password": new_password,
