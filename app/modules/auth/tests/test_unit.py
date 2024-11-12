@@ -174,9 +174,9 @@ def test_reset_password_user_not_found(auth_service):
 def test_reset_password_after_user_creation(auth_service, mock_user):
     with patch.object(AuthenticationService, 'create_with_profile', return_value=mock_user):
         auth_service.create_with_profile(
-            email="newuser@example.com", 
+            email="newuser@example.com",
             password="initialpassword",
-            name="New", 
+            name="New",
             surname="User"
         )
 
@@ -185,17 +185,6 @@ def test_reset_password_after_user_creation(auth_service, mock_user):
 
     assert result is True
     assert mock_user.check_password("newpassword123")
-
-def test_generate_resetpassword_verification_token(auth_service, valid_email, mock_repo):
-    token = auth_service.generate_resetpassword_verification_token(valid_email)
-
-    assert len(token) == 6
-    assert token.isalnum()
-
-    token_instance = mock_repo.get_by_email(valid_email)
-    assert token_instance is not None
-    assert token_instance.token == token
-
 
 def test_generate_resetpassword_verification_token(auth_service, valid_email, mock_repo):
     token = auth_service.generate_resetpassword_verification_token(valid_email)
@@ -261,7 +250,7 @@ def test_validate_resetpassword_verification_token_expired(auth_service, valid_e
 
     mock_token_instance = MagicMock()
     mock_token_instance.token = token
-    mock_token_instance.created_at = datetime.now(timezone.utc) - timedelta(minutes=15)  
+    mock_token_instance.created_at = datetime.now(timezone.utc) - timedelta(minutes=15)
     mock_repo.get_by_email.return_value = mock_token_instance
 
     auth_service.rp_token_repository = mock_repo
@@ -273,21 +262,20 @@ def test_validate_resetpassword_verification_token_expired(auth_service, valid_e
     mock_repo.delete.assert_called_once_with(mock_token_instance)
 
 
-def test_generate_resetpassword_verification_token_replace_old(auth_service, valid_email):
+def test_generate_resetpassword_verification_token_replace_old(auth_service, valid_email, invalid_token):
     mock_repo = MagicMock()
 
-    old_token = "old_token_123"
     mock_token_instance = MagicMock()
-    mock_token_instance.token = old_token
+    mock_token_instance.token = invalid_token
     mock_token_instance.created_at = datetime.now(timezone.utc) - timedelta(minutes=5)
-    mock_token_instance.id = 1  
-    mock_repo.get_by_email.return_value = mock_token_instance  
+    mock_token_instance.id = 1
+    mock_repo.get_by_email.return_value = mock_token_instance
 
     auth_service.rp_token_repository = mock_repo
 
     new_token = auth_service.generate_resetpassword_verification_token(valid_email)
 
-    assert new_token != old_token
+    assert new_token != invalid_token
 
     mock_repo.delete.assert_called_once_with(mock_token_instance.id)
 

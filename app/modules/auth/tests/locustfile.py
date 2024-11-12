@@ -93,7 +93,7 @@ class ForgotPasswordBehavior(TaskSet):
                 if response.status_code != 200:
                     print(f"Failed to load reset password form: {response.status_code}")
                     return
-                
+
                 csrf_token = get_csrf_token(response)
                 
                 new_password = fake.password()
@@ -107,7 +107,7 @@ class ForgotPasswordBehavior(TaskSet):
                     print(f"Password reset failed: {response.status_code}")
                 else:
                     print(f"Password reset successful. New password: {new_password}")
-        else: 
+        else:
             print("OTP code form not found, possibly forgot password failed.")
 
 class AuthUser(HttpUser):
