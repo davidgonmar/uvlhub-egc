@@ -8,6 +8,7 @@ class UserProfile(db.Model):
     affiliation = db.Column(db.String(100))
     name = db.Column(db.String(100), nullable=False)
     surname = db.Column(db.String(100), nullable=False)
+    github = db.Column(db.String(39), nullable=True)
 
     def save(self):
         if not self.id:

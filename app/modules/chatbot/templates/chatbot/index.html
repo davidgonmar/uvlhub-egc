@@ -1,26 +1,65 @@
 {% extends "base_template.html" %}
 
-{% block title %}View Chatbot{% endblock %}
+{% block title %}Romeo Assistant{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bot.css') }}">
+{% endblock %}
 
 {% block content %}
 <div class="chat-container">
     <h2>Romeo Assistant</h2>
+    <div id="messages" class="messages-container">
+    </div>
     <div class="input-group">
-        <input type="text" placeholder="Escribe tu mensaje aquí..." id="chatInput">
+        <input type="text" placeholder="Escribe tu mensaje aquí..." id="chatInput" onkeydown="if(event.key === 'Enter') enviarMensaje();">
         <button onclick="enviarMensaje()">Enviar</button>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('chatbot.scripts') }}"></script>
 <script>
-    function enviarMensaje() {
-        const mensaje = document.getElementById("chatInput").value;
-        if (mensaje) {
-            alert("Mensaje enviado: " + mensaje);
-            document.getElementById("chatInput").value = "";
+async function enviarMensaje() {
+    const mensaje = document.getElementById("chatInput").value;
+    const messagesContainer = document.getElementById("messages");
+
+    if (mensaje) {
+        const userMessage = document.createElement("div");
+        userMessage.classList.add("user-message");
+        userMessage.textContent = "Tú: " + mensaje;
+        messagesContainer.appendChild(userMessage);
+
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: mensaje })
+            });
+
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                const data = await response.json();
+                console.log("Respuesta del chatbot:", data.response);
+
+                const botMessage = document.createElement("div");
+                botMessage.classList.add("bot-message");
+                botMessage.textContent = "Romeo: " + data.response;
+                messagesContainer.appendChild(botMessage);
+            } else {
+                console.error("Error: el servidor devolvió una respuesta inesperada.");
+            }
+            
+        } catch (error) {
+            console.error("Error de conexión:", error);
         }
+        
+        document.getElementById("chatInput").value = "";
+
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
+}
 </script>
 {% endblock %}

@@ -2,13 +2,8 @@ import os
 
 from flask_login import login_user, current_user
 
-from flask_login import login_user
-from flask_login import current_user
-
 from flask import current_app as app
-from app import db
 from authlib.integrations.flask_client import OAuth
-
 
 from app.modules.auth.models import User
 from app.modules.auth.repositories import UserRepository, SignUpVerificationTokenRepository, ResetPasswordVerificationTokenRepository
@@ -22,7 +17,8 @@ from datetime import datetime, timezone
 import smtplib
 
 
-MAX_VERIFICATION_TOKEN_AGE = 60 * 10 # 10 minutes
+MAX_VERIFICATION_TOKEN_AGE = 60 * 10  # 10 minutes
+
 
 class AuthenticationService(BaseService):
     def __init__(self):
@@ -38,32 +34,32 @@ class AuthenticationService(BaseService):
         # there can only be one token per email at a time
         if token := self.su_token_repository.get_by_email(email):
             self.su_token_repository.delete(token.id)
-        token = secrets.token_hex(3) # 6 characters
+        token = secrets.token_hex(3)  # 6 characters
         self.su_token_repository.create(email=email, token=token)
         return token
-    
-    def validate_signup_verification_token(self, email: str, token: str, delete = True) -> bool:
+
+    def validate_signup_verification_token(self, email: str, token: str, delete=True) -> bool:
         token_instance = self.su_token_repository.get_by_email(email)
         if token_instance is None:
             return False
         now = datetime.now(timezone.utc).timestamp()
         created_at = token_instance.created_at.replace(tzinfo=timezone.utc).timestamp()
         if (now - created_at) > MAX_VERIFICATION_TOKEN_AGE:
-            self.su_token_repository.delete(token_instance)
+            self.su_token_repository.delete(token_instance.id)
             return False
         if token_instance.token == token:
-            (lambda: self.su_token_repository.delete(token_instance) if delete else lambda: None)()
+            (lambda: self.su_token_repository.delete(token_instance.id) if delete else lambda: None)()
             return True
         return False
-    
+
     def generate_resetpassword_verification_token(self, email: str) -> str:
         if token := self.rp_token_repository.get_by_email(email):
             self.rp_token_repository.delete(token.id)
         token = secrets.token_hex(3)
         self.rp_token_repository.create(email=email, token=token)
         return token
-    
-    def validate_resetpassword_verification_token(self, email: str, token: str, delete = True) -> bool:
+
+    def validate_resetpassword_verification_token(self, email: str, token: str, delete=True) -> bool:
         token_instance = self.rp_token_repository.get_by_email(email)
         if token_instance is None:
             return False
@@ -76,6 +72,9 @@ class AuthenticationService(BaseService):
             (lambda: self.rp_token_repository.delete(token_instance) if delete else lambda: None)()
             return True
         return False
+
+    def get_max_verification_token_age(self):
+        return MAX_VERIFICATION_TOKEN_AGE
 
     def login(self, email, password, remember=True):
         user = self.repository.get_by_email(email)
@@ -95,6 +94,7 @@ class AuthenticationService(BaseService):
             password = kwargs.pop("password", None)
             name = kwargs.pop("name", None)
             surname = kwargs.pop("surname", None)
+            is_developer = kwargs.pop("is_developer", False)
 
             if not email:
                 raise ValueError("Email is required.")
@@ -107,7 +107,8 @@ class AuthenticationService(BaseService):
 
             user_data = {
                 "email": email,
-                "password": password
+                "password": password,
+                "is_developer": is_developer
             }
 
             profile_data = {
@@ -151,6 +152,32 @@ class AuthenticationService(BaseService):
     def temp_folder_by_user(self, user: User) -> str:
         return os.path.join(uploads_folder_name(), "temp", str(user.id))
 
+    def get_or_create_user_from_github(self, github_id, github_email, name=None, surname=None):
+        user = self.repository.get_by_github_id(github_id)
+        if not user:
+            print("Creating new user")
+
+            if not github_email:
+                github_email = f"user_{github_id}@example.com"  # O cualquier otra lógica que desees
+
+            user_data = {
+                "email": github_email,
+                "github_id": github_id,
+                "password": None  # Establece la contraseña como None
+            }
+
+            user = self.create(commit=False, **user_data)
+
+            profile_data = {
+                "name": name or "Default Name",  # Puedes usar un nombre por defecto o uno proporcionado
+                "surname": surname or "Default Surname",  # Igualmente para el apellido
+                "user_id": user.id
+            }
+
+            self.user_profile_repository.create(**profile_data)
+            self.repository.session.commit()
+        return user
+
     def get_user_by_email(self, email: str) -> User | None:
         return self.repository.get_by_email(email)
 
@@ -163,8 +190,6 @@ class AuthenticationService(BaseService):
         self.repository.session.commit()
 
         return True
-
-
 
     def get_or_create_user(self, google_user_info):
         app.logger.info(f"Google user info received: {google_user_info}")  # Log para ver la info del usuario de Google
@@ -203,7 +228,6 @@ class AuthenticationService(BaseService):
 
         return user
 
-    
     def configure_oauth(self, app):
         oauth = OAuth(app)
         orcid = oauth.register(
@@ -242,4 +266,3 @@ class EmailService():
         msg = f'Subject: {subject}\n\n{message}'
         server.sendmail(self.sender, receiver, msg)
         server.quit()
-
