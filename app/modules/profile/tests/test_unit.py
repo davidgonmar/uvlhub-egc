@@ -47,7 +47,7 @@ def test_edit_post(test_client):
     """
     login_response = login(test_client, "user@example.com", "test1234")
     assert login_response.status_code == 200, "Login was unsuccessful."
-    
+
     response = test_client.post(
         "/profile/edit",
         data=dict(name="Foo",
@@ -65,7 +65,7 @@ def test_edit_post_incorrect_github(test_client):
     """
     login_response = login(test_client, "user@example.com", "test1234")
     assert login_response.status_code == 200, "Login was unsuccessful."
-    
+
     response = test_client.post(
         "/profile/edit",
         data=dict(
@@ -88,7 +88,7 @@ def test_edit_github_not_developer_user(test_client):
     """
     login_response = login(test_client, "user1@example.com", "test1234")
     assert login_response.status_code == 200, "Login was unsuccessful."
-    
+
     response = test_client.post(
         "/profile/edit",
         data=dict(
@@ -104,14 +104,14 @@ def test_edit_github_not_developer_user(test_client):
     assert b"Only developers can add their GitHub username." in response.data, "Error message for username being developer trying to add GitHub not found."
 
     logout(test_client)
-    
+
 def test_edit_incorrect_orcid(test_client):
     """
     Tests that submitting an invalid ORCID code results in a validation error.
     """
     login_response = login(test_client, "user@example.com", "test1234")
     assert login_response.status_code == 200, "Login was unsuccessful."
-    
+
     response = test_client.post(
         "/profile/edit",
         data=dict(
