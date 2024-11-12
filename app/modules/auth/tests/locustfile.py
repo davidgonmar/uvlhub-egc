@@ -110,9 +110,7 @@ class ForgotPasswordBehavior(TaskSet):
                 else:
                     print(f"Password reset successful. New password: {new_password}")
         else:
-            print("OTP code form not found, possibly forgot password failed.")
-
-   
+            print("OTP code form not found, possibly forgot password failed.")  
 
 class AuthUser(HttpUser):
     tasks = [SignupBehavior, LoginBehavior, ForgotPasswordBehavior

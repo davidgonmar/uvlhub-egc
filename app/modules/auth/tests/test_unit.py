@@ -341,5 +341,3 @@ def test_generate_resetpassword_verification_token_replace_old(auth_service, val
     mock_repo.delete.assert_called_once_with(mock_token_instance.id)
 
     mock_repo.create.assert_called_once_with(email=valid_email, token=new_token)
-
-
