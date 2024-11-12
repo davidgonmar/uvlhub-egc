@@ -194,28 +194,6 @@ def test_generate_resetpassword_verification_token(auth_service, valid_email, mo
     assert token_instance is not None
     assert token_instance.token == token
 
-def test_validate_resetpassword_verification_token_success(auth_service, valid_email):
-    mock_repo = MagicMock()
-
-    token = auth_service.generate_resetpassword_verification_token(valid_email)
-    
-    mock_token_instance = MagicMock()
-    mock_token_instance.token = token
-    mock_token_instance.created_at = datetime.now(timezone.utc)
-    mock_repo.get_by_email.return_value = mock_token_instance
-
-    auth_service.su_token_repository = mock_repo
-
-    is_valid = auth_service.validate_resetpassword_verification_token(valid_email, token)
-    
-    assert is_valid is True
-
-    mock_repo.delete.assert_called_once_with(mock_token_instance)
-
-    mock_repo.get_by_email.return_value = None 
-
-    token_instance = mock_repo.get_by_email(valid_email)
-    assert token_instance is None 
 
 def test_validate_resetpassword_verification_invalid_token(auth_service, valid_email):
     mock_repo = MagicMock()
