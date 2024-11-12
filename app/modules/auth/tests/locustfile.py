@@ -60,7 +60,6 @@ class ForgotPasswordBehavior(TaskSet):
         if response.status_code != 200:
             print(f"Logout failed or no active session: {response.status_code}")
 
-    
     @task
     def forgot_password(self):
         response = self.client.get("/forgotpassword/")
@@ -69,8 +68,7 @@ class ForgotPasswordBehavior(TaskSet):
             return
 
         csrf_token = get_csrf_token(response)
-
-        email = fake.email() 
+        email = fake.email()
         response = self.client.post("/forgotpassword/", data={
             "email": email,
             "csrf_token": csrf_token
@@ -81,7 +79,7 @@ class ForgotPasswordBehavior(TaskSet):
             return
 
         if "OTP code" in response.text:
-            otp_code = "123456" 
+            otp_code = "123456"
             response = self.client.post("/forgotpassword/code-validation", data={
                 "code": otp_code,
                 "csrf_token": get_csrf_token(response)  
@@ -109,12 +107,11 @@ class ForgotPasswordBehavior(TaskSet):
                     print(f"Password reset failed: {response.status_code}")
                 else:
                     print(f"Password reset successful. New password: {new_password}")
-        else:
-            print("OTP code form not found, possibly forgot password failed.")  
+        else: 
+            print("OTP code form not found, possibly forgot password failed.")
 
 class AuthUser(HttpUser):
-    tasks = [SignupBehavior, LoginBehavior, ForgotPasswordBehavior
-    ]
+    tasks = [SignupBehavior, LoginBehavior, ForgotPasswordBehavior]
     min_wait = 5000
     max_wait = 9000
     host = get_host_for_locust_testing()
