@@ -9,7 +9,7 @@ class AuthSeeder(BaseSeeder):
 
         # Seeding users with google_id
         users = [
-            User(email='user1@example.com', password='1234'),
+            User(email='user1@example.com', password='1234', is_developer=True),
             User(email='user2@example.com', password='1234'),
         ]
 

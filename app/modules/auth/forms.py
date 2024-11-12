@@ -8,6 +8,7 @@ class SignupForm(FlaskForm):
     surname = StringField('Surname', validators=[DataRequired(), Length(max=100)])
     password = PasswordField('Password', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
+    is_developer = BooleanField('Developer')
     submit = SubmitField('Submit')
     
 
