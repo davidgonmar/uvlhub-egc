@@ -1,16 +1,13 @@
-import os
-
-from flask import Flask
-
-from flask_sqlalchemy import SQLAlchemy
-from dotenv import load_dotenv
-from flask_migrate import Migrate
-
 from core.configuration.configuration import get_app_version
 from core.managers.module_manager import ModuleManager
 from core.managers.config_manager import ConfigManager
 from core.managers.error_handler_manager import ErrorHandlerManager
 from core.managers.logging_manager import LoggingManager
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from dotenv import load_dotenv
+import os
 
 
 
@@ -23,7 +20,6 @@ load_dotenv()
 # Create the instances
 db = SQLAlchemy()
 migrate = Migrate()
-
 
 def create_app(config_name='development'):
 
@@ -67,7 +63,6 @@ def create_app(config_name='development'):
     error_handler_manager = ErrorHandlerManager(app)
     error_handler_manager.register_error_handlers()
 
-    # Inyección de variables de entorno en el contexto de Jinja
     @app.context_processor
     def inject_vars_into_jinja():
         return {
@@ -78,7 +73,6 @@ def create_app(config_name='development'):
         }
 
     return app
-
 
 app = create_app()
 
