@@ -313,7 +313,7 @@ def before_request():
 
 @auth_bp.route('/orcid/login')
 def login_orcid():
-    redirect_uri = url_for('auth.authorize_orcid', _external=True, _scheme='http')
+    redirect_uri = url_for('auth.authorize_orcid', _external=True, _scheme=request.scheme)
     return current_app.orcid_service.orcid_client.authorize_redirect(redirect_uri)
 
 
