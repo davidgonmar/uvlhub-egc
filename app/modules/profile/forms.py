@@ -5,7 +5,7 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, Length, Regexp, Optional, ValidationError
 
 def is_developer(form, field):
-    if not current_user.is_developer: 
+    if not current_user.is_developer:
         raise ValidationError("Only developers can add their GitHub username.")
 
 def github_username_available(form, field):
