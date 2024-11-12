@@ -81,7 +81,8 @@ def test_service_create_with_profile_success(clean_database):
         "name": "Test",
         "surname": "Foo",
         "email": "service_test@example.com",
-        "password": "test1234"
+        "password": "test1234",
+        "is_developer": True
     }
 
     AuthenticationService().create_with_profile(**data)
@@ -95,7 +96,8 @@ def test_service_create_with_profile_fail_no_email(clean_database):
         "name": "Test",
         "surname": "Foo",
         "email": "",
-        "password": "1234"
+        "password": "1234",
+        "is_developer": True
     }
 
     with pytest.raises(ValueError, match="Email is required."):
@@ -110,7 +112,8 @@ def test_service_create_with_profile_fail_no_password(clean_database):
         "name": "Test",
         "surname": "Foo",
         "email": "test@example.com",
-        "password": ""
+        "password": "",
+        "is_developer": True
     }
 
     with pytest.raises(ValueError, match="Password is required."):

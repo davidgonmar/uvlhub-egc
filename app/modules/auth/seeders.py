@@ -4,14 +4,12 @@ from core.seeders.BaseSeeder import BaseSeeder
 
 
 class AuthSeeder(BaseSeeder):
-
-    priority = 1  # Higher priority
-
+    priority = 1
     def run(self):
 
-        # Seeding users
+        # Seeding users with google_id
         users = [
-            User(email='user1@example.com', password='1234'),
+            User(email='user1@example.com', password='1234', is_developer=True),
             User(email='user2@example.com', password='1234'),
         ]
 
@@ -25,7 +23,7 @@ class AuthSeeder(BaseSeeder):
         for user, name in zip(seeded_users, names):
             profile_data = {
                 "user_id": user.id,
-                "orcid": "",
+                "orcid": None,
                 "affiliation": "Some University",
                 "name": name[0],
                 "surname": name[1],
