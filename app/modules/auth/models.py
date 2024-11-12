@@ -9,14 +9,14 @@ import pytz
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
- 
+
     email = db.Column(db.String(256), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=True)
 
     orcid_id = db.Column(db.String(19), unique=True, nullable=True) # Para autenticar por GitHub
     github_id = db.Column(db.String(100), unique=True, nullable=True)  # Para autenticar por GitHub
     google_id = db.Column(db.String(256), unique=True, nullable=True)  # Para autenticar por Google
-    
+    is_developer = db.Column(db.Boolean, default=False, nullable=False)
 
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
         
