@@ -7,19 +7,19 @@ class UserRepository(BaseRepository):
         super().__init__(User)
 
     def create(self, commit: bool = True, **kwargs):
-        # Extrae la contraseña solo si existe, ya que podría no estar presente en usuarios de Google
         password = kwargs.pop("password", None)
         instance = self.model(**kwargs)
 
-        # Si se proporciona una contraseña, establece la contraseña
         if password:
             instance.set_password(password)
         
         self.session.add(instance)
+        
         if commit:
             self.session.commit()
         else:
             self.session.flush()
+        
         return instance
 
     def get_by_email(self, email: str):
@@ -33,6 +33,8 @@ class UserRepository(BaseRepository):
         # Permite buscar usuarios mediante su Google ID
         return self.model.query.filter_by(google_id=google_id).first()
 
+    def get_by_github_id(self, github_id):
+        return User.query.filter_by(github_id=github_id).first()
 
 class SignUpVerificationTokenRepository(BaseRepository):
     def __init__(self):
@@ -72,4 +74,3 @@ class ResetPasswordVerificationTokenRepository(BaseRepository):
 
     def get_by_token(self, token: str):
         return self.model.query.filter_by(token=token).first()
-

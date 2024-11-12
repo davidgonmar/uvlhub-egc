@@ -109,7 +109,8 @@ def test_service_create_with_profie_success(clean_database):
         "name": "Test",
         "surname": "Foo",
         "email": "service_test@example.com",
-        "password": "test1234"
+        "password": "test1234",
+        "is_developer": True
     }
 
     AuthenticationService().create_with_profile(**data)
@@ -123,7 +124,8 @@ def test_service_create_with_profile_fail_no_email(clean_database):
         "name": "Test",
         "surname": "Foo",
         "email": "",
-        "password": "1234"
+        "password": "1234",
+        "is_developer": True
     }
 
     with pytest.raises(ValueError, match="Email is required."):
@@ -138,13 +140,15 @@ def test_service_create_with_profile_fail_no_password(clean_database):
         "name": "Test",
         "surname": "Foo",
         "email": "test@example.com",
-        "password": ""
+        "password": "",
+        "is_developer": True
     }
 
     with pytest.raises(ValueError, match="Password is required."):
         AuthenticationService().create_with_profile(**data)
 
     assert UserRepository().count() == 0
+    assert UserProfileRepository().count() == 0
     assert UserProfileRepository().count() == 0
 
 
@@ -337,3 +341,5 @@ def test_generate_resetpassword_verification_token_replace_old(auth_service, val
     mock_repo.delete.assert_called_once_with(mock_token_instance.id)
 
     mock_repo.create.assert_called_once_with(email=valid_email, token=new_token)
+
+

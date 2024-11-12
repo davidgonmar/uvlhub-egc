@@ -5,6 +5,7 @@ import os
 from flask import render_template, redirect, url_for, request, session, current_app, flash
 
 from flask_login import current_user, login_user, logout_user
+from flask_dance.contrib.github import make_github_blueprint, github
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 from google.auth.transport import requests
@@ -13,6 +14,8 @@ from app.modules.auth import auth_bp
 from app.modules.auth.forms import SignupForm, LoginForm, ForgotPasswordForm, CodeForm, ResetPasswordForm, SignupCodeForm
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
+
+# Servicios
 from app.modules.auth.services import EmailService
 
 
@@ -36,6 +39,15 @@ password = os.getenv('EMAIL_PASS')
 authentication_service = AuthenticationService()
 user_profile_service = UserProfileService()
 email_service = EmailService(email, password)
+
+# Configuración del Blueprint de GitHub
+github_blueprint = make_github_blueprint(
+    client_id=os.getenv("GITHUB_CLIENT_ID"),
+    client_secret=os.getenv("GITHUB_CLIENT_SECRET"),
+    redirect_to="auth.github_callback"
+)
+
+auth_bp.register_blueprint(github_blueprint, url_prefix="/auth/github")
 
 
 @auth_bp.route("/signup/", methods=["GET", "POST"])
@@ -199,6 +211,49 @@ def logout():
     return redirect(url_for('public.index'))
 
 
+@auth_bp.route('/auth/github/login')
+def github_login():
+
+    if not github.authorized:
+        return redirect(url_for("github.login"))
+
+    resp = github.get("/user")
+    if not resp.ok:
+        return redirect(url_for("auth.login"))
+
+    github_info = resp.json()
+    github_id = github_info.get("id")
+    email = github_info.get("email")
+    name = github_info.get("login")
+    surname = github_info.get("name")
+
+    user = authentication_service.get_or_create_user_from_github(github_id, email, name, surname)
+    login_user(user)
+    return redirect(url_for("public.index"))
+
+
+# Callback de GitHub, se ejecuta al regresar desde GitHub tras la autorización
+@auth_bp.route("/auth/github/authorized")
+def github_callback():
+    if not github.authorized:
+        return redirect(url_for("github.login"))  # Vuelve a pedir autorización si no se ha completado
+
+    resp = github.get("/user")
+    if not resp.ok:
+        return redirect(url_for("auth.login"))
+
+    github_info = resp.json()
+    github_id = github_info.get("id")
+    email = github_info.get("email")
+    name = github_info.get("login")
+    surname = github_info.get("name")
+
+    print(github_info)
+
+    user = authentication_service.get_or_create_user_from_github(github_id, email, name, surname)
+    login_user(user)  # Inicia sesión con el usuario creado
+
+    return redirect(url_for("public.index"))
 @auth_bp.route('/login/google')
 def google_login():
     session.permanent = True
