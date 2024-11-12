@@ -27,4 +27,3 @@ class TestForgotPassword():
     self.driver.find_element(By.ID, "email").send_keys("user1@example.com")
     self.driver.find_element(By.ID, "submit").click()
     self.driver.find_element(By.CSS_SELECTOR, ".d-flex").click()
-  
