@@ -58,7 +58,7 @@ def test_edit_post(test_client):
         follow_redirects=True,
     )
     assert response.status_code == 200
-    
+
 def test_edit_post_incorrect_github(test_client):
     """
     Tests that submitting an invalid GitHub username results in a validation error.
