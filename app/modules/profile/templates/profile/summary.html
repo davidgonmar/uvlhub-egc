@@ -16,14 +16,27 @@
                 <h5 class="card-title mb-0" style="color: white; font-size: 15px;">Profile Information</h5>
             </div>
             <div class="card-body">
-                <p class="card-text h5"><i class="fa fa-user"></i> <strong>Name:</strong> {{user_profile.name}}</p>
-                <p class="card-text h5"><i class="fa fa-user-circle"></i> <strong>Surname:</strong> {{user_profile.surname}}</p>
-                <p class="card-text h5"><i class="fa fa-building"></i> <strong>Affiliation:</strong> {{user_profile.affiliation}}</p>
-                <p class="card-text h5"><i class="fa fa-id-card"></i> <strong>Orcid:</strong> {{user_profile.orcid}}</p>
-                <p class="card-text h5"><i class="fa fa-envelope"></i> <strong>Email:</strong> {{user.email}}</p>
-                <p class="card-text h5"><i class="fa fa-building"></i> <strong>GitHub Username:</strong> {{user_profile.github}}</p>
+                <p class="card-text h5"><i class="fa fa-user"></i> 
+                    <strong>Name:</strong> {{ user_profile.name }}
+                    {% if user.is_developer %}
+                        <i class="fa fa-check-circle text-primary" title="Verified Developer" aria-hidden="true"></i>
+                    {% endif %}
+                </p>
+                <p class="card-text h5"><i class="fa fa-user-circle"></i> <strong>Surname:</strong> {{ user_profile.surname }}</p>
+                <p class="card-text h5"><i class="fa fa-building"></i> <strong>Affiliation:</strong> {{ user_profile.affiliation }}</p>
+                <p class="card-text h5"><i class="fa fa-id-card"></i> <strong>Orcid:</strong> {{ user_profile.orcid }}</p>
+                <p class="card-text h5"><i class="fa fa-envelope"></i> <strong>Email:</strong> {{ user.email }}</p>
+                <p class="card-text h5"><i class="fa fa-building"></i> <strong>GitHub Username:</strong> {{ user_profile.github }}</p>
                 <p class="card-text h5"><i class="fa fa-database"></i> <strong>Uploaded datasets:</strong> {{ total_datasets }} datasets</p>
-                <p class="card-text h5"><i class="fa fa-database"></i> <strong>Developer:</strong> {{user.is_developer}}</p>
+                
+                <!-- Developer Badge -->
+                <p <strong></strong> 
+                    {% if user.is_developer %}
+                        <span class="badge badge-success">I'm a Developer :)</span>
+                    {% else %}
+                        <span class="badge badge-danger">Not a Developer :(</span>
+                    {% endif %}
+                </p>
             </div>
             
         </div>
