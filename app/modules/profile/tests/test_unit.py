@@ -71,7 +71,7 @@ def test_edit_post_incorrect_github(test_client):
         data=dict(
             name="Foo",
             surname="Example",
-            github="Cargarmar18",
+            github="foo@example.com",
             orcid="0000-0000-0000-0000",
             affiliation="Example affiliation"
         ),
@@ -94,7 +94,7 @@ def test_edit_github_not_developer_user(test_client):
         data=dict(
             name="Foo",
             surname="Example",
-            github="Cargarmar18",
+            github="foo@example.com",
             orcid="0000-0000-0000-0000",
             affiliation="Example affiliation"
         ),
