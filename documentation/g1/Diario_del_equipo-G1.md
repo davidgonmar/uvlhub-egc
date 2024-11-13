@@ -64,9 +64,9 @@
 
 ## 2. Resumen de total de reuniones
 - **Total de reuniones (TR):** 4
-- **Total de reuniones presenciales (TRP):** 0
+- **Total de reuniones presenciales (TRP):** 1
 - **Total de reuniones virtuales (TRV):** 4
-- **Total de tiempo empleado en reuniones presenciales (TTRP):** 0h 0min
+- **Total de tiempo empleado en reuniones presenciales (TTRP):** 0h 40min
 - **Total de tiempo empleado en reuniones virtuales (TTRV):** 4h 30min
 
 
@@ -178,7 +178,7 @@ Esta reunión trató los acuerdos tomados para la segunda iteración del proyect
 - Vento Conesa, Adriana
 
 **Introducción:**
-Esta reunión trata los acuerdos tomados entre los coordinadores de ambos grupos de jamon-hub de cara a la segunda _milestone_. 
+Esta reunión trató los acuerdos tomados entre los coordinadores de ambos grupos de jamon-hub de cara a la segunda _milestone_. 
 
 **Acuerdos tomados:**
 - **Acuerdo 2024-03-01:** Tareas a realizar en la segunda iteración, para controlar los posibles conflictos que puedan surgir.
@@ -187,3 +187,31 @@ Esta reunión trata los acuerdos tomados entre los coordinadores de ambos grupos
 - **Acuerdo 2024-03-04:** Se empezará a estudiar el _work item_ 'Fakenodo', pero no se asegura que se vaya a tener para la _milestone_ 2.
 - **Acuerdo 2024-03-05:** Eliminación del _workflow_ de _lint_.
 - **Acuerdo 2024-03-06:** Ideas para _workflows_. El grupo 2 empezará ya a probar algunos. El grupo 1 podrá empezar también.
+
+
+<br>
+
+
+### ACTA 2024-04
+
+**Asistentes:**
+- Castillo Cebolla, Rafael
+- Flores de Francisco, Daniel
+- González Martínez, David
+- Heras Pérez, Raúl
+- Mellado Díaz, Luis
+- Trenado González, Sergio
+
+**Introducción:**
+Esta reunión trató sobre la implementación del feedback de la segunda _milestone_ y se tomaron acuerdos tomados entre el equipo de cara a la tercera _milestone_. 
+
+**Acuerdos tomados:**
+
+- **Acuerdo 2024-04-01:** Hacer plantilla para títulos de _pull requests_.
+- **Acuerdo 2024-04-02:** Hacer plantilla para cuerpos de _issues_
+- **Acuerdo 2024-04-03:** En el cuerpo o pie de cada _commit_ se referenciará su correspondiente _issue_.
+- **Acuerdo 2024-04-04:** Usar explícitamente en GitHub Projects las prioridades de las tareas.
+- **Acuerdo 2024-04-05:** Haremos pruebas para todos los _work items_.
+- **Acuerdo 2024-04-06:** Haremos pruebas de todos los tipos, si el _work item_ lo permite.
+- **Acuerdo 2024-04-07:** Desglose en tareas de los _work items_ restantes.
+- **Acuerdo 2024-04-08:** Asignación de encargados de cada tarea.
