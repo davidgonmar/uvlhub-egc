@@ -206,6 +206,7 @@ Esta reunión trató los acuerdos tomados entre los coordinadores de ambos grupo
 Esta reunión trató sobre la implementación del feedback de la segunda _milestone_ y se tomaron acuerdos tomados entre el equipo de cara a la tercera _milestone_. 
 
 **Acuerdos tomados:**
+
 - **Acuerdo 2024-04-01:** Hacer plantilla para títulos de _pull requests_.
 - **Acuerdo 2024-04-02:** Hacer plantilla para cuerpos de _issues_
 - **Acuerdo 2024-04-03:** En el cuerpo o pie de cada _commit_ se referenciará su correspondiente _issue_.

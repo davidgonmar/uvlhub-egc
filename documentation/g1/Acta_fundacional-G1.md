@@ -408,7 +408,7 @@ El cuerpo seguirá la siguiente estructura:
 Work item:
 >  <work item al que pertenece si procede>
 
-Descripción:
+Description:
 >  - <primer punto>
 >  - <segundo punto>
 >  [...]
@@ -420,7 +420,7 @@ Ejemplo:
 Work item:
 >  Sign-up validation
 
-Descripción:
+Description:
 >  - Notify the user, onscreen, that an email has been sent.
 >  - Wait for the code to be sent and send it one it is entered.
 ``` 
