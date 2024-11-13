@@ -8,7 +8,7 @@ def test_client():
     # Create a new Flask app and register fakenodo blueprint
     app = Flask(__name__)
     app.register_blueprint(fakenodo_bp)
-    
+
     # Return the test client to interact with the app
     with app.test_client() as client:
         with app.app_context():
