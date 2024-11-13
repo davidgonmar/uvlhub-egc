@@ -20,17 +20,20 @@
 
 # UVLHub (Clone) - EGC Project
 
-## 🌟 **About this Project**  
+## 🌟 **About this Project** 
+
 This repository is a **clone** of the original UVLHub project. It contains feature models in **UVL format**, integrated with **Zenodo** and **flamapy**, following the principles of **Open Science**.
 
 This project was developed as part of a **university course** called **EGC** by the group **Jamon-Hub**, composed of **Jamon-Hub-1** and **Jamon-Hub-2**. We aim to enhance the original project by adding new features and to follow the CI/CD principles.
 
-### 🔗 **Original Project**  
+### 🔗 **Original Project** 
+
 - The original UVLHub project is available here: [UVLHub](https://www.uvlhub.io)
 
 - And the original GitHub repository: [Repository](https://github.com/diverso-lab/uvlhub)
 
 ## 🚀 **Official Documentation**  
+
 The official documentation of the original project can be found at:  
 [docs.uvlhub.io](https://docs.uvlhub.io/)  
 
@@ -46,17 +49,20 @@ This version is hosted and continuously updated to reflect the latest changes ma
 
 # UVLHub (Clon) - Proyecto EGC
 
-## 🌟 **Sobre este Proyecto**  
+## 🌟 **Sobre este Proyecto**
+
 Este repositorio es un **clon** del proyecto original **UVLHub**. Contiene modelos de características en formato **UVL**, integrados con **Zenodo** y **flamapy**, siguiendo los principios de **Ciencia Abierta**.
 
 Este proyecto fue desarrollado como parte de un **curso universitario** llamado **EGC** por el grupo **Jamon-Hub**, compuesto por **Jamon-Hub-1** y **Jamon-Hub-2**. Nuestro objetivo es mejorar el proyecto original añadiendo nuevas características y seguir los principios de **CI/CD**.
 
 ### 🔗 **Proyecto Original**  
+
 - El proyecto original de **UVLHub** está disponible aquí: [UVLHub](https://www.uvlhub.io)
 
 - Y el repositorio original de GitHub: [Repositorio](https://github.com/diverso-lab/uvlhub)
 
-## 🚀 **Documentación Oficial**  
+## 🚀 **Documentación Oficial** 
+ 
 La documentación oficial del proyecto original se puede encontrar en:  
 [docs.uvlhub.io](https://docs.uvlhub.io/)  
 
