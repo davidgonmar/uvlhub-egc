@@ -1,4 +1,5 @@
 from openai import OpenAI
+import os
 
 
 class ChatbotService():
@@ -24,12 +25,10 @@ def create_new_chat(client):
 
             response = completion.choices[0].message.content
             print(f"Romeo: {response}")
-        
-#Esto es provisional, esta puest en el .env pero esta por ahora. Quien haga la otra parte que lo quite.
-# Habria que hacerlo asi llamando a las variables de entorno en routes.py al hacer el POST -> client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
 
-api_key = ""
-client = OpenAI(api_key=api_key)
+        
+
+client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
 
 chatbot = ChatbotService(client)
 create_new_chat(chatbot.client)
