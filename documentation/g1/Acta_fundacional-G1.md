@@ -61,6 +61,7 @@
    - [Frecuencia de _commit_ y _merge_](#frecuencia-de-commit-y-merge)  
    - [Cierre de tareas: merge de _pull requests_ y borrado de ramas](#cierre-de-tareas-merge-de-pull-requests-y-borrado-de-ramas)
    - [Mensajes de _commits_](#mensajes-de-commits)  
+   - [Títulos de _pull requests_](#títulos-de-pull-requests)
    - [Versionado del producto](#versionado-del-producto)  
 5. [Gestión de _Work Items_](#5-gestión-de-work-items)
    - [Asignación de _actividades_](#asignación-de-actividades)
@@ -116,7 +117,7 @@ Cada miembro se hará responsable de un _Work Item_. Esto no significa que sean 
 |  Miembro del equipo           |       Work Item       |
 |-------------------------------|-----------------------|
 | Castillo Cebolla, Rafael      | Sign-up validation    |
-| Flores de Francisco, Daniel   | Fakenodo              |
+| Flores de Francisco, Daniel   | AI integration              |
 | González Martínez, David      | Rate datasets/models  |
 | Heras Pérez, Raúl             | Advanced search       |
 | Mellado Díaz, Luis            | Download all datasets |
@@ -296,11 +297,11 @@ Explicación:
 
 - `<scope>` es el area afectado por el cambio del commit. Este atributo es opcional. Por ejemplo, `api`, `lang`, o `owner`.
 
-- `<subject>` contiene el mensaje del commit, o en otras palabras, la descripción corta del cambio realizado. Incluirá la palabra clave 'Closes' y el ID de la issue, para poder cerrar automáticamente la _issue_ al aceptar la :pull request_ correspondiente. Se usará minúscula al comienzo, y no se usará punto al final. Empezaremos por un verbo en imperativo, a poder ser. Este atributo es **obligatorio**. 
+- `<subject>` contiene el mensaje del commit, o en otras palabras, la descripción corta del cambio realizado. Incluirá cuando haga falta la palabra clave 'Closes' y el ID de la _issue_, para poder cerrarla automáticamente al aceptar la _pull request_ correspondiente. Se usará minúscula al comienzo, y no se usará punto al final. Empezaremos por un verbo en imperativo, a poder ser. Este atributo es **obligatorio**. 
 
-- `<body>` contiene una explicación más detallada de la motivación del cambio y/o cómo este contrasta con el código anterior. Este atributo es opcional.
+- `<body>` contiene una explicación más detallada de la motivación del cambio y/o cómo este contrasta con el código anterior. Podrá incluir el ID de la issue, para poder relacionar el commit con ella. Este atributo es opcional.
 
-- `<footer>` contiene cualquier información extra, como cambios importantes en la API o referencias a problemas de GitHub o commits revertidos. Este atributo es opcional.
+- `<footer>` contiene cualquier información extra, como cambios importantes en la API o referencias a problemas de GitHub o commits revertidos. Incluirá el ID de la issue, para poder relacionar el commit con ella (si ya aprece en el 'body', no es obligatorio). Este atributo es opcional.
 
 Ejemplo:
 
@@ -310,12 +311,19 @@ feat(user-profile): add prophile picture in backend. Closes #123
 It adds a new feature that allows users to upload prophile pictures by themselves.
 This commit includes the backend implementation. The frontend one will be made soon.
 
+issue: #123
 author: Pepe Rodríguez<pRodri@example.com>
 reviewed by: Pepe Benítez <pBeni@example.com>
-tested by: Pepe Martínez <pMarti@example.com>
 ```
 
 Se hará uso de un _hook_ para controlar que no se realiza un commit con mensaje erróneo.
+
+
+### Títulos de _pull requests_
+Por motivos de claridad y unificación, el equipo ha definido un formato para el nombramiento de las _pull requests_. No es un formato fijo, sino que se basa en los siguientes principios:
+ - No se usará el nombre por defecto que provee GitHub, el cual parsea el nombre de la rama de origen.
+ - No se usará el formato de Conventional commits.
+ - Será una descripción breve y sin adornos del objetivo de la _pull request_. Se ha de asemejar en parte al título de la _issue_ a la que corresponde, si procede.
 
 
 ### Versionado del producto
@@ -385,14 +393,37 @@ Se usarán las siguientes etiquetas para definir un cambio:
 Los títulos de las **tareas** seguirán el patrón:
 
 ```
-Tarea <número_tarea><-_número_subtarea>: <Nombre_tarea>.
+Tarea <número_tarea><-_número_subtarea_(opt)>: <Nombre_tarea>.
 ```
-Ejemplo:
+
+Ejemplos:
 
 ```
+Tarea 15: Realizar tests de login.
 Tarea 13-1: Cambiar diseño de botones.
 ```
 
+El cuerpo seguirá la siguiente estructura:
+```html
+Work item:
+>  <work item al que pertenece si procede>
+
+Descripción:
+>  - <primer punto>
+>  - <segundo punto>
+>  [...]
+```
+>El símbolo ">" se parseará en el markdown de la descripción de las issues en GitHub tal y como se ve en este comentario.
+
+Ejemplo:
+```html
+Work item:
+>  Sign-up validation
+
+Descripción:
+>  - Notify the user, onscreen, that an email has been sent.
+>  - Wait for the code to be sent and send it one it is entered.
+``` 
 
 ### Estandarización de incidencias
 Se usará la siguiente plantilla para estandarizar la escritura de incidencias, garantizando la información necesaria para intentar resolverlas.
