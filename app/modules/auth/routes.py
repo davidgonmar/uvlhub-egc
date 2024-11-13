@@ -1,19 +1,20 @@
 import os
 
-
-
 from flask import render_template, redirect, url_for, request, session, current_app, flash
 
 from flask_login import current_user, login_user, logout_user
+from flask_dance.contrib.github import make_github_blueprint, github
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
 from app.modules.auth import auth_bp
 from app.modules.auth.forms import SignupForm, LoginForm, ForgotPasswordForm, CodeForm, ResetPasswordForm, SignupCodeForm
-from app.modules.auth.services import AuthenticationService
+from app.modules.auth.services import AuthenticationService, EmailService
 from app.modules.profile.services import UserProfileService
-from app.modules.auth.services import EmailService
+from app.modules.auth.models import User
+from app.modules.profile.models import UserProfile
+from app import db
 
 
 CLIENT_SECRETS_FILE = os.getenv("GOOGLE_CLIENT_SECRETS_FILE")
@@ -25,10 +26,6 @@ SCOPES = [
     "openid"
 ]
 
-from app.modules.auth.models import User
-from app.modules.profile.models import UserProfile
-from app import db
-
 
 email = os.getenv('EMAIL')
 password = os.getenv('EMAIL_PASS')
@@ -36,6 +33,15 @@ password = os.getenv('EMAIL_PASS')
 authentication_service = AuthenticationService()
 user_profile_service = UserProfileService()
 email_service = EmailService(email, password)
+
+# Configuración del Blueprint de GitHub
+github_blueprint = make_github_blueprint(
+    client_id=os.getenv("GITHUB_CLIENT_ID"),
+    client_secret=os.getenv("GITHUB_CLIENT_SECRET"),
+    redirect_to="auth.github_callback"
+)
+
+auth_bp.register_blueprint(github_blueprint, url_prefix="/auth/github")
 
 
 @auth_bp.route("/signup/", methods=["GET", "POST"])
@@ -81,7 +87,7 @@ def validate_code():
             if not authentication_service.validate_signup_verification_token(email, submitted_code):
                 return render_template("auth/signup_code_validation_form.html",
                                        form=code_validation_form, error='Invalid code')
-            
+
             user = authentication_service.create_with_profile(**temp_user_data)
 
         except Exception as exc:
@@ -124,17 +130,17 @@ def show_forgotpassword_form():
             otp_code = authentication_service.generate_resetpassword_verification_token(email)
             msg = f"Your OTP code is: {otp_code}. Please use this to reset your password."
             email_service.send_mail(email, msg, "Password Reset OTP")
-            
+
             session['temp_user_data'] = {'email': email}
-            
+
             return render_template("auth/validatecode_form.html", form=formCode)
-        
+
         except Exception as exc:
             return render_template("auth/forgotpassword_form.html", form=form, error=f"Error sending OTP: {exc}")
 
     return render_template("auth/forgotpassword_form.html", form=form)
 
-  
+
 @auth_bp.route("/forgotpassword/code-validation", methods=["GET", "POST"])
 def validate_forgotpassword_code():
 
@@ -154,7 +160,7 @@ def validate_forgotpassword_code():
 
             if not authentication_service.validate_resetpassword_verification_token(email, entered_code):
                 return render_template("auth/validatecode_form.html", form=form, error="Invalid OTP code. Please try again.")
-            
+
             return render_template("auth/resetpassword_form.html", form=formPassword)
 
         except Exception as exc:
@@ -196,6 +202,51 @@ def reset_password():
 def logout():
     logout_user()
     return redirect(url_for('public.index'))
+
+
+@auth_bp.route('/auth/github/login')
+def github_login():
+
+    if not github.authorized:
+        return redirect(url_for("github.login"))
+
+    resp = github.get("/user")
+    if not resp.ok:
+        return redirect(url_for("auth.login"))
+
+    github_info = resp.json()
+    github_id = github_info.get("id")
+    email = github_info.get("email")
+    name = github_info.get("login")
+    surname = github_info.get("name")
+
+    user = authentication_service.get_or_create_user_from_github(github_id, email, name, surname)
+    login_user(user)
+    return redirect(url_for("public.index"))
+
+
+# Callback de GitHub, se ejecuta al regresar desde GitHub tras la autorización
+@auth_bp.route("/auth/github/authorized")
+def github_callback():
+    if not github.authorized:
+        return redirect(url_for("github.login"))  # Vuelve a pedir autorización si no se ha completado
+
+    resp = github.get("/user")
+    if not resp.ok:
+        return redirect(url_for("auth.login"))
+
+    github_info = resp.json()
+    github_id = github_info.get("id")
+    email = github_info.get("email")
+    name = github_info.get("login")
+    surname = github_info.get("name")
+
+    print(github_info)
+
+    user = authentication_service.get_or_create_user_from_github(github_id, email, name, surname)
+    login_user(user)  # Inicia sesión con el usuario creado
+
+    return redirect(url_for("public.index"))
 
 
 @auth_bp.route('/login/google')
@@ -253,14 +304,17 @@ def google_callback():
 
     return redirect(url_for('public.index'))
 
+
 @auth_bp.before_app_request
 def before_request():
     current_app.orcid_service = AuthenticationService()
 
+
 @auth_bp.route('/orcid/login')
 def login_orcid():
-    redirect_uri = url_for('auth.authorize_orcid', _external=True, _scheme='http')
+    redirect_uri = url_for('auth.authorize_orcid', _external=True, _scheme=request.scheme)
     return current_app.orcid_service.orcid_client.authorize_redirect(redirect_uri)
+
 
 @auth_bp.route('/orcid/authorize')
 def authorize_orcid():
@@ -285,7 +339,6 @@ def authorize_orcid():
     family_name = user_info.get('family_name', '')
     surname = family_name if family_name else ""
 
-    
     # Obtener el correo electrónico del perfil completo
     email = ''
     email_data = full_profile.get('person', {}).get('emails', {}).get('email', [])
@@ -294,7 +347,7 @@ def authorize_orcid():
 
     # Verificar si el ORCID iD ya está registrado
     user_record = User.query.filter_by(orcid_id=orcid_id).first()
-    
+
     if user_record:
         # Si el registro existe, obtener el perfil del usuario asociado
         profile = UserProfile.query.filter_by(id=user_record.id).first()
@@ -307,7 +360,7 @@ def authorize_orcid():
         user = User()
         user.set_password(orcid_id)  # Usar el ORCID como contraseña
         user.email = email
-        user.orcid_id=orcid_id
+        user.orcid_id = orcid_id
         db.session.add(user)
         db.session.commit()
 

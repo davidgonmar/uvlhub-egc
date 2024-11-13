@@ -8,7 +8,6 @@
 
 <div class="row">
     <div class="col-12">
-
         <form action="" method="post" novalidate>
             {{ form.hidden_tag() }}
 
@@ -45,42 +44,53 @@
                 </div>
             </div>
 
+            <div class="row">
+                {% if error %}
+                <div class="mt-3 col-lg-6 col-12">
+                    <span style="color: red;">{{ error }}</span>
+                </div>
+                {% endif %}
+            </div>
+
             <div class="row mt-4">
                 <div class="col-auto">
                     {{ form.submit(class="btn btn-primary btn-block") }}
                 </div>
-                <div class="col-auto">
-                    <a href="{{ url_for('auth.login_orcid') }}" class="btn btn-info" style="border-radius: 5px; display: flex; align-items: center;">
+            </div>
+
+            <!-- Botones de login alineados en la misma fila -->
+            <div class="row mt-4">
+                <div class="col">
+                    <a href="{{ url_for('auth.github_login') }}" class="btn btn-dark btn-block" style="display: flex; align-items: center;">
+                        <i class="fab fa-github"></i> Login with GitHub
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{{ url_for('auth.login_orcid') }}" class="btn btn-info btn-block" style="display: flex; align-items: center;">
                         <img src="https://dirago.me/wp-content/uploads/2023/08/orcid_w.png" alt="ORCID logo" style="width:20px; vertical-align:middle; margin-right:10px;">
                         Login with ORCID
                     </a>
                 </div>
-            </div>
-
-            <div class="row">
-                {% if error %}
-                    <div class="mt-3 col-lg-6 col-12">
-                        <span style="color: red;">{{ error }}</span>
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="row">
-                <div class="mt-3">
-                    <div class="col-lg-6 col-12">
-                        Don't have an account? <a href="{{ url_for('auth.show_signup_form') }}">Sign up!</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-6 col-12 mt-3">
-                    <a href="{{ url_for('auth.google_login') }}" class="btn btn-outline-secondary">
+                <div class="col">
+                    <a href="{{ url_for('auth.google_login') }}" class="btn btn-outline-secondary btn-block" style="display: flex; align-items: center;">
                         <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" style="width:20px; vertical-align:middle; margin-right:10px;">
                         Login with Google
                     </a>
                 </div>
             </div>
+
+           <div class="row">
+                <div class="mt-3">
+                    <div class="col-lg-6 col-12">
+                        <a href="{{ url_for('auth.show_forgotpassword_form') }}">Forgot your password?</a>
+                    </div>
+                    <div class="mt-3"></div>
+                    <div class="col-lg-6 col-12">
+                        Don't have an account? <a href="{{ url_for('auth.show_signup_form') }}">Sign up!</a>
+                    </div>
+                </div>
+            </div>
+            
 
         </form>
 

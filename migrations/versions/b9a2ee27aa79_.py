@@ -1,8 +1,8 @@
-"""first migration
+"""empty message
 
-Revision ID: 001
+Revision ID: b9a2ee27aa79
 Revises: 
-Create Date: 2024-09-08 16:50:20.326640
+Create Date: 2024-11-12 21:27:27.790138
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '001'
+revision = 'b9a2ee27aa79'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,17 +36,36 @@ def upgrade():
     sa.Column('not_solver', sa.Text(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('user',
+    op.create_table('reset_password_verification_token',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=256), nullable=False),
-    sa.Column('password', sa.String(length=256), nullable=False),
+    sa.Column('token', sa.String(length=256), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
-    op.create_table('webhook',
+    op.create_table('sign_up_verification_token',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('email', sa.String(length=256), nullable=False),
+    sa.Column('token', sa.String(length=256), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email')
+    )
+    op.create_table('user',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('email', sa.String(length=256), nullable=False),
+    sa.Column('password', sa.String(length=256), nullable=True),
+    sa.Column('orcid_id', sa.String(length=19), nullable=True),
+    sa.Column('github_id', sa.String(length=100), nullable=True),
+    sa.Column('google_id', sa.String(length=256), nullable=True),
+    sa.Column('is_developer', sa.Boolean(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('github_id'),
+    sa.UniqueConstraint('google_id'),
+    sa.UniqueConstraint('orcid_id')
     )
     op.create_table('zenodo',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -78,6 +97,14 @@ def upgrade():
     sa.ForeignKeyConstraint(['fm_metrics_id'], ['fm_metrics.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('notepad',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(length=256), nullable=False),
+    sa.Column('body', sa.Text(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('user_profile',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
@@ -85,8 +112,10 @@ def upgrade():
     sa.Column('affiliation', sa.String(length=100), nullable=True),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('surname', sa.String(length=100), nullable=False),
+    sa.Column('github', sa.String(length=39), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('orcid'),
     sa.UniqueConstraint('user_id')
     )
     op.create_table('author',
@@ -180,11 +209,13 @@ def downgrade():
     op.drop_table('data_set')
     op.drop_table('author')
     op.drop_table('user_profile')
+    op.drop_table('notepad')
     op.drop_table('fm_meta_data')
     op.drop_table('ds_meta_data')
     op.drop_table('zenodo')
-    op.drop_table('webhook')
     op.drop_table('user')
+    op.drop_table('sign_up_verification_token')
+    op.drop_table('reset_password_verification_token')
     op.drop_table('fm_metrics')
     op.drop_table('ds_metrics')
     op.drop_table('doi_mapping')
