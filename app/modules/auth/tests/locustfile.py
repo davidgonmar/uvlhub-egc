@@ -110,8 +110,53 @@ class ForgotPasswordBehavior(TaskSet):
         else:
             print("OTP code form not found, possibly forgot password failed.")
 
+
+class SignupValidationBehavior(TaskSet):
+    def on_start(self):
+        self.ensure_logged_out()
+        self.signup()
+        self.code_validation()
+
+    @task()
+    def ensure_logged_out(self):
+        response = self.client.get("/logout")
+        if response.status_code != 200:
+            print(f"Logout failed or no active session: {response.status_code}")
+
+    @task
+    def signup(self):
+        response = self.client.get("/signup")
+        csrf_token = get_csrf_token(response)
+
+        response = self.client.post("/signup", data={
+            "email": fake.email(),
+            "password": fake.password(),
+            "csrf_token": csrf_token
+        })
+        if response.status_code != 200:
+            print(f"Signup failed: {response.status_code}")
+
+    @task
+    def code_validation(self):
+        response = self.client.get("/signup/code-validation")
+        if response.status_code != 200:
+            print(f"Failed to access sign up code validation form: {response.status_code}")
+            return
+
+        csrf_token = get_csrf_token(response)
+        code = "1235456"
+        response = self.client.post("/signup/code-validation", data={
+            "code": code,
+            "csrf_token": csrf_token
+        })
+
+        if response.status_code != 200:
+            print(f"Signup validation request failed: {response.status_code}")
+            return
+
+
 class AuthUser(HttpUser):
-    tasks = [SignupBehavior, LoginBehavior, ForgotPasswordBehavior]
+    tasks = [SignupBehavior, LoginBehavior, ForgotPasswordBehavior, SignupValidationBehavior]
     min_wait = 5000
     max_wait = 9000
     host = get_host_for_locust_testing()
