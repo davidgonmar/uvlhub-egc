@@ -113,6 +113,9 @@ class DataSetRepository(BaseRepository):
             .limit(5)
             .all()
         )
+    
+    def get_all(self):
+        return self.model.query.all()
 
 
 class DOIMappingRepository(BaseRepository):
