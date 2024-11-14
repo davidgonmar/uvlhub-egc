@@ -78,7 +78,7 @@ def validate_code():
             temp_user_data = session.get('temp_user_data', None)
             if not temp_user_data:
                 return render_template("auth/signup_code_validation_form.html",
-                                       form=code_validation_form, error='Invalid session data: did not find temp_user_data')
+                                       form=code_validation_form, error='Invalid session data: user data not found')
             submitted_code = code_validation_form.code.data
             email = temp_user_data.get('email')
             if not email:
