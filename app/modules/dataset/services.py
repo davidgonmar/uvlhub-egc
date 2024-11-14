@@ -139,10 +139,10 @@ class DataSetService(BaseService):
     def get_uvlhub_doi(self, dataset: DataSet) -> str:
         domain = os.getenv('DOMAIN', 'localhost')
         return f'http://{domain}/doi/{dataset.ds_meta_data.dataset_doi}'
-    
-    ############ DOWNLOAD ALL ################################################
+
+############ DOWNLOAD ALL ################################################
     def get_all(self):
-            return self.repository.get_all() 
+        return self.repository.get_all()
 
 
 class AuthorService(BaseService):
