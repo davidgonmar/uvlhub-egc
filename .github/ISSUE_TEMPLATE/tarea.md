@@ -1,7 +1,7 @@
 ---
 name: Tarea
 about: Describe una tarea a realizar
-title: 'Tarea XX - '
+title: 'Tarea XX: '
 labels: ''
 assignees: ''
 
