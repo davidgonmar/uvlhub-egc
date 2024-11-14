@@ -144,3 +144,41 @@ En esta reunión, se definieron los Work Items (WIs) que se implementarán duran
 
 - **Acuerdo 2024-03-04: Asignación de tareas.**  
   Se asignaron tareas específicas a cada miembro del equipo para asegurar que el progreso fuera adecuado. Las tareas fueron distribuidas según la experiencia y la disponibilidad de cada miembro. Se utilizará la herramienta de gestión de tareas acordada para llevar el seguimiento de cada una de ellas.
+
+
+
+### ACTA 2024-04
+
+**Asistentes:**
+
+- Barrera Garrancho, María del Carmen
+- García Martínez, Carlos
+- García Sebastián, Javier
+- Meana Iturri, Claudia
+- Pérez Gutiérrez, Lucía
+- Vento Conesa, Adriana
+
+**Introducción:**
+Durante la reunión se establecieron los Work Items (WIs) que se desarrollarán durante la etapa M3 del proyecto. La conversación se enfocó en dividir cada WI en tareas específicas, buscando un desglose que permita una ejecución ordenada y eficiente. Además, se asignaron responsabilidades entre los miembros del equipo para asegurar que todos trabajen en diversas areas.
+
+**Acuerdos tomados:**
+
+- **Acuerdo 2024-04-01: Work Items para M3.**  
+  Se decidió trabajar en los siguientes WIs para M3:
+  - **MEDIUM**:
+    - **Different versions of models**: Mejora en la funcionalidad que convierte el modelo UVL en diversos formatos al ser cargado, optimizando el rendimiento de la aplicación. 
+  - **HIGH**:
+    - **Staging area**:  Implementación de una nueva funcionalidad que permita a los usuarios guardar un borrador del conjunto de datos antes de proceder con su publicación definitiva.
+    - **Search queries**: Implementación de mejoras como la ampliación de seeders para incluir más datasets o incorporar webscraping, la optimización de la funcionalidad de búsqueda y la adición de una opción para descargar únicamente los datos correspondientes a la consulta, con pruebas asignadas para validar cada aspecto.
+
+- **Acuerdo 2024-04-02: Divisiones de tareas.**  
+  Los WIs seleccionados serán desglosados en tareas más pequeñas, tal como se acordó en la reunión anterior. Cada miembro del equipo tomará tareas relacionadas con diferentes aspectos del proyecto para asegurar que todos trabajen en diversas áreas.
+- **Acuerdo 2024-04-03: Discusion para implementación de WIs.**  
+  Durante la reunión se discutieron diferentes ideas sobre la implementación de cada WI, con el objetivo de identificar las mejores soluciones y posibles dificultades. Las discusiones incluyeron:
+    - **Different versions of models**: Se discutió la mejora de la funcionalidad que convierte el modelo UVL en diferentes formatos al ser cargado, optimizando así el rendimiento de la aplicación. Además, se aclaró el alcance de este WI, resolviendo las dudas previas sobre su funcionamiento y objetivos específicos.
+    - **Staging area**: Se analizaron diferentes aspectos de la implementación, incluyendo el diseño tanto del backend como del frontend, así como los tests necesarios para garantizar el correcto funcionamiento de la aplicación.
+    - **Search queries**: Se discutieron mejoras como la ampliación de seeders para incluir más datasets o incorporar webscraping, la optimización de la funcionalidad de búsqueda y la implementación de una opción para descargar solo los datos correspondientes a la consulta, asignando pruebas para validar cada uno de estos aspectos.
+
+- **Acuerdo 2024-04-04: Asignación de tareas.**  
+  Se asignaron tareas concretas a cada miembro del equipo para garantizar un avance óptimo. La distribución de las tareas se basó en la experiencia y disponibilidad de cada persona. Además, se utilizará la herramienta de gestión de tareas previamente acordada para realizar el seguimiento de su progreso.
+
