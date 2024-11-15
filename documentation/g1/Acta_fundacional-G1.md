@@ -117,7 +117,7 @@ Cada miembro se hará responsable de un _Work Item_. Esto no significa que sean 
 |  Miembro del equipo           |       Work Item       |
 |-------------------------------|-----------------------|
 | Castillo Cebolla, Rafael      | Sign-up validation    |
-| Flores de Francisco, Daniel   | AI integration              |
+| Flores de Francisco, Daniel   | AI integration        |
 | González Martínez, David      | Rate datasets/models  |
 | Heras Pérez, Raúl             | Advanced search       |
 | Mellado Díaz, Luis            | Download all datasets |
@@ -299,9 +299,9 @@ Explicación:
 
 - `<subject>` contiene el mensaje del commit, o en otras palabras, la descripción corta del cambio realizado. Incluirá cuando haga falta la palabra clave 'Closes' y el ID de la _issue_, para poder cerrarla automáticamente al aceptar la _pull request_ correspondiente. Se usará minúscula al comienzo, y no se usará punto al final. Empezaremos por un verbo en imperativo, a poder ser. Este atributo es **obligatorio**. 
 
-- `<body>` contiene una explicación más detallada de la motivación del cambio y/o cómo este contrasta con el código anterior. Podrá incluir el ID de la issue, para poder relacionar el commit con ella. Este atributo es opcional.
+- `<body>` contiene una explicación más detallada de la motivación del cambio y/o cómo este contrasta con el código anterior. Este atributo es opcional.
 
-- `<footer>` contiene cualquier información extra, como cambios importantes en la API o referencias a problemas de GitHub o commits revertidos. Incluirá el ID de la issue, para poder relacionar el commit con ella (si ya aprece en el 'body', no es obligatorio). Este atributo es opcional.
+- `<footer>` contiene cualquier información extra, como cambios importantes en la API o referencias a problemas de GitHub o commits revertidos. Incluirá el ID de la issue, para poder relacionar el commit con ella. Este atributo es obligatorio.
 
 Ejemplo:
 
@@ -312,8 +312,8 @@ It adds a new feature that allows users to upload prophile pictures by themselve
 This commit includes the backend implementation. The frontend one will be made soon.
 
 issue: #123
-author: Pepe Rodríguez<pRodri@example.com>
-reviewed by: Pepe Benítez <pBeni@example.com>
+author: Cristiano Ronaldo <cr7@example.com>
+reviewed by: Lionel Messi <lm10@example.com>
 ```
 
 Se hará uso de un _hook_ para controlar que no se realiza un commit con mensaje erróneo.
@@ -362,10 +362,9 @@ Cada _issue_ será asignada a un único miembro del equipo para su ejecución. S
 
 
 ### Prioridad de _issues_
-Se utilizará la siguiente clasificación para definir la prioridad de las _issues_:
-
- - **P0:** para incidencias.
- - **P1:** para tareas.
+- **Alta:** tareas críticas para el progreso del proyecto. Estas tareas afectan directamente el avance, ya que otras tareas dependen exclusivamente de su finalización.
+- **Media:** tareas que tienen una doble función: dependen de otras tareas para empezar o completarse y, al mismo tiempo, otras tareas dependen de ellas. Son importantes, pero no bloquean el progreso de manera inmediata.
+- **Baja:** tareas independientes que no tienen ninguna otra tarea que dependa de ellas. Su ejecución no afecta directamente el avance del proyecto.
 
 
 ### Estados de _issues_
@@ -425,6 +424,8 @@ Description:
 >  - Wait for the code to be sent and send it one it is entered.
 ``` 
 
+Se implementará mediante una plantilla de tareas en GitHub.
+
 ### Estandarización de incidencias
 Se usará la siguiente plantilla para estandarizar la escritura de incidencias, garantizando la información necesaria para intentar resolverlas.
 
@@ -446,9 +447,8 @@ Se usará la siguiente plantilla para estandarizar la escritura de incidencias, 
    Entorno
       - Sistema operativo: <sistema operativo>
       - Versión del producto: <versión del producto>
-      - Navegador:
-         - Modelo: <modelo de navegador>
-         - Versión: <versión del navegador>
+      - Modelo del navegador: <modelo de navegador>
+      - Versión del navegador: <versión del navegador>
       - Detalles adicionales: <detalles adicionales>
    Posibles soluciones:
       <ideas sobre cómo solucionar el problema>
@@ -458,6 +458,7 @@ Se usará la siguiente plantilla para estandarizar la escritura de incidencias, 
       <comentarios adicionales>
 ```
 
+Se implementará mediante una plantilla de incidencias en GitHub.
 
 
 ---
