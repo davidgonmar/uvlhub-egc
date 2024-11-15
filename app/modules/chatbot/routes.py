@@ -1,6 +1,6 @@
 from app.modules.chatbot import chatbot_bp
 from flask import render_template, request, jsonify
-from app.modules.chatbot.services import ChatbotService  
+from app.modules.chatbot.services import ChatbotService
 import os
 
 

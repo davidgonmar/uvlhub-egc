@@ -35,5 +35,5 @@ if __name__ == "__main__":
     if not api_key:
         print("Por favor, define la variable de entorno OPENAI_API_KEY.")
     else:
-        chatbot = ChatbotService(api_key)
+        chatbot = ChatbotService(api_key, instructions="Eres un chatbot")
         chatbot.create_new_chat()
