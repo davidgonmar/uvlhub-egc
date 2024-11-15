@@ -2,7 +2,7 @@
 from selenium.webdriver.common.by import By
 
 from core.environment.host import get_host_for_selenium_testing
-from core.selenium.common import initialize_driver
+from core.selenium.common import initialize_driver, close_driver
 
 
 class TestSignup():
@@ -11,7 +11,7 @@ class TestSignup():
         self.vars = {}
 
     def teardown_method(self, method):
-        self.driver.quit()
+        close_driver(self.driver)
 
     def test_signup(self):
         self.driver.get(get_host_for_selenium_testing())
