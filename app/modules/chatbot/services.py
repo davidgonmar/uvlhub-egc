@@ -1,35 +1,39 @@
-from openai import OpenAI
+import openai
 import os
 
 
-class ChatbotService():
+class ChatbotService:
+    def __init__(self, api_key, instructions):
+        openai.api_key = api_key
+        self.instructions = instructions
 
-    def __init__(self, client):
-        self.client = client
+    def get_response(self, user_input, context):
+        try:
+            # Agregar el mensaje del usuario al contexto
+            context.append({"role": "user", "content": user_input})
 
-def create_new_chat(client):
-        messages = [
-            {"role": "system", "content": "Eres un chatbot"}
-        ]
-        while True:
-            prompt = input("Tu: ")
-            #Esto es para salir de la conversacion desde la terminal, habría que retocar
-            if prompt.lower() == "salir":
-                break
-            messages.append({"role": "user", "content": prompt})
-
-            completion = client.chat.completions.create(
-                model="gpt-4o",
-                messages = messages
+            # Llamar a la API de OpenAI
+            completion = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=context
             )
 
-            response = completion.choices[0].message.content
-            print(f"Romeo: {response}")
+            # Obtener la respuesta del asistente
+            response = completion["choices"][0]["message"]["content"]
 
-        
+            # Agregar la respuesta al contexto (si quieres mantenerlo para más mensajes)
+            context.append({"role": "assistant", "content": response})
 
-client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+            return response, context
+        except Exception as e:
+            return f"Error: {e}", context
 
-chatbot = ChatbotService(client)
-create_new_chat(chatbot.client)
-    
+
+if __name__ == "__main__":
+    # Configura tu clave de API
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        print("Por favor, define la variable de entorno OPENAI_API_KEY.")
+    else:
+        chatbot = ChatbotService(api_key)
+        chatbot.create_new_chat()
