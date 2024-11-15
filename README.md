@@ -34,7 +34,6 @@ Our goal is to maintain the essence of the original project while taking it to t
 
 **Jamon-Hub-1** includes the following functionalities:
 
-- **Fakenodo:** Implementation of a stub called "Fakenodo" that replaces the Zenodo API, allowing its functionality to be simulated without relying on an actual external service. Both teams will collaborate on Fakenodo.
 - **AI integration:** Integration of artificial intelligence into the application. Initially, OpenAI’s AI will be used. Users will be able to request information about UVL models via its API.
 - **Advanced search:** An advanced search feature that allows users to filter models based on specific criteria.
 - **Download all datasets:** An option that lets users download all available datasets in all formats with a single click.
@@ -44,6 +43,7 @@ Our goal is to maintain the essence of the original project while taking it to t
 
 **Jamon-Hub-2** will develop the following:  
 
+- **Fakenodo:** Implementation of a stub called "Fakenodo" that replaces the Zenodo API, allowing its functionality to be simulated without relying on an actual external service. Both teams will collaborate on Fakenodo.
 - **Staging Area:** Implementation of a temporary space where users can store datasets before uploading them to Zenodo.  
 - **Search Queries:** Development of advanced functionalities that allow users to make specific queries to filter and download models according to personalized criteria.  
 - **Improve UI:** Redesign and optimization of the graphical user interface to enhance the user experience. The dataset display should resemble GitHub’s layout.  
@@ -88,16 +88,16 @@ Nuestro objetivo es mantener la esencia del proyecto original mientras lo llevam
 
 Por parte de **Jamon-Hub-1** se incluirá las siguientes funcionalidades:
 
- - **Fakenodo:** implementación de un stub denominado "Fakenodo" que reemplazará la API de Zenodo, permitiendo simular su funcionalidad sin depender de un servicio externo real. Ambos equipos trabajarán en Fakenodo.
- - **AI integration:** implementación de una inteligencia artificial en la aplicación. En principio se usará una IA de OpenAI. Los usuarios, podrán solicitar, mediante su API, información a la IA sobre  modelos UVL.
- - **Advanced search:** funcionalidad de búsqueda avanzada que permitirá a los usuarios filtrar modelos según criterios específicos.
- - **Download all datasets:** opción que permitirá a los usuarios descargar todos los _datasets_ disponibles en todos los formatos presionando un solo botón.
- - **Rate datasets/models:** función que permitirá a los usuarios para dejar valoraciones a _datasets_ y modelos.
- - **Sign-up validation:** proceso de validación del correo electrónico para llevar a cabo el registro de los usuarios.
- - **Multiple login:** opción para que los usuarios inicien sesión utilizando sus cuentas de ORCID, GitHub o Google.
+- **AI integration:** implementación de una inteligencia artificial en la aplicación. En principio se usará una IA de OpenAI. Los usuarios, podrán solicitar, mediante su API, información a la IA sobre  modelos UVL.
+- **Advanced search:** funcionalidad de búsqueda avanzada que permitirá a los usuarios filtrar modelos según criterios específicos.
+- **Download all datasets:** opción que permitirá a los usuarios descargar todos los _datasets_ disponibles en todos los formatos presionando un solo botón.
+- **Rate datasets/models:** función que permitirá a los usuarios para dejar valoraciones a _datasets_ y modelos.
+- **Sign-up validation:** proceso de validación del correo electrónico para llevar a cabo el registro de los usuarios.
+- **Multiple login:** opción para que los usuarios inicien sesión utilizando sus cuentas de ORCID, GitHub o Google.
 
 Por último **Jamon-Hub-2** desarrollará:
 
+- **Fakenodo:** implementación de un stub denominado "Fakenodo" que reemplazará la API de Zenodo, permitiendo simular su funcionalidad sin depender de un servicio externo real. Ambos equipos trabajarán en Fakenodo.
 - **Staging Area**: Implementación de un espacio temporal que permite a los usuarios almacenar datasets antes de ser subidos a Zenodo.  
 - **Search Queries**: Desarrollo de funcionalidades avanzadas que permiten a los usuarios realizar consultas específicas para filtrar y descargar modelos según criterios personalizados.
 - **Improve UI**: Rediseño y optimización de la interfaz gráfica de usuario para mejorar la experiencia del usuario. La visualización de los datasets debe ser similar a la de GitHub.
