@@ -26,6 +26,31 @@ This repository is a **clone** of the original UVLHub project. It contains featu
 
 This project was developed as part of a **university course** called **EGC** by the group **Jamon-Hub**, composed of **Jamon-Hub-1** and **Jamon-Hub-2**. We aim to enhance the original project by adding new features and to follow the CI/CD principles.
 
+### 🔧 **What does ours include?**  
+
+This project is a clone of **UVLHub**, designed to replicate its main features. However, we didn’t stop there: we’ve added new functionalities and improvements that expand its capabilities, enhance the user experience, and offer fantastic new features.
+
+Our goal is to maintain the essence of the original project while taking it to the next level by implementing features that make it more versatile and up-to-date.
+
+**Jamon-Hub-1** includes the following functionalities:
+
+- **Fakenodo:** Implementation of a stub called "Fakenodo" that replaces the Zenodo API, allowing its functionality to be simulated without relying on an actual external service. Both teams will collaborate on Fakenodo.
+- **AI integration:** Integration of artificial intelligence into the application. Initially, OpenAI’s AI will be used. Users will be able to request information about UVL models via its API.
+- **Advanced search:** An advanced search feature that allows users to filter models based on specific criteria.
+- **Download all datasets:** An option that lets users download all available datasets in all formats with a single click.
+- **Rate datasets/models:** A function that enables users to rate datasets and models.
+- **Sign-up validation:** Email validation process to complete user registration.
+- **Multiple login:** An option for users to log in using their ORCID, GitHub, or Google accounts.
+
+**Jamon-Hub-2** will develop the following:  
+
+- **Staging Area:** Implementation of a temporary space where users can store datasets before uploading them to Zenodo.  
+- **Search Queries:** Development of advanced functionalities that allow users to make specific queries to filter and download models according to personalized criteria.  
+- **Improve UI:** Redesign and optimization of the graphical user interface to enhance the user experience. The dataset display should resemble GitHub’s layout.  
+- **Different versions of models:** Support for multiple model versions and their download in various formats.  
+- **Remember my password:** Integration of a feature that allows users to save their passwords, making it easier to access the application without re-entering credentials.  
+- **Register developer:** An option for users to register as developers.  
+
 ### 🔗 **Original Project** 
 
 - The original UVLHub project is available here: [UVLHub](https://www.uvlhub.io)
@@ -54,6 +79,31 @@ This version is hosted and continuously updated to reflect the latest changes ma
 Este repositorio es un **clon** del proyecto original **UVLHub**. Contiene modelos de características en formato **UVL**, integrados con **Zenodo** y **flamapy**, siguiendo los principios de **Ciencia Abierta**.
 
 Este proyecto fue desarrollado como parte de un **curso universitario** llamado **EGC** por el grupo **Jamon-Hub**, compuesto por **Jamon-Hub-1** y **Jamon-Hub-2**. Nuestro objetivo es mejorar el proyecto original añadiendo nuevas características y seguir los principios de **CI/CD**.
+
+### 🔧 **¿Qué incluye el nuestro?** 
+
+Este proyecto es un clon de **UVLHub**, diseñado para replicar sus principales características. Sin embargo, no nos hemos quedado ahí: hemos añadido nuevas funcionalidades y mejoras que amplían sus capacidades, mejora la experiencia de usuario ofreciendo funcionalidades fantásticas.
+
+Nuestro objetivo es mantener la esencia del proyecto original mientras lo llevamos al siguiente nivel con la implementación de features que lo hacen más versátil y actualizado.
+
+Por parte de **Jamon-Hub-1** se incluirá las siguientes funcionalidades:
+
+ - **Fakenodo:** implementación de un stub denominado "Fakenodo" que reemplazará la API de Zenodo, permitiendo simular su funcionalidad sin depender de un servicio externo real. Ambos equipos trabajarán en Fakenodo.
+ - **AI integration:** implementación de una inteligencia artificial en la aplicación. En principio se usará una IA de OpenAI. Los usuarios, podrán solicitar, mediante su API, información a la IA sobre  modelos UVL.
+ - **Advanced search:** funcionalidad de búsqueda avanzada que permitirá a los usuarios filtrar modelos según criterios específicos.
+ - **Download all datasets:** opción que permitirá a los usuarios descargar todos los _datasets_ disponibles en todos los formatos presionando un solo botón.
+ - **Rate datasets/models:** función que permitirá a los usuarios para dejar valoraciones a _datasets_ y modelos.
+ - **Sign-up validation:** proceso de validación del correo electrónico para llevar a cabo el registro de los usuarios.
+ - **Multiple login:** opción para que los usuarios inicien sesión utilizando sus cuentas de ORCID, GitHub o Google.
+
+Por último **Jamon-Hub-2** desarrollará:
+
+- **Staging Area**: Implementación de un espacio temporal que permite a los usuarios almacenar datasets antes de ser subidos a Zenodo.  
+- **Search Queries**: Desarrollo de funcionalidades avanzadas que permiten a los usuarios realizar consultas específicas para filtrar y descargar modelos según criterios personalizados.
+- **Improve UI**: Rediseño y optimización de la interfaz gráfica de usuario para mejorar la experiencia del usuario. La visualización de los datasets debe ser similar a la de GitHub.
+- **Different versions of models**: Soporte para diferentes versiones de modelos y su descarga en varios formatos.
+- **Remember my password**: Integración de una funcionalidad que permite a los usuarios optar por guardar su contraseña, facilitando el acceso a la aplicación sin la necesidad de ingresarla repetidamente.
+- **Register developer**: Opción para que los usuarios se registren como desarrolladores.
 
 ### 🔗 **Proyecto Original**  
 
