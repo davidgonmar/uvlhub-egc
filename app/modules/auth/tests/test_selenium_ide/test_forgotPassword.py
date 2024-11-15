@@ -9,14 +9,15 @@ from selenium.webdriver.common.by import By
 #from selenium.webdriver.support.wait import WebDriverWait
 #from selenium.webdriver.common.keys import Keys
 #from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from core.selenium.common import initialize_driver, close_driver
 
 class TestForgotPassword():
   def setup_method(self, method):
-    self.driver = webdriver.Chrome()
+    self.driver = initialize_driver()
     self.vars = {}
 
   def teardown_method(self, method):
-    self.driver.quit()
+    close_driver(self.driver)
 
   def test_forgotPassword(self):
     self.driver.get("http://127.0.0.1:5000/")
