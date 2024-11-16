@@ -29,12 +29,17 @@ class DataSetSeeder(BaseSeeder):
         # Create DSMetrics instance
         ds_metrics = DSMetrics(number_of_models='5', number_of_features='50')
         seeded_ds_metrics = self.seed([ds_metrics])[0]
-
+        custom_titles = [
+            'Cats',
+            'Dog',
+            'Cats and Dogs',
+            'Never gonna give you up'
+        ]
         # Create DSMetaData instances
         ds_meta_data_list = [
             DSMetaData(
                 deposition_id=1 + i,
-                title=f'Sample dataset {i+1}',
+                title=custom_titles[i],
                 description=f'Description for dataset {i+1}',
                 publication_type=PublicationType.DATA_MANAGEMENT_PLAN,
                 publication_doi=f'10.1234/dataset{i+1}',
@@ -44,7 +49,7 @@ class DataSetSeeder(BaseSeeder):
             ) for i in range(4)
         ]
         seeded_ds_meta_data = self.seed(ds_meta_data_list)
-
+        
         # Create Author instances and associate with DSMetaData
         authors = [
             Author(
