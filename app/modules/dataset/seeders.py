@@ -49,7 +49,7 @@ class DataSetSeeder(BaseSeeder):
             ) for i in range(4)
         ]
         seeded_ds_meta_data = self.seed(ds_meta_data_list)
-        
+
         # Create Author instances and associate with DSMetaData
         authors = [
             Author(

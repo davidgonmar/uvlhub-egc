@@ -30,22 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
             send_query(query, publicationType, sorting);
         });
     }
-
-    // Optionally: if you want to handle query parameter changes dynamically (e.g., in a multi-page setup)
-    // This can be useful if you want to modify the URL parameters based on user input in real-time.
-    const navbarSearchForm = document.getElementById('navbar-search-form');
-    if (navbarSearchForm) {
-        navbarSearchForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent form from reloading the page
-
-            const query = document.getElementById('navbar-query').value.trim();
-            const publicationType = document.getElementById('navbar-publication-type').value;
-            const sorting = document.getElementById('navbar-sorting').value;
-
-            // Update URL and trigger search
-            updateURLAndSearch(query, publicationType, sorting);
-        });
-    }
 });
 
 function send_query() {
