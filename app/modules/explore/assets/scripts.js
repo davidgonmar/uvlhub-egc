@@ -1,17 +1,50 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Trigger search automatically when the page loads (for example, if there's a query in the URL)
-    send_query();
-
-    // Add event listener to the search button so it triggers search when clicked
-    document.getElementById('search-button').addEventListener('click', send_query);
-
-    // Optionally: if you want to handle query parameter to trigger a search when the page loads
+    // Extract query parameters from the URL
     let urlParams = new URLSearchParams(window.location.search);
     let queryParam = urlParams.get('query');
+    let publicationTypeParam = urlParams.get('publication_type') || 'any';  // Default to 'any' if not present
+    let sortingParam = urlParams.get('sorting') || 'newest';  // Default to 'newest' if not present
+
+    // If there is a query parameter, trigger the search with that query
     if (queryParam && queryParam.trim() !== '') {
+        // Pre-fill the search input with the query from the URL
         const queryInput = document.getElementById('query');
-        queryInput.value = queryParam;
-        queryInput.dispatchEvent(new Event('input', {bubbles: true}));
+        queryInput.value = queryParam.trim();
+        queryInput.dispatchEvent(new Event('input', { bubbles: true })); // Trigger input event (optional, depending on implementation)
+        
+        // Trigger the search function with the query, publication type, and sorting options
+        send_query(queryParam, publicationTypeParam, sortingParam);
+    } else {
+        // If no query in the URL, load all datasets (show default results)
+        send_query();
+    }
+
+    // Add event listener to the search button (if exists) so it triggers the search when clicked
+    const searchButton = document.getElementById('search-button');
+    if (searchButton) {
+        searchButton.addEventListener('click', () => {
+            const queryInput = document.getElementById('query');
+            const query = queryInput.value.trim();
+            const publicationType = document.getElementById('publication_type').value || 'any';
+            const sorting = document.querySelector('[name="sorting"]:checked').value || 'newest';
+            send_query(query, publicationType, sorting);
+        });
+    }
+
+    // Optionally: if you want to handle query parameter changes dynamically (e.g., in a multi-page setup)
+    // This can be useful if you want to modify the URL parameters based on user input in real-time.
+    const navbarSearchForm = document.getElementById('navbar-search-form');
+    if (navbarSearchForm) {
+        navbarSearchForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form from reloading the page
+
+            const query = document.getElementById('navbar-query').value.trim();
+            const publicationType = document.getElementById('navbar-publication-type').value;
+            const sorting = document.getElementById('navbar-sorting').value;
+
+            // Update URL and trigger search
+            updateURLAndSearch(query, publicationType, sorting);
+        });
     }
 });
 
