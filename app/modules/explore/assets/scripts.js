@@ -1,7 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Trigger search automatically when the page loads
+    send_query();
+
+    // Add event listener to the search button so it triggers search when clicked
     document.getElementById('search-button').addEventListener('click', send_query);
 });
-
 
 function send_query() {
     console.log("send query...");
@@ -10,15 +13,14 @@ function send_query() {
     document.getElementById('results').innerHTML = '';
     document.getElementById("results_not_found").style.display = "none";
 
-    // Get the filter values
+    // Get the filter values (this uses default values to show all datasets ordered by "newest first")
     const searchCriteria = {
         csrf_token: document.getElementById('csrf_token').value, // CSRF token
-        query: document.querySelector('#query').value,
-        publication_type: document.querySelector('#publication_type').value,
-        sorting: document.querySelector('[name="sorting"]:checked').value,
+        query: document.querySelector('#query').value || '', // Default query is empty (show all datasets)
+        publication_type: document.querySelector('#publication_type').value || 'any', // Default publication type is "any"
+        sorting: document.querySelector('[name="sorting"]:checked').value || 'newest', // Default sorting is "newest"
     };
 
-    // Debug log
     console.log("Search Criteria:", searchCriteria);
 
     // Perform the search request (AJAX request)
@@ -99,7 +101,6 @@ function send_query() {
     });
 }
 
-
 function formatDate(dateString) {
     const options = {day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric'};
     const date = new Date(dateString);
@@ -145,24 +146,14 @@ function clearFilters() {
     send_query(); // Trigger the search after clearing filters
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
-
-    //let queryInput = document.querySelector('#query');
-    //queryInput.dispatchEvent(new Event('input', {bubbles: true}));
-
+    // Optional: if you want to handle query parameter to trigger a search
     let urlParams = new URLSearchParams(window.location.search);
     let queryParam = urlParams.get('query');
 
     if (queryParam && queryParam.trim() !== '') {
-
         const queryInput = document.getElementById('query');
-        queryInput.value = queryParam
-        queryInput.dispatchEvent(new Event('input', {bubbles: true}));
-        console.log("throw event");
-
-    } else {
-        const queryInput = document.getElementById('query');
+        queryInput.value = queryParam;
         queryInput.dispatchEvent(new Event('input', {bubbles: true}));
     }
 });
