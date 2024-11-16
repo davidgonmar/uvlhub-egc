@@ -1,9 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Trigger search automatically when the page loads
+    // Trigger search automatically when the page loads (for example, if there's a query in the URL)
     send_query();
 
     // Add event listener to the search button so it triggers search when clicked
     document.getElementById('search-button').addEventListener('click', send_query);
+
+    // Optionally: if you want to handle query parameter to trigger a search when the page loads
+    let urlParams = new URLSearchParams(window.location.search);
+    let queryParam = urlParams.get('query');
+    if (queryParam && queryParam.trim() !== '') {
+        const queryInput = document.getElementById('query');
+        queryInput.value = queryParam;
+        queryInput.dispatchEvent(new Event('input', {bubbles: true}));
+    }
 });
 
 function send_query() {
@@ -14,14 +23,25 @@ function send_query() {
     document.getElementById("results_not_found").style.display = "none";
 
     // Get the filter values (this uses default values to show all datasets ordered by "newest first")
+    const query = document.querySelector('#query').value || ''; // Default query is empty (show all datasets)
+    const publication_type = document.querySelector('#publication_type').value || 'any'; // Default publication type is "any"
+    const sorting = document.querySelector('[name="sorting"]:checked').value || 'newest'; // Default sorting is "newest"
+    
     const searchCriteria = {
         csrf_token: document.getElementById('csrf_token').value, // CSRF token
-        query: document.querySelector('#query').value || '', // Default query is empty (show all datasets)
-        publication_type: document.querySelector('#publication_type').value || 'any', // Default publication type is "any"
-        sorting: document.querySelector('[name="sorting"]:checked').value || 'newest', // Default sorting is "newest"
+        query,
+        publication_type,
+        sorting,
     };
 
     console.log("Search Criteria:", searchCriteria);
+
+    // Update the URL to reflect the current search query
+    const url = new URL(window.location);
+    url.searchParams.set('query', query);
+    url.searchParams.set('publication_type', publication_type);
+    url.searchParams.set('sorting', sorting);
+    window.history.pushState({}, '', url); // Update the URL without reloading the page
 
     // Perform the search request (AJAX request)
     fetch('/explore', {
@@ -145,15 +165,3 @@ function clearFilters() {
     // Perform a new search with the reset filters
     send_query(); // Trigger the search after clearing filters
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Optional: if you want to handle query parameter to trigger a search
-    let urlParams = new URLSearchParams(window.location.search);
-    let queryParam = urlParams.get('query');
-
-    if (queryParam && queryParam.trim() !== '') {
-        const queryInput = document.getElementById('query');
-        queryInput.value = queryParam;
-        queryInput.dispatchEvent(new Event('input', {bubbles: true}));
-    }
-});
