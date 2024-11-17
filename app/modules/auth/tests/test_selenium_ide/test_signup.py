@@ -17,7 +17,6 @@ class TestSignup():
         self.driver.get(get_host_for_selenium_testing())
         signup_link = self.driver.find_element(By.XPATH, "/html/body/div/div/nav/div/ul/li/a[2]")
         signup_link.click()
-    
         self.driver.find_element(By.ID, "email").send_keys("user1@example.com")
         self.driver.find_element(By.ID, "password").send_keys("1234")
         self.driver.find_element(By.ID, "name").click()
