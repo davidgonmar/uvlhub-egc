@@ -29,8 +29,10 @@
    - [Proceso de integración y despliegue continuo](#proceso-de-integración-y-despliegue-continuo)  
    - [Gestión de tareas](#gestión-de-tareas)  
    - [Política de ramas](#política-de-ramas)  
-   - [Frecuencia de commits y merge](#frecuencia-de-commits-y-merge)  
-   - [Mensajes de commits](#mensajes-de-commits)  
+   - [Frecuencia de commits y merge](#frecuencia-de-commits-y-merge)
+   - [Cierre de tareas](#cierre-de-tareas)
+   - [Mensajes de commits](#mensajes-de-commits)
+   - [Títulos de pull requests](#títulos-de-pull-requests)
    - [Versionado del producto](#versionado-del-producto)
 6. [Gestión de Work Items](#6-gestión-de-work-items-wis)
    - [Asignación de actividades](#asignación-de-actividades)
@@ -100,7 +102,7 @@ Los equipos Jamón-Hub-1 y Jamón-Hub-2 ya han trabajado juntos antes y han cons
 ### Work Items (WIs) a realizar:
 
 #### **HIGH**:
-- **Fakenodo**: Implementación de un stub denominado "Fakenodo" que reemplazará la API de Zenodo, permitiendo simular su funcionalidad sin depender de un servicio externo.
+- **AI Integration**: Implementación de una AI (OpenAI) en UVLHub.
 - **Advanced Search**: Funcionalidad de búsqueda avanzada que permitirá a los usuarios filtrar modelos según criterios específicos.
 
 #### **MEDIUM**:
@@ -182,7 +184,7 @@ Se utilizarán **Issues** y **Projects** de GitHub para gestionar las tareas. Ca
 Dado que GitFlow no es una opción viable, el equipo ha decidido adoptar un enfoque alternativo: crear una rama para cada tarea a realizar. Salvo excepciones, las ramas seguirán el siguiente patrón:
 
 ```
-g2/task_<número_de_ticket>/<nombre_de_ticket>
+g2/task_<número_de_tarea>/<nombre_de_ticket>
 ```
 
 La sección "*g2*" se utiliza para diferenciar las ramas del grupo 2 de aquellas del grupo 1. Por ejemplo, una rama podría verse así:
@@ -196,6 +198,14 @@ Entre las excepciones, se incluye la rama "main", que funcionará como la rama p
 ### Frecuencia de commits y merge:
 
 Se realizará un commit cada dos días (excluyendo fines de semana). Los cambios listos para producción se integrarán a la rama "main" con la misma frecuencia. Estos commits deben ser *atómicos* y deberán incluir todos los cambios listos para producción. Si ningún cambio está listo para ser integrado y desplegado, se permite realizar un commit vacío.
+
+### Cierre de tareas:
+
+El encargado de una tarea creará sus propias _pull requests_. Él mismo, o en su defecto, los coordinadores, asignarán a un revisor entre los miembros del proyecto, para revisar cualitativamente el contenido de la misma y el cumplimiento con los requisitos.
+
+Si el revisor aprueba la _pull request_, éste se encargará en el momento de hacer _merge_. Si no la aprueba, el revisor dejará abierta la _pull request_, y escribirá sus comentarios en ella. Se notificará al encargado de la tarea para que revise los errores. Una vez supuestamente arreglados, los cambios aparecerán en la misma _pull request_, y se volverá a empezar este ciclo.
+
+Una vez se le ha hecho _merge_ a una tarea y se ha cerrado, el encargado de la tarea para la cual se ha creado la rama, se encargará de borrar la rama.
 
 ### Mensajes de commits:
 
@@ -226,20 +236,30 @@ El proyecto utilizará [Conventional Commits](https://www.conventionalcommits.or
 
 - `<body>` contiene una explicación más detallada de la motivación del cambio y/o cómo este contrasta con el código anterior. Este atributo es opcional.
 
-- `<footer>` contiene cualquier información extra, como cambios importantes en la API o referencias a problemas de GitHub o commits revertidos. Este atributo es opcional.
+- `<footer>` contiene cualquier información extra, como cambios importantes en la API o referencias a problemas de GitHub o commits. En este campo deberá referenciarse el número de la issue vinculado con el commit.
 
 **Ejemplo**:
 
 ```
-feat(user-profile): add profile picture in backend closes #123
+feat(user-profile): add profile picture in backend
 
 It adds a new feature that allows users to upload prophile pictures by themselves.
 This commit includes the backend implementation. The frontend one will be made soon.
+
+#12
 ```
 
 Se hará uso de un *hook* para controlar que no se realiza un commit con mensaje erróneo.
 
-### Versionado del producto
+### Títulos de pull requests:
+
+Por motivos de claridad y unificación, el equipo ha definido un formato para el nombramiento de las _pull requests_. No es un formato fijo, sino que se basa en los siguientes principios:
+
+ - No se usará el nombre por defecto que provee GitHub, el cual parsea el nombre de la rama de origen.
+ - No se usará el formato de Conventional Commits (es decir, el texto por defecto del commit).
+ - Será una descripción breve y sin adornos del objetivo de la _pull request_. Se ha de asemejar en parte al título de la _issue_ a la que corresponde, si procede.
+
+### Versionado del producto:
 
 El proyecto seguirá las directrices de [versionado semántico](https://semver.org/). La información correspondiente a este apartado se ha extraído de la página oficial. Por lo tanto, el versionado funcionará de la siguiente manera:
 
@@ -271,8 +291,9 @@ Cada _issue_ será asignada a un único miembro del equipo, quien será responsa
 ### Priorización de issues:
 Se utilizará la siguiente clasificación para definir la prioridad de las _issues_:
 
-- **P0:** Incidencias.
-- **P1:** Tareas.
+- **Alta:** Tareas críticas para el progreso del proyecto. Estas tareas afectan directamente el avance, ya que otras tareas dependen exclusivamente de su finalización.
+- **Media:** Tareas que tienen una doble función: dependen de otras tareas para empezar o completarse y, al mismo tiempo, otras tareas dependen de ellas. Son importantes, pero no bloquean el progreso de manera inmediata.
+- **Baja:** Tareas independientes que no tienen ninguna otra tarea que dependa de ellas. Su ejecución no afecta directamente el avance del proyecto.
 
 ### Estados de issues:
 Las _issues_ pasarán por los siguientes estados. En GitHub Projects, estos se representarán mediante columnas.
@@ -289,7 +310,7 @@ Si una pull request no se acepta, e trasladará a la columna del estado _Failed 
 ### Etiquetas de issues:
 Las siguientes etiquetas se utilizarán para clasificar los cambios en las _issues_:
 
-- Tipos de actividad: `task`, `incidencia`, `documentation`, `meeting`.
+- Tipos de actividad: `task`, `incidencia`.
 - Tipos de cambio: `feat`, `fix`, `refactor`, `style`, `test`, `database`, `build`, `hotfix`.
 - Áreas del sistema: `backend`, `frontend`.
 
@@ -297,13 +318,41 @@ Las siguientes etiquetas se utilizarán para clasificar los cambios en las _issu
 
 Para mantener un orden coherente, los títulos de las **issues** seguirán los siguientes patrones:
 ```
-Tarea <número_tarea>-<número_subtarea>: <Nombre_tarea>.
+Tarea <número_tarea>-<número_subtarea_(opt)>: <Nombre_tarea>.
 ```
-Ejemplo:
+Ejemplos:
 
 ```
 Tarea 13-1: Cambiar diseño de botones.
 ```
+
+```
+Tarea 15: Realizar tests de login.
+```
+
+El cuerpo seguirá la siguiente estructura:
+
+```html
+Work item:
+>  <work item al que pertenece si procede>
+Description:
+>  - <primer punto>
+>  - <segundo punto>
+>  [...]
+```
+> El símbolo ">" se parseará en el markdown de la descripción de las issues en GitHub tal y como se ve en este comentario.
+
+Ejemplo:
+
+```html
+Work item:
+>  Sign-up validation
+Description:
+>  - Notify the user, onscreen, that an email has been sent.
+>  - Wait for the code to be sent and send it one it is entered.
+``` 
+
+Se hará a través de una plantilla de tareas en GitHub.
 
 ### Estandarización de incidencias:
 Para garantizar que las incidencias reportadas contienen la información necesaria para su resolución, se seguirá esta plantilla:
@@ -337,6 +386,8 @@ Para garantizar que las incidencias reportadas contienen la información necesar
    Comentarios adicionales
       <comentarios adicionales>
 ```
+
+Se hará a través de una plantilla de incidencias en GitHub.
 
 ---
 
