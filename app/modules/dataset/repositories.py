@@ -114,6 +114,9 @@ class DataSetRepository(BaseRepository):
             .all()
         )
 
+    def get_all(self):
+        return self.model.query.all()
+
 
 class DOIMappingRepository(BaseRepository):
     def __init__(self):
