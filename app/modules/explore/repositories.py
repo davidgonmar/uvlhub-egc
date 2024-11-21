@@ -14,8 +14,11 @@ class ExploreRepository(BaseRepository):
     def __init__(self):
         super().__init__(DataSet)
 
-    def filter(self, query="", sorting="newest", publication_type="any", tags=[], start_date="", end_date="", 
-               min_uvl="", max_uvl="", min_size=None, max_size=None, size_unit="bytes", **kwargs):
+    def filter(self, query="", sorting="newest", publication_type="any", tags=None, start_date="", end_date="", 
+        min_uvl="", max_uvl="", min_size=None, max_size=None, size_unit="bytes", **kwargs):
+
+        if tags is None:
+            tags = []
 
         # Normaliza y limpia el texto de búsqueda
         normalized_query = unidecode.unidecode(query).lower()
@@ -37,7 +40,7 @@ class ExploreRepository(BaseRepository):
 
         # Alias para Hubfile para poder hacer múltiples uniones
         hubfile_alias = aliased(Hubfile)
-        
+
         datasets = (
             self.model.query
             .join(DataSet.ds_meta_data)

@@ -29,7 +29,7 @@ class DataSetSeeder(BaseSeeder):
         # Create DSMetrics instance
         ds_metrics = DSMetrics(number_of_models='5', number_of_features='50')
         seeded_ds_metrics = self.seed([ds_metrics])[0]
-        
+
         # Custom titles for datasets
         custom_titles = [
             'Cats', 'Dogs', 'Cats and Dogs', 'Never gonna give you up', 
