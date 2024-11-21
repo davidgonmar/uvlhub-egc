@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 from flask import request
-from sqlalchemy import Enum as SQLAlchemyEnum
+from sqlalchemy import Enum as SQLAlchemyEnum, UniqueConstraint
 from sqlalchemy.orm import relationship, validates
 from app import db
 from app.modules.auth.models import User
@@ -176,7 +176,12 @@ class DSRating(db.Model):
 
     user = db.relationship(User, backref='ds_ratings')
     dataset = db.relationship(DataSet, backref='ratings')
-    
+
+    # Add a unique constraint for user_id and dataset_id
+    __table_args__ = (
+        UniqueConstraint('user_id', 'dataset_id', name='unique_user_dataset_rating'),
+    )
+
     @validates('rating')
     def validate_rating(self, key, value):
         if value < 0 or value > 5:

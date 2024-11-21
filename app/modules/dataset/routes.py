@@ -30,8 +30,10 @@ from app.modules.dataset.services import (
     DSMetaDataService,
     DSViewRecordService,
     DataSetService,
+    DSRatingService,
     DOIMappingService
 )
+
 from app.modules.zenodo.services import ZenodoService
 
 logger = logging.getLogger(__name__)
@@ -43,6 +45,7 @@ dsmetadata_service = DSMetaDataService()
 zenodo_service = ZenodoService()
 doi_mapping_service = DOIMappingService()
 ds_view_record_service = DSViewRecordService()
+ds_rating_service = DSRatingService()
 
 
 @dataset_bp.route("/dataset/upload", methods=["GET", "POST"])
@@ -337,3 +340,18 @@ def download_all_datasets():
     shutil.rmtree(temp_dir)
 
     return resp
+
+@login_required
+@dataset_bp.route("/dataset/rate", methods=["POST"])
+def rate():
+    data = request.get_json()
+    dataset_id = data.get("dataset_id")
+    rating = data.get("rating")
+
+    if not dataset_id or not rating:
+        return jsonify({"message": "Invalid request"}), 400
+    
+    dataset = dataset_service.get_or_404(dataset_id)
+    ds_rating_service.create_or_update(dataset, current_user, rating)
+
+    return jsonify({"message": "Rating saved successfully"}), 200
