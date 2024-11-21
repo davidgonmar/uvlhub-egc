@@ -29,11 +29,3 @@ class ChatbotService:
             return f"Error: {e}", context
 
 
-if __name__ == "__main__":
-    # Configura tu clave de API
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        print("Por favor, define la variable de entorno OPENAI_API_KEY.")
-    else:
-        chatbot = ChatbotService(api_key, instructions="Eres un chatbot")
-        chatbot.create_new_chat()
