@@ -3,9 +3,9 @@ from enum import Enum
 
 from flask import request
 from sqlalchemy import Enum as SQLAlchemyEnum
-
+from sqlalchemy.orm import relationship, validates
 from app import db
-
+from app.modules.auth.models import User
 
 class PublicationType(Enum):
     NONE = 'none'
@@ -164,3 +164,36 @@ class DOIMapping(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     dataset_doi_old = db.Column(db.String(120))
     dataset_doi_new = db.Column(db.String(120))
+
+
+class DSRating(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    dataset_id = db.Column(db.Integer, db.ForeignKey('data_set.id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    user = db.relationship(User, backref='ds_ratings')
+    dataset = db.relationship(DataSet, backref='ratings')
+    
+    @validates('rating')
+    def validate_rating(self, key, value):
+        if value < 0 or value > 5:
+            raise ValueError("Rating must be between 0 and 5.")
+        return value
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'dataset_id': self.dataset_id,
+            'rating': self.rating,
+            'comment': self.comment,
+            'created_at': self.created_at,
+            'created_at_timestamp': int(self.created_at.timestamp()),
+            'user': self.user.to_dict() if self.user else None,
+        }
+
+    def __repr__(self):
+        return f'<DSRating id={self.id} user_id={self.user_id} dataset_id={self.dataset_id} rating={self.rating}>'
