@@ -140,16 +140,15 @@ class DSRatingRepository(BaseRepository):
     def get_by_dataset(self, dataset_id: int):
         return self.model.query.filter_by(dataset_id=dataset_id).all()
 
-    def create_or_update(self, dataset_id: int, user_id: int, rating: int, comment: str) -> DSRating:
+    def create_or_update(self, dataset_id: int, user_id: int, rating: int) -> DSRating:
         rating = self.get_rating(dataset_id, user_id)
         if rating:
             rating.rating = rating
-            rating.comment = comment
+            rating.save()
         else:
             rating = self.create(
                 user_id=user_id,
                 dataset_id=dataset_id,
                 rating=rating,
-                comment=comment
             )
         return rating

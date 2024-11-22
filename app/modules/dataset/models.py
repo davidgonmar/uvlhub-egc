@@ -171,7 +171,6 @@ class DSRating(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     dataset_id = db.Column(db.Integer, db.ForeignKey('data_set.id'), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
-    comment = db.Column(db.Text)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     user = db.relationship(User, backref='ds_ratings')
@@ -194,7 +193,6 @@ class DSRating(db.Model):
             'user_id': self.user_id,
             'dataset_id': self.dataset_id,
             'rating': self.rating,
-            'comment': self.comment,
             'created_at': self.created_at,
             'created_at_timestamp': int(self.created_at.timestamp()),
             'user': self.user.to_dict() if self.user else None,
