@@ -228,7 +228,7 @@ class DSRatingService(BaseService):
 
     def get_average_by_dataset(self, dataset_id: int) -> float:
         return self.repository.get_average_by_dataset(dataset_id)
-    
+
     def get_by_dataset(self, dataset_id: int):
         return self.repository.get_by_dataset(dataset_id)
     
