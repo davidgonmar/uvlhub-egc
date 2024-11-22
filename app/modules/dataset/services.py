@@ -231,6 +231,6 @@ class DSRatingService(BaseService):
 
     def get_by_dataset(self, dataset_id: int):
         return self.repository.get_by_dataset(dataset_id)
-    
+
     def create_or_update(self, dataset_id: int, user_id: int, rating: int) -> DSRating:
         return self.repository.create_or_update(dataset_id, user_id, rating)
