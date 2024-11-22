@@ -3,7 +3,7 @@ from enum import Enum
 
 from flask import request
 from sqlalchemy import Enum as SQLAlchemyEnum, UniqueConstraint
-from sqlalchemy.orm import relationship, validates
+from sqlalchemy.orm import validates
 from app import db
 from app.modules.auth.models import User
 

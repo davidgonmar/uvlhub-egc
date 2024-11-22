@@ -225,7 +225,7 @@ class DSRatingService(BaseService):
 
     def get(self, dataset_id: int, user_id: int) -> Optional[DSRating]:
         return self.repository.get(dataset_id, user_id)
-    
+
     def get_average_by_dataset(self, dataset_id: int) -> float:
         return self.repository.get_average_by_dataset(dataset_id)
     
@@ -234,4 +234,3 @@ class DSRatingService(BaseService):
     
     def create_or_update(self, dataset_id: int, user_id: int, rating: int, comment: str) -> DSRating:
         return self.repository.create_or_update(dataset_id, user_id, rating, comment)
-    

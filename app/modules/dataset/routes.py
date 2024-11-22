@@ -350,7 +350,7 @@ def rate():
 
     if not dataset_id or not rating:
         return jsonify({"message": "Invalid request"}), 400
-    
+
     dataset = dataset_service.get_or_404(dataset_id)
     ds_rating_service.create_or_update(dataset, current_user, rating)
 
