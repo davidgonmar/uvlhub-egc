@@ -54,6 +54,7 @@ jobs:
           MARIADB_TEST_DATABASE: uvlhubdb_test
           MARIADB_USER: uvlhub_user
           MARIADB_PASSWORD: uvlhub_password
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           pytest app/modules/ --cov=app/modules/ --cov-report=xml:coverage.xml --ignore-glob='*selenium*'
 
