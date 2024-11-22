@@ -18,7 +18,12 @@
     <!-- First Column -->
     <div class="col-md-8">
         <div style="display: flex; justify-content: space-between;">
-            <h1 style="margin-left: 1rem;"><b>{{ dataset.ds_meta_data.title }}</b></h1>
+            <div style="display: flex; align-items: center; margin-left: 1rem;">
+                <h1 style="margin: 0;"><b>{{ dataset.ds_meta_data.title }}</b></h1>
+                {% if dataset.user.is_developer %}
+                    <i class="fa fa-check-circle text-primary" title="Verified Developer" aria-hidden="true" style="font-size: 1.5rem; margin-left: 0.4rem;"></i>
+                {% endif %}
+            </div>            
             <div style="justify-content: flex-end;">
                 <a href="/explore" class="btn btn-primary btn-sm" id="search" style="border-radius: 5px; margin-bottom: 1rem; margin-right: 1rem;">
                     <i data-feather="search" class="center-button-icon"></i> Explore more datasets
@@ -76,10 +81,10 @@
 
 
                                 <div class="btn-group" role="group">
-                                    <button id="btnGroupDrop{{ file.id }}" type="button" class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style=" border-radius: 5px;">
+                                    <button id="btnGroupDrop1" type="button" class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style=" border-radius: 5px;">
                                         <i data-feather="check"></i> Check
                                     </button>
-                                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop{{ file.id }}">
+                                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop2">
                                         <li>
                                             <a class="dropdown-item" href="javascript:void(0);" onclick="checkUVL('{{ file.id }}')">Syntax check</a>
                                         </li>
@@ -92,7 +97,7 @@
                                 </div>
 
                                 <div class="btn-group" role="group">
-                                    <button id="btnGroupDropExport{{ file.id }}" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style=" border-radius: 5px;">
+                                    <button id="btnGroupDropExport3" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style=" border-radius: 5px;">
                                         <i data-feather="download"></i> Export
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="btnGroupDropExport{{ file.id }}">
