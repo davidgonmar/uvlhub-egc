@@ -11,6 +11,7 @@ from app.modules.dataset.models import (
     DSDownloadRecord,
     DSMetaData,
     DSViewRecord,
+    DSRating,
     DataSet
 )
 from core.repositories.BaseRepository import BaseRepository
@@ -124,3 +125,30 @@ class DOIMappingRepository(BaseRepository):
 
     def get_new_doi(self, old_doi: str) -> str:
         return self.model.query.filter_by(dataset_doi_old=old_doi).first()
+
+
+class DSRatingRepository(BaseRepository):
+    def __init__(self):
+        super().__init__(DSRating)
+
+    def get(self, dataset_id: int, user_id: int) -> Optional[DSRating]:
+        return self.model.query.filter_by(dataset_id=dataset_id, user_id=user_id).first()
+
+    def get_average_by_dataset(self, dataset_id: int) -> float:
+        return self.model.query.with_entities(func.avg(self.model.rating)).filter_by(dataset_id=dataset_id).scalar()
+
+    def get_by_dataset(self, dataset_id: int):
+        return self.model.query.filter_by(dataset_id=dataset_id).all()
+
+    def create_or_update(self, dataset_id: int, user_id: int, rating: int) -> DSRating:
+        rating = self.get_rating(dataset_id, user_id)
+        if rating:
+            rating.rating = rating
+            rating.save()
+        else:
+            rating = self.create(
+                user_id=user_id,
+                dataset_id=dataset_id,
+                rating=rating,
+            )
+        return rating
