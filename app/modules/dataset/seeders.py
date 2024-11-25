@@ -32,10 +32,9 @@ class DataSetSeeder(BaseSeeder):
 
         # Custom titles for datasets
         custom_titles = [
-            'Cats', 'Dogs', 'Cats and Dogs', 'Never gonna give you up', 
+            'Cats', 'Dogs', 'Cats and Dogs', 'Never gonna give you up',
             'Elephants', 'Giraffes', 'Monkeys', 'Lions', 'Tigers', 'Bears'
         ]
-        
         # Create DSMetaData instances
         ds_meta_data_list = [
             DSMetaData(
