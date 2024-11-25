@@ -12,6 +12,7 @@ from app.modules.dataset.models import (
     Author)
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+from app.modules.dataset.transformation_aux import transformation
 
 
 class DataSetSeeder(BaseSeeder):
@@ -126,4 +127,5 @@ class DataSetSeeder(BaseSeeder):
                 size=os.path.getsize(file_path),
                 feature_model_id=feature_model.id
             )
+            transformation(file_path)
             self.seed([uvl_file])
