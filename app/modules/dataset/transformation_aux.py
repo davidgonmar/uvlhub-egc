@@ -1,4 +1,4 @@
-from flamapy.metamodels.fm_metamodel.transformations import UVLReader, GlencoeWriter
+from flamapy.metamodels.fm_metamodel.transformations import UVLReader, GlencoeWriter, SPLOTWriter
 import tempfile
 import os
 
@@ -22,7 +22,20 @@ def transformation(filepath):
     json_file_name = base_name + ".json"
     
     shutil.copy(json.name, os.path.join(file_path_json, json_file_name))
-    for temp_file in [json.name]:
+    
+    # Transformation to splx
+    splx = tempfile.NamedTemporaryFile(suffix='.splx', delete=False)
+    
+    SPLOTWriter(splx.name, fm).transform()
+    file_path__splx = os.path.join(static_path,  "type_splx")
+    
+    if not os.path.exists(file_path__splx):
+        os.makedirs(file_path__splx)  
+    splx_file_name = base_name + ".splx"
+    
+    shutil.copy(splx.name, os.path.join(file_path__splx, splx_file_name))
+    
+    for temp_file in [json.name, splx.name]:
         try:
             os.remove(temp_file)
         except FileNotFoundError:
