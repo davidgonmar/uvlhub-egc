@@ -8,13 +8,14 @@ import uuid
 from flask import request
 
 from app.modules.auth.services import AuthenticationService
-from app.modules.dataset.models import DSViewRecord, DataSet, DSMetaData
+from app.modules.dataset.models import DSViewRecord, DataSet, DSMetaData, DSRating
 from app.modules.dataset.repositories import (
     AuthorRepository,
     DOIMappingRepository,
     DSDownloadRecordRepository,
     DSMetaDataRepository,
     DSViewRecordRepository,
+    DSRatingRepository,
     DataSetRepository
 )
 from app.modules.featuremodel.repositories import FMMetaDataRepository, FeatureModelRepository
@@ -140,6 +141,10 @@ class DataSetService(BaseService):
         domain = os.getenv('DOMAIN', 'localhost')
         return f'http://{domain}/doi/{dataset.ds_meta_data.dataset_doi}'
 
+############ DOWNLOAD ALL ################################################
+    def get_all(self):
+        return self.repository.get_all()
+
 
 class AuthorService(BaseService):
     def __init__(self):
@@ -212,3 +217,20 @@ class SizeService():
             return f'{round(size / (1024 ** 2), 2)} MB'
         else:
             return f'{round(size / (1024 ** 3), 2)} GB'
+
+
+class DSRatingService(BaseService):
+    def __init__(self):
+        super().__init__(DSRatingRepository())
+
+    def get(self, dataset_id: int, user_id: int) -> Optional[DSRating]:
+        return self.repository.get(dataset_id, user_id)
+
+    def get_average_by_dataset(self, dataset_id: int) -> float:
+        return self.repository.get_average_by_dataset(dataset_id)
+
+    def get_by_dataset(self, dataset_id: int):
+        return self.repository.get_by_dataset(dataset_id)
+
+    def create_or_update(self, dataset_id: int, user_id: int, rating: int) -> DSRating:
+        return self.repository.create_or_update(dataset_id, user_id, rating)
