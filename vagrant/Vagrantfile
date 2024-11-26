@@ -58,7 +58,7 @@ Vagrant.configure("2") do |config|
       mariadb_user: ENV['MARIADB_USER'],
       mariadb_password: ENV['MARIADB_PASSWORD'],
       mariadb_root_password: ENV['MARIADB_ROOT_PASSWORD'],
-      working_dir: ENV['WORKING_DIR']
+      working_dir: ENV['WORKING_DIR_VAGRANT']
     }
   end
 
