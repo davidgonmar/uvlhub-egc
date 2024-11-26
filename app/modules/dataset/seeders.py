@@ -29,11 +29,11 @@ class DataSetSeeder(BaseSeeder):
         # Create DSMetrics instance
         ds_metrics = DSMetrics(number_of_models='5', number_of_features='50')
         seeded_ds_metrics = self.seed([ds_metrics])[0]
+
+        # Custom titles for datasets
         custom_titles = [
-            'Cats',
-            'Dog',
-            'Cats and Dogs',
-            'Never gonna give you up'
+            'Cats', 'Dogs', 'Cats and Dogs', 'Never gonna give you up',
+            'Elephants', 'Giraffes', 'Monkeys', 'Lions', 'Tigers', 'Bears'
         ]
         # Create DSMetaData instances
         ds_meta_data_list = [
@@ -46,7 +46,7 @@ class DataSetSeeder(BaseSeeder):
                 dataset_doi=f'10.1234/dataset{i+1}',
                 tags='tag1, tag2',
                 ds_metrics_id=seeded_ds_metrics.id
-            ) for i in range(4)
+            ) for i in range(10)  # Changed to 10 datasets
         ]
         seeded_ds_meta_data = self.seed(ds_meta_data_list)
 
@@ -56,8 +56,8 @@ class DataSetSeeder(BaseSeeder):
                 name=f'Author {i+1}',
                 affiliation=f'Affiliation {i+1}',
                 orcid=f'0000-0000-0000-000{i}',
-                ds_meta_data_id=seeded_ds_meta_data[i % 4].id
-            ) for i in range(4)
+                ds_meta_data_id=seeded_ds_meta_data[i % 10].id  # Update for 10 datasets
+            ) for i in range(20)  # Increased number of authors
         ]
         self.seed(authors)
 
@@ -67,11 +67,11 @@ class DataSetSeeder(BaseSeeder):
                 user_id=user1.id if i % 2 == 0 else user2.id,
                 ds_meta_data_id=seeded_ds_meta_data[i].id,
                 created_at=datetime.now(timezone.utc)
-            ) for i in range(4)
+            ) for i in range(10)  # Changed to 10 datasets
         ]
         seeded_datasets = self.seed(datasets)
 
-        # Assume there are 12 UVL files, create corresponding FMMetaData and FeatureModel
+        # Assume there are 24 UVL files, create corresponding FMMetaData and FeatureModel
         fm_meta_data_list = [
             FMMetaData(
                 uvl_filename=f'file{i+1}.uvl',
@@ -81,26 +81,27 @@ class DataSetSeeder(BaseSeeder):
                 publication_doi=f'10.1234/fm{i+1}',
                 tags='tag1, tag2',
                 uvl_version='1.0'
-            ) for i in range(12)
+            ) for i in range(24)  # Changed to 24 feature models
         ]
         seeded_fm_meta_data = self.seed(fm_meta_data_list)
 
         # Create Author instances and associate with FMMetaData
         fm_authors = [
             Author(
-                name=f'Author {i+5}',
-                affiliation=f'Affiliation {i+5}',
-                orcid=f'0000-0000-0000-000{i+5}',
+                name=f'Author {i+21}',  # New authors starting from 21
+                affiliation=f'Affiliation {i+21}',
+                orcid=f'0000-0000-0000-000{i+21}',
                 fm_meta_data_id=seeded_fm_meta_data[i].id
-            ) for i in range(12)
+            ) for i in range(24)  # Increased number of authors
         ]
         self.seed(fm_authors)
 
+        # Create FeatureModel instances
         feature_models = [
             FeatureModel(
-                data_set_id=seeded_datasets[i // 3].id,
+                data_set_id=seeded_datasets[i // 4].id,  # Distribute across datasets
                 fm_meta_data_id=seeded_fm_meta_data[i].id
-            ) for i in range(12)
+            ) for i in range(24)  # Changed to 24 feature models
         ]
         seeded_feature_models = self.seed(feature_models)
 
@@ -108,7 +109,7 @@ class DataSetSeeder(BaseSeeder):
         load_dotenv()
         working_dir = os.getenv('WORKING_DIR', '')
         src_folder = os.path.join(working_dir, 'app', 'modules', 'dataset', 'uvl_examples')
-        for i in range(12):
+        for i in range(24):  # Adjusted for 24 files
             file_name = f'file{i+1}.uvl'
             feature_model = seeded_feature_models[i]
             dataset = next(ds for ds in seeded_datasets if ds.id == feature_model.data_set_id)
