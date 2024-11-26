@@ -16,6 +16,7 @@ from flask import (
     make_response,
     abort,
     url_for,
+    session
 )
 from flask_login import login_required, current_user
 
@@ -35,6 +36,7 @@ from app.modules.dataset.services import (
 )
 
 from app.modules.zenodo.services import ZenodoService
+from app.modules.explore.services import ExploreService
 
 logger = logging.getLogger(__name__)
 
@@ -340,6 +342,75 @@ def download_all_datasets():
     shutil.rmtree(temp_dir)
 
     return resp
+
+
+########## DOWNLOAD ALL RELEVANT ###############################################
+@dataset_bp.route("/dataset/download_relevant_datasets", methods=["GET"])
+def download_all_relevant_datasets():
+    # Obtener todos los datasets
+    criteria = session.get('explore_criteria')
+    datasets = ExploreService().filter(**criteria)
+    
+    print(datasets)
+
+    # Validar si se recibieron datasets
+    if not datasets or not isinstance(datasets, list):
+        return jsonify({"error": "No datasets provided or invalid format"}), 400
+
+    # Crear una carpeta temporal para almacenar el archivo ZIP
+    temp_dir = tempfile.mkdtemp()
+    zip_path = os.path.join(temp_dir, "all_relevant_datasets.zip")
+
+    # Crear el archivo ZIP con los datasets
+    with ZipFile(zip_path, "w") as zipf:
+        for dataset in datasets:
+            file_path = f"uploads/user_{dataset.user_id}/dataset_{dataset.id}/"
+            if os.path.exists(file_path):
+                for subdir, dirs, files in os.walk(file_path):
+                    for file in files:
+                        full_path = os.path.join(subdir, file)
+                        relative_path = os.path.relpath(full_path, file_path)
+                        zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+
+    # Generar o recuperar la cookie de descarga
+    user_cookie = request.cookies.get("download_cookie")
+    if not user_cookie:
+        user_cookie = str(uuid.uuid4())  # Generar un UUID si no hay cookie de descarga
+
+    # Enviar el archivo ZIP como respuesta
+    resp = make_response(
+        send_from_directory(
+            temp_dir,
+            "all_relevant_datasets.zip",
+            as_attachment=True,
+            mimetype="application/zip",
+        )
+    )
+    resp.set_cookie("download_cookie", user_cookie)
+
+    # Registrar cada dataset descargado
+    for dataset in datasets:
+        existing_record = DSDownloadRecord.query.filter_by(
+            dataset_id=dataset.id,
+            download_cookie=user_cookie
+        ).first()
+
+        # Registrar solo si no existe un registro previo
+        if not existing_record:
+            DSDownloadRecordService().create(
+                user_id=None,  # Sin usuario autenticado
+                dataset_id=dataset.id,
+                download_date=datetime.now(timezone.utc),
+                download_cookie=user_cookie,
+            )
+
+    # Limpieza de la carpeta temporal
+    shutil.rmtree(temp_dir)
+
+    return resp
+
+
+
 
 @login_required
 @dataset_bp.route("/dataset/rate", methods=["POST"])
