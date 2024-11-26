@@ -283,7 +283,7 @@ def get_unsynchronized_dataset(dataset_id):
     return render_template("dataset/view_dataset.html", dataset=dataset)
 
 
-## DOWNLOAD ALL 
+## DOWNLOAD ALL
 @dataset_bp.route("/dataset/download_all", methods=["GET"])
 def download_all_datasets():
     # Obtener todos los datasets
@@ -326,7 +326,7 @@ def download_all_datasets():
 
         if not existing_record:
             DSDownloadRecordService().create(
-                user_id=None,  
+                user_id=None,
                 dataset_id=dataset.id,
                 download_date=datetime.now(timezone.utc),
                 download_cookie=user_cookie,

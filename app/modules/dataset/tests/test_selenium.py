@@ -134,7 +134,6 @@ from selenium.webdriver.support import expected_conditions as EC
 
 def test_downloadall():
     driver = initialize_driver()
-    
     try:
         host = get_host_for_selenium_testing()
 
