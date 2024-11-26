@@ -6,7 +6,6 @@ import shutil
 
 
 def transformation(filepath):
-    
     fm = UVLReader(filepath).transform()
     base_name = os.path.basename(filepath)
     base_name = base_name.replace(".uvl", "")
