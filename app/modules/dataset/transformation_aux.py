@@ -6,12 +6,10 @@ import shutil
 
 
 def transformation(filepath):
-    
     fm = UVLReader(filepath).transform()
     base_name = os.path.basename(filepath)
     base_name = base_name.replace(".uvl", "")
     static_path = os.path.dirname(filepath)
-    
     # Transformation to json
     json = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
     GlencoeWriter(json.name, fm).transform()
