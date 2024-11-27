@@ -14,16 +14,14 @@ def transformation(filepath):
     json = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
     GlencoeWriter(json.name, fm).transform()
     file_path_json = os.path.join(static_path,  "type_json")
-    if not os.path.exists(file_path_json):
-        os.makedirs(file_path_json) 
+    os.makedirs(file_path_json, exist_ok=True)
     json_file_name = base_name + ".json"
     shutil.copy(json.name, os.path.join(file_path_json, json_file_name))
     # Transformation to splx
     splx = tempfile.NamedTemporaryFile(suffix='.splx', delete=False)
     SPLOTWriter(splx.name, fm).transform()
     file_path__splx = os.path.join(static_path,  "type_splx")
-    if not os.path.exists(file_path__splx):
-        os.makedirs(file_path__splx)  
+    os.makedirs(file_path__splx, exist_ok=True)
     splx_file_name = base_name + ".splx"
     shutil.copy(splx.name, os.path.join(file_path__splx, splx_file_name))
     # Transformation to cnf
@@ -31,8 +29,7 @@ def transformation(filepath):
     sat = FmToPysat(fm).transform()
     DimacsWriter(cnf.name, sat).transform()
     file_path_cnf = os.path.join(static_path,  "type_cnf")
-    if not os.path.exists(file_path_cnf):
-        os.makedirs(file_path_cnf)
+    os.makedirs(file_path_cnf, exist_ok=True)
     cnf_file_name = base_name + ".cnf"
     shutil.copy(cnf.name, os.path.join(file_path_cnf, cnf_file_name))
     for temp_file in [json.name, splx.name, cnf.name]:
