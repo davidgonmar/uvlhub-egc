@@ -266,7 +266,6 @@
                                 h4Element.textContent = response.filename;
                                 listItem.appendChild(h4Element);
 
-                                
                                 let transformationText = document.createElement('span');
                                 transformationText.innerHTML = "<b>Transformed to:</b>"; 
                                 listItem.appendChild(transformationText);
@@ -293,6 +292,8 @@
                                     FORM BUTTON
                                     ##########################################
                                 */
+
+
                                 let formButton = document.createElement('button');
                                 formButton.innerHTML = 'Show info';
                                 formButton.classList.add('info-button', 'btn', 'btn-outline-secondary', "btn-sm");
@@ -356,8 +357,18 @@
                                     APPEND BUTTONS
                                     ##########################################
                                 */
-                                listItem.appendChild(formButton);
-                                listItem.appendChild(removeButton);
+    
+                                let buttonContainer = document.createElement('div');
+                                buttonContainer.style.marginTop = "20px"; 
+                                buttonContainer.style.display = "flex";
+                                buttonContainer.style.justifyContent = "space-between";
+                                removeButton.style.margin = "0"; 
+                                formButton.style.margin = "0"; 
+
+
+                                buttonContainer.appendChild(formButton);
+                                buttonContainer.appendChild(removeButton);
+                                listItem.appendChild(buttonContainer);
 
                                 /*
                                     ##########################################
