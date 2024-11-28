@@ -2,7 +2,6 @@
 
 <h1 class="h2 mb-3"><b>Explore</b></h1>
 
-
 <div class="row">
 
     <h3 class="h3 mb-3 col-lg-7" style="display: flex; flex-wrap: wrap; justify-content: space-between;">
@@ -13,8 +12,7 @@
         </button>
     </h3>
 
-    <div class="col-lg-7 scrollable-column">
-
+    <div class="col-lg-7">
 
         <div class="row">
 
@@ -26,11 +24,6 @@
                     We have not found any datasets that meet your search criteria. <br>How about trying some others?
                 </p>
             </div>
-
-            <div id="results_not_found" style="text-align: center;">
-
-            </div>
-
 
         </div>
     </div>
@@ -48,64 +41,122 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label class="form-label" for="query">
-                                Search for datasets by title, description, authors, tags, UVL files...
-                            </label>
+                                    Search for datasets by title, description, authors, tags, UVL files...
+                                </label>
                             <input class="form-control" id="query" name="query" required="" type="text" value="" autofocus>
                         </div>
                     </div>
 
                     <div class="col-lg-6">
                         <div class="mb-3">
-                            <label class="form-label" for="publication_type">Filter by publication
-                                type</label>
+                            <label class="form-label" for="publication_type">Filter by publication type</label>
                             <select class="form-control" id="publication_type" name="publication_type" required="">
-                                <option value="any">Any</option>
-                                <option value="none">None</option>
-                                <option value="annotationcollection">Annotation Collection</option>
-                                <option value="book">Book</option>
-                                <option value="section">Book Section</option>
-                                <option value="conferencepaper">Conference Paper</option>
-                                <option value="datamanagementplan">Data Management Plan</option>
-                                <option value="article">Journal Article</option>
-                                <option value="patent">Patent</option>
-                                <option value="preprint">Preprint</option>
-                                <option value="deliverable">Project Deliverable</option>
-                                <option value="milestone">Project Milestone</option>
-                                <option value="proposal">Proposal</option>
-                                <option value="report">Report</option>
-                                <option value="softwaredocumentation">Software Documentation</option>
-                                <option value="taxonomictreatment">Taxonomic Treatment</option>
-                                <option value="technicalnote">Technical Note</option>
-                                <option value="thesis">Thesis</option>
-                                <option value="workingpaper">Working Paper</option>
-                                <option value="other">Other</option>
-                            </select>
+                                    <option value="any">Any</option>
+                                    <option value="none">None</option>
+                                    <option value="annotationcollection">Annotation Collection</option>
+                                    <option value="book">Book</option>
+                                    <option value="section">Book Section</option>
+                                    <option value="conferencepaper">Conference Paper</option>
+                                    <option value="datamanagementplan">Data Management Plan</option>
+                                    <option value="article">Journal Article</option>
+                                    <option value="patent">Patent</option>
+                                    <option value="preprint">Preprint</option>
+                                    <option value="deliverable">Project Deliverable</option>
+                                    <option value="milestone">Project Milestone</option>
+                                    <option value="proposal">Proposal</option>
+                                    <option value="report">Report</option>
+                                    <option value="softwaredocumentation">Software Documentation</option>
+                                    <option value="taxonomictreatment">Taxonomic Treatment</option>
+                                    <option value="technicalnote">Technical Note</option>
+                                    <option value="thesis">Thesis</option>
+                                    <option value="workingpaper">Working Paper</option>
+                                    <option value="other">Other</option>
+                                </select>
                         </div>
-
                     </div>
 
                 </div>
 
                 <div class="row">
-
-                    <div class="col-6">
-
-                        <div>
-                            Sort results by creation date
-                            <label class="form-check">
-                                <input class="form-check-input" type="radio" value="newest" name="sorting" checked="">
-                                <span class="form-check-label">
-                                    Newest first
-                                </span>
-                            </label>
-                            <label class="form-check">
-                                <input class="form-check-input" type="radio" value="oldest" name="sorting">
-                                <span class="form-check-label">
-                                    Oldest first
-                                </span>
-                            </label>
+                    <!-- Ajuste de las fechas -->
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label class="form-label" for="start_date">Created from:</label>
+                            <input class="form-control" type="date" name="start_date" id="start_date" required="">
                         </div>
+                    </div>
 
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label class="form-label" for="end_date">To:</label>
+                            <input class="form-control" type="date" name="end_date" id="end_date" required="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Ajuste de los modelos UVL -->
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+
+                            <label class="form-label" for="min_uvl">Minimum UVL models:</label>
+                            <input class="form-control" type="number" name="min_uvl" id="min_uvl" min="0" required="">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label class="form-label" for="max_uvl">Maximum UVL models:</label>
+                            <input class="form-control" type="number" name="max_uvl" id="max_uvl" min="0" required="">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label" for="min_size">Minimum size:</label>
+                        <input class="form-control" type="number" name="min_size" id="min_size" min="0" placeholder="0">
+                    </div>
+
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label" for="max_size">Maximum size:</label>
+                        <input class="form-control" type="number" name="max_size" id="max_size" min="0" placeholder="0">
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-3">
+                            <label class="form-label" for="size_unit">Choose file size unit:</label>
+                            <select class="form-control" id="size_unit" name="size_unit">
+                                    <option value="bytes">Bytes</option>
+                                    <option value="KB">KB</option>
+                                    <option value="MB">MB</option>
+                                    <option value="GB">GB</option>
+                                </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div>
+                            <p style="margin-bottom: 0.2rem;">Sort results by creation date</p>
+                            <label class="form-check">
+                                    <input class="form-check-input" type="radio" value="newest" name="sorting" checked="" >
+                                    <span class="form-check-label">
+                                      Newest first
+                                    </span>
+                                </label>
+                            <label class="form-check">
+                                    <input class="form-check-input" type="radio" value="oldest" name="sorting">
+                                    <span class="form-check-label">
+                                      Oldest first
+                                    </span>
+                                </label>
+                        </div>
                     </div>
 
                 </div>
@@ -113,42 +164,32 @@
                 <div class="row">
 
                     <div class="col-12">
-
                         <div class="mt-3">
-
-                            <div id="authors">
-
-                            </div>
-
+                            <div id="authors"></div>
                             <button id="clear-filters" class="btn btn-outline-primary">
-                                <i data-feather="x-circle" style="vertical-align: middle; margin-top: -2px"></i>
-                                Clear filters
-                            </button>
+                                    <i data-feather="x-circle" style="vertical-align: middle; margin-top: -2px"></i>
+                                    Clear filters
+                                </button>
                         </div>
 
+                        <!-- Search button -->
                         <div class="mb-3 mt-4" style="margin-top: 20px;">
-                            <!-- Search button -->
                             <button type="button" class="btn btn-primary" id="search-button">
-                                Search
-                            </button>
+                                    Search
+                                </button>
                         </div>
 
                     </div>
+
                 </div>
 
             </div>
 
         </div>
 
-        <div class="row">
-
-        </div>
-
     </div>
 
-
 </div>
-
 
 {% endblock %} {% block scripts %}
 <script src="{{ url_for('explore.scripts') }}"></script>

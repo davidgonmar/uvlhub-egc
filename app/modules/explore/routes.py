@@ -18,4 +18,3 @@ def index():
         session['explore_criteria'] = criteria
         datasets = ExploreService().filter(**criteria)
         return jsonify([dataset.to_dict() for dataset in datasets])
-
