@@ -6,11 +6,42 @@
 
     <h3 class="h3 mb-3 col-lg-7" style="display: flex; flex-wrap: wrap; justify-content: space-between;">
         <span id="results_number"></span>
-        <button type="button" class="btn btn-primary" id="download-relevant-datasets">
-            <i data-feather="download" style="vertical-align: middle; margin-top: -2px"></i>
-            Download Relevant Datasets
-        </button>
+        <div class="btn-group" role="group">
+            <button id="btnGroupDropExport3" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true" style="border-radius: 5px;">
+                <i data-feather="download"></i> Download relevant datasets
+            </button>
+            <ul class="dropdown-menu" id="dropdown-menu" style="padding: 10px; width: 120%; border: 2px solid #00000012; border-radius: 5px;">
+                <li>
+                    <button type="button" class="dropdown-item toggle-button" data-target="checkbox_uvl" style="display: flex; align-items: center; padding: 5px 10px; border-radius: 8px; color: #333; font-size: 14px;">
+                        <input type="checkbox" id="checkbox_uvl" style="margin-right: 8px; pointer-events: none; accent-color: #147abb;" /> UVL
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="dropdown-item toggle-button" data-target="checkbox_glencoe" style="display: flex; align-items: center; padding: 5px 10px; border-radius: 8px; color: #333; font-size: 14px;">
+                        <input type="checkbox" id="checkbox_glencoe" style="margin-right: 8px; pointer-events: none; accent-color: #147abb;" /> Glencoe
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="dropdown-item toggle-button" data-target="checkbox_dimacs" style="display: flex; align-items: center; padding: 5px 10px; border-radius: 8px; color: #333; font-size: 14px;">
+                        <input type="checkbox" id="checkbox_dimacs" style="margin-right: 8px; pointer-events: none; accent-color: #147abb;" /> DIMACS
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="dropdown-item toggle-button" data-target="checkbox_splot" style="display: flex; align-items: center; padding: 5px 10px; border-radius: 8px; color: #333; font-size: 14px;">
+                        <input type="checkbox" id="checkbox_splot" style="margin-right: 8px; pointer-events: none; accent-color: #147abb;" /> SPLOT
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn btn-primary" id="download-relevant-datasets" style="width: 100%; margin-top: 1rem; background-color:#147abb;border-radius: 5px; ">
+                        <i data-feather="download" style="vertical-align: middle; margin-top: -2px;"></i>
+                        Download
+                    </button>
+                </li>
+            </ul>
+        </div>
     </h3>
+
+
 
     <div class="col-lg-7">
 
