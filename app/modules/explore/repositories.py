@@ -44,14 +44,14 @@ class ExploreRepository(BaseRepository):
             self.model.query
             .join(DataSet.ds_meta_data)
             .join(DSMetaData.authors)
-            .join(DataSet.feature_models)
-            .join(FeatureModel.fm_meta_data)
-            .join(FeatureModel.files)
-            .join(hubfile_alias, hubfile_alias.feature_model_id == FeatureModel.id)  # Alias para archivos
+            .outerjoin(DataSet.feature_models)  # Unión externa con FeatureModel
+            .outerjoin(FeatureModel.fm_meta_data)  # Unión externa con FMMetaData
+            .outerjoin(FeatureModel.files)  # Unión externa con archivos
+            .outerjoin(hubfile_alias, hubfile_alias.feature_model_id == FeatureModel.id)  # Unión externa con Hubfile
             .group_by(DataSet.id)
             .filter(or_(*filters))
             .filter(DSMetaData.dataset_doi.isnot(None))  # Excluir datasets sin DOI
-        )
+            )
 
         # Filtrado por tipo de publicación
         if publication_type != "any":
