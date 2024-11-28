@@ -49,3 +49,9 @@ def delete_transformation(filepath):
     json_file_name = base_name + ".json"
     file_path_json = os.path.join(folder_path_json, json_file_name)
     os.remove(file_path_json)
+    
+    #Delete splx file
+    folder_path_splx = os.path.join(static_path,  "type_splx")
+    splx_file_name = base_name + ".splx"
+    file_path_splx = os.path.join(folder_path_splx, splx_file_name)
+    os.remove(file_path_splx)
