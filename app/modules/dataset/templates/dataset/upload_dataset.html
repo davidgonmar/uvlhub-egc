@@ -266,6 +266,25 @@
                                 h4Element.textContent = response.filename;
                                 listItem.appendChild(h4Element);
 
+                                
+                                let transformationText = document.createElement('span');
+                                transformationText.innerHTML = "<b>Transformed to:</b>"; 
+                                listItem.appendChild(transformationText);
+
+                                let formats = ["Glencoe", "DIMACS", "SPLOT"];
+
+                                formats.forEach(format => {
+                                let formatContainer = document.createElement('span');
+                                formatContainer.textContent = format;
+                                formatContainer.style.border = '1px solid #3A7CA5';
+                                formatContainer.style.borderRadius = '5px';
+                                formatContainer.style.padding = '2px 5px';
+                                formatContainer.style.marginLeft = '5px';
+                                formatContainer.style.display = 'inline-block';
+                                formatContainer.style.color = '#3A7CA5';
+                                listItem.appendChild(formatContainer);
+                                });
+
                                 // generate incremental id for form
                                 let formUniqueId = generateIncrementalId();
 
