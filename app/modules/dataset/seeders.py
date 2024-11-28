@@ -127,7 +127,7 @@ class DataSetSeeder(BaseSeeder):
 
             for file_number in range(num_files):
                 if current_file_index >= len(seeded_feature_models):
-                    raise ValueError("Ran out of feature models to assign files.")
+                    raise ValueError("Ran out of feature models to assign files." + file_number)
                 file_name = f'file{current_file_index + 1}.uvl'
                 feature_model = seeded_feature_models[current_file_index]
                 feature_model.data_set_id = dataset.id
