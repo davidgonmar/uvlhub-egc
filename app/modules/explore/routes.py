@@ -14,7 +14,7 @@ def index():
 
     if request.method == 'POST':
         criteria = request.get_json()
-          #Mete los datos en una sesión para recuperarlos en la función de download relevant
+        #Mete los datos en una sesión para recuperarlos en la función de download relevant
         session['explore_criteria'] = criteria
         datasets = ExploreService().filter(**criteria)
         return jsonify([dataset.to_dict() for dataset in datasets])

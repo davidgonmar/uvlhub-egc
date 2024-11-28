@@ -390,7 +390,7 @@ def download_all_relevant_datasets():
                             zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
 
                 # Check specific subfolders for other types
-                for subdir, dirs, files in os.walk(dataset_path):
+                for subdir, files in os.walk(dataset_path):
                     relative_subdir = os.path.relpath(subdir, dataset_path)
                     if any(folder in relative_subdir for folder in allowed_folders):
                         for file in files:
