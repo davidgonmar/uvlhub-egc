@@ -203,7 +203,7 @@ Entre las excepciones, se incluye la rama "main", que funcionará como la rama p
 
 ### Frecuencia de commits y merge:
 
-Con el propósito de facilitar la integración continua, el equipo ha acordado realizar un mínimo de un commit cada tres días naturales, excluyendo el sábado y el domingo. El _commit_ ha de incluir todo los cambios listos para producción. Si ningún cambio está listo para ser integrado y desplegado, se permite realizar un commit vacío. Los cambios listos para producción se integrarán a la rama "main" con la misma frecuencia.
+Con el propósito de facilitar la integración continua, el equipo ha acordado realizar un mínimo de un commit cada tres días naturales, excluyendo el sábado y el domingo. El _commit_ ha de incluir todos los cambios listos para producción. Si ningún cambio está listo para ser integrado y desplegado, se permite realizar un commit vacío. Los cambios listos para producción se integrarán a la rama "main" con la misma frecuencia.
 
 ### Cierre de tareas:
 
