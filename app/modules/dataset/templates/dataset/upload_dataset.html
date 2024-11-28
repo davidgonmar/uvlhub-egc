@@ -266,11 +266,18 @@
                                 h4Element.textContent = response.filename;
                                 listItem.appendChild(h4Element);
 
+
                                 let transformationText = document.createElement('span');
                                 transformationText.innerHTML = "<b>Transformed to:</b>"; 
                                 listItem.appendChild(transformationText);
 
                                 let formats = ["Glencoe", "DIMACS", "SPLOT"];
+
+                                let formatContainer = document.createElement('div');
+                                formatContainer.style.display = 'flex';
+                                formatContainer.style.flexWrap = 'wrap'; 
+                                formatContainer.style.marginTop = '10px';
+                                listItem.appendChild(formatContainer);
 
                                 formats.forEach(format => {
                                 let formatContainer = document.createElement('span');
