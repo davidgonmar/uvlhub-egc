@@ -6,6 +6,7 @@ import tempfile
 import uuid
 from datetime import datetime, timezone
 from zipfile import ZipFile
+from app.modules.dataset.transformation_aux import transformation
 
 from flask import (
     redirect,
@@ -151,6 +152,7 @@ def upload():
 
     try:
         file.save(file_path)
+        transformation(file_path)
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
