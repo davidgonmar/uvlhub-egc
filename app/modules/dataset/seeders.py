@@ -16,6 +16,7 @@ from app.modules.dataset.models import (
     DSMetrics,
     Author
 )
+import secrets
 
 class DataSetSeeder(BaseSeeder):
     priority = 2
@@ -38,9 +39,9 @@ class DataSetSeeder(BaseSeeder):
         def random_date_within_last_three_years():
             today = datetime.now(timezone.utc)
             three_years_ago = today - timedelta(days=3 * 365)
-            return three_years_ago + timedelta(days=random.randint(0, (today - three_years_ago).days))
-        
-                
+            random_days = secrets.randbelow((today - three_years_ago).days + 1)
+            return three_years_ago + timedelta(days=random_days)
+
         # Load dataset information from JSON file
         datasets_file = os.path.join(os.path.dirname(__file__), 'datasets.json')
         with open(datasets_file, 'r') as f:
@@ -56,8 +57,7 @@ class DataSetSeeder(BaseSeeder):
                 publication_doi=f'10.1234/dataset{i+1}',
                 dataset_doi=f'10.1234/dataset{i+1}',
                 tags=", ".join(dataset_info[i]["tags"]),
-                ds_metrics_id=seeded_ds_metrics.id ) for i in range(len(custom_titles))
-        ]    
+                ds_metrics_id=seeded_ds_metrics.id ) for i in range(len(custom_titles))]    
         seeded_ds_meta_data = self.seed(ds_meta_data_list)
 
         authors = [
@@ -118,36 +118,36 @@ class DataSetSeeder(BaseSeeder):
         file_distribution = [2, 2, 3, 5, 1, 2, 2, 4, 1, 2]
         current_file_index = 0
         for dataset_index, dataset in enumerate(seeded_datasets):
-                user_id = dataset.user_id
-                dest_folder = os.path.join(working_dir, 'uploads', f'user_{user_id}', f'dataset_{dataset.id}')
-                os.makedirs(dest_folder, exist_ok=True)
+            user_id = dataset.user_id
+            dest_folder = os.path.join(working_dir, 'uploads', f'user_{user_id}', f'dataset_{dataset.id}')
+            os.makedirs(dest_folder, exist_ok=True)
 
-                num_files = file_distribution[dataset_index] if dataset_index < len(file_distribution) else 0
+            num_files = file_distribution[dataset_index] if dataset_index < len(file_distribution) else 0
 
-                for file_number in range(num_files):
-                    if current_file_index >= len(seeded_feature_models):
-                        raise ValueError("Ran out of feature models to assign files.")
-                    print(file_number)    
-                    file_name = f'file{current_file_index + 1}.uvl'
-                    feature_model = seeded_feature_models[current_file_index]
-                    feature_model.data_set_id = dataset.id
-                    self.seed([feature_model])
+            for file_number in range(num_files):
+                if current_file_index >= len(seeded_feature_models):
+                    raise ValueError("Ran out of feature models to assign files.")
+                file_number  
+                file_name = f'file{current_file_index + 1}.uvl'
+                feature_model = seeded_feature_models[current_file_index]
+                feature_model.data_set_id = dataset.id
+                self.seed([feature_model])
 
-                    src_file_path = os.path.join(src_folder, file_name)
-                    dest_file_path = os.path.join(dest_folder, file_name)
+                src_file_path = os.path.join(src_folder, file_name)
+                dest_file_path = os.path.join(dest_folder, file_name)
 
-                    if os.path.exists(src_file_path):
-                        shutil.copy(src_file_path, dest_file_path)
-                    else:
-                        with open(dest_file_path, 'w') as placeholder_file:
-                            placeholder_file.write(f"Placeholder content for {file_name}")
+                if os.path.exists(src_file_path):
+                    shutil.copy(src_file_path, dest_file_path)
+                else:
+                    with open(dest_file_path, 'w') as placeholder_file:
+                        placeholder_file.write(f"Placeholder content for {file_name}")
 
-                    uvl_file = Hubfile(
-                        name=file_name,
-                        checksum=f'checksum{current_file_index + 1}',
-                        size=os.path.getsize(dest_file_path),
-                        feature_model_id=feature_model.id
-                    )
-                    transformation(dest_file_path)
-                    self.seed([uvl_file])
-                    current_file_index += 1
+                uvl_file = Hubfile(
+                    name=file_name,
+                    checksum=f'checksum{current_file_index + 1}',
+                    size=os.path.getsize(dest_file_path),
+                    feature_model_id=feature_model.id
+                )
+                transformation(dest_file_path)
+                self.seed([uvl_file])
+                current_file_index += 1
