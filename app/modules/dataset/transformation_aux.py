@@ -37,3 +37,24 @@ def transformation(filepath):
             os.remove(temp_file)
         except FileNotFoundError:
             pass
+
+
+def delete_transformation(filepath):
+    base_name = os.path.basename(filepath)
+    base_name = base_name.replace(".uvl", "")
+    static_path = os.path.dirname(filepath)
+    # Delete json file
+    folder_path_json = os.path.join(static_path,  "type_json")
+    json_file_name = base_name + ".json"
+    file_path_json = os.path.join(folder_path_json, json_file_name)
+    os.remove(file_path_json)
+    # Delete splx file
+    folder_path_splx = os.path.join(static_path,  "type_splx")
+    splx_file_name = base_name + ".splx"
+    file_path_splx = os.path.join(folder_path_splx, splx_file_name)
+    os.remove(file_path_splx)
+    # Delete cnf file
+    folder_path_cnf = os.path.join(static_path,  "type_cnf")
+    cnf_file_name = base_name + ".cnf"
+    file_path_cnf = os.path.join(folder_path_cnf, cnf_file_name)
+    os.remove(file_path_cnf)
