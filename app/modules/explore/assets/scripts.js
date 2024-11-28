@@ -246,16 +246,13 @@ function formatDate(dateString) {
     return date.toLocaleDateString(undefined, options);
 }
 
-const params = new URLSearchParams();
-params.append("uvl", "true");
-params.append("cnf", "false");
-params.append("json", "true");
-params.append("splx", "false");
 
-function download_relevant_dataset() {
+function download_relevant_dataset(selectedOptions) {
     console.log('Downloading relevant datasets...');
+    
 
-    fetch(`/dataset/download_relevant_datasets?uvl=true&cnf=false&json=false&splx=false`, {
+
+    fetch(`/dataset/download_relevant_datasets?uvl=${selectedOptions.UVL}&cnf=${selectedOptions.DIMACS}&json=${selectedOptions.Glencoe}&splx=${selectedOptions.SPLOT}`, {
         method: 'GET',
     })
     .then(response => {
@@ -279,8 +276,49 @@ function download_relevant_dataset() {
 
 
 
-    // Add event listener to the download relevant datasets button
-    const downloadButton = document.getElementById('download-relevant-datasets');
-    if (downloadButton) {
-        downloadButton.addEventListener('click', download_relevant_dataset);
-    }
+    // // Add event listener to the download relevant datasets button
+    // const downloadButton = document.getElementById('download-relevant-datasets');
+    // if (downloadButton) {
+    //     downloadButton.addEventListener('click', download_relevant_dataset);
+    // }
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleButtons = document.querySelectorAll('.toggle-button');
+    
+        // Prevent dropdown menu from closing on button click
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent default dropdown close behavior
+                const checkboxId = button.getAttribute('data-target');
+                const checkbox = document.getElementById(checkboxId);
+    
+                if (checkbox) {
+                    // Toggle the checkbox state
+                    checkbox.checked = !checkbox.checked;
+                    console.log(`${checkboxId} is now ${checkbox.checked ? 'checked' : 'unchecked'}`);
+                }
+            });
+        });
+    
+        // Ensure the "Download" button also doesn't close the dropdown
+        const downloadButton = document.getElementById('download-relevant-datasets');
+        if (downloadButton) {
+            downloadButton.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent dropdown from closing
+                // Handle the download action
+                const selectedOptions = {
+                    UVL: document.getElementById('checkbox_uvl')?.checked || false,
+                    Glencoe: document.getElementById('checkbox_glencoe')?.checked || false,
+                    DIMACS: document.getElementById('checkbox_dimacs')?.checked || false,
+                    SPLOT: document.getElementById('checkbox_splot')?.checked || false,
+                };
+                console.log('Selected options:', selectedOptions);
+        // Check if at least one option is selected
+        if (Object.values(selectedOptions).includes(true)) {
+            console.log('Downloading:', selectedOptions);
+            download_relevant_dataset(selectedOptions);
+        } else {
+            alert('No options selected!');
+        }
+            });
+        }
+    });
