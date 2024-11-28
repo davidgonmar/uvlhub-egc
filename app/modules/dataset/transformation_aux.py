@@ -37,3 +37,15 @@ def transformation(filepath):
             os.remove(temp_file)
         except FileNotFoundError:
             pass
+
+
+def delete_transformation(filepath):
+    base_name = os.path.basename(filepath)
+    base_name = base_name.replace(".uvl", "")
+    static_path = os.path.dirname(filepath)
+
+    #Delete json file
+    folder_path_json = os.path.join(static_path,  "type_json")
+    json_file_name = base_name + ".json"
+    file_path_json = os.path.join(folder_path_json, json_file_name)
+    os.remove(file_path_json)

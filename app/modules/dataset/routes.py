@@ -6,7 +6,7 @@ import tempfile
 import uuid
 from datetime import datetime, timezone
 from zipfile import ZipFile
-from app.modules.dataset.transformation_aux import transformation
+from app.modules.dataset.transformation_aux import transformation, delete_transformation
 
 from flask import (
     redirect,
@@ -173,9 +173,9 @@ def delete():
     filename = data.get("file")
     temp_folder = current_user.temp_folder()
     filepath = os.path.join(temp_folder, filename)
-
     if os.path.exists(filepath):
         os.remove(filepath)
+        delete_transformation(filepath)
         return jsonify({"message": "File deleted successfully"})
 
     return jsonify({"error": "Error: File not found"})
