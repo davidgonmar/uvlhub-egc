@@ -2,7 +2,6 @@ import json
 import os
 import shutil
 from datetime import datetime, timedelta, timezone
-import random
 from dotenv import load_dotenv
 from app.modules.auth.models import User
 from app.modules.dataset.transformation_aux import transformation
@@ -17,6 +16,7 @@ from app.modules.dataset.models import (
     Author
 )
 import secrets
+
 
 class DataSetSeeder(BaseSeeder):
     priority = 2
@@ -57,7 +57,8 @@ class DataSetSeeder(BaseSeeder):
                 publication_doi=f'10.1234/dataset{i+1}',
                 dataset_doi=f'10.1234/dataset{i+1}',
                 tags=", ".join(dataset_info[i]["tags"]),
-                ds_metrics_id=seeded_ds_metrics.id ) for i in range(len(custom_titles))]    
+                ds_metrics_id=seeded_ds_metrics.id) for i in range(len(custom_titles))
+            ]
         seeded_ds_meta_data = self.seed(ds_meta_data_list)
 
         authors = [
@@ -127,7 +128,6 @@ class DataSetSeeder(BaseSeeder):
             for file_number in range(num_files):
                 if current_file_index >= len(seeded_feature_models):
                     raise ValueError("Ran out of feature models to assign files.")
-                file_number  
                 file_name = f'file{current_file_index + 1}.uvl'
                 feature_model = seeded_feature_models[current_file_index]
                 feature_model.data_set_id = dataset.id
