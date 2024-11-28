@@ -56,7 +56,7 @@ def delete_transformation(filepath):
     file_path_splx = os.path.join(folder_path_splx, splx_file_name)
     os.remove(file_path_splx)
     
-    #Delete cnf
+    #Delete cnf file
     folder_path_cnf = os.path.join(static_path,  "type_cnf")
     cnf_file_name = base_name + ".cnf"
     file_path_cnf = os.path.join(folder_path_cnf, cnf_file_name)
