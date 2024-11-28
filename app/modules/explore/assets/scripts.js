@@ -245,3 +245,42 @@ function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, options);
 }
+
+const params = new URLSearchParams();
+params.append("uvl", "true");
+params.append("cnf", "false");
+params.append("json", "true");
+params.append("splx", "false");
+
+function download_relevant_dataset() {
+    console.log('Downloading relevant datasets...');
+
+    fetch(`/dataset/download_relevant_datasets?uvl=true&cnf=false&json=false&splx=false`, {
+        method: 'GET',
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to download relevant datasets');
+        return response.blob();
+    })
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'relevant_datasets.zip';
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+        console.error('Error downloading datasets:', error);
+        alert('An error occurred while downloading the datasets. Please try again.');
+    });
+}
+
+
+
+
+    // Add event listener to the download relevant datasets button
+    const downloadButton = document.getElementById('download-relevant-datasets');
+    if (downloadButton) {
+        downloadButton.addEventListener('click', download_relevant_dataset);
+    }

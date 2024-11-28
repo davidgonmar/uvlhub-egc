@@ -343,41 +343,66 @@ def download_all_datasets():
 
     return resp
 
-
-########## DOWNLOAD ALL RELEVANT ###############################################
 @dataset_bp.route("/dataset/download_relevant_datasets", methods=["GET"])
 def download_all_relevant_datasets():
-    # Obtener todos los datasets
     criteria = session.get('explore_criteria')
     datasets = ExploreService().filter(**criteria)
-    
-    print(datasets)
 
-    # Validar si se recibieron datasets
     if not datasets or not isinstance(datasets, list):
         return jsonify({"error": "No datasets provided or invalid format"}), 400
 
-    # Crear una carpeta temporal para almacenar el archivo ZIP
+    include_uvl = request.args.get("uvl", "false").lower() == "true"
+    include_cnf = request.args.get("cnf", "false").lower() == "true"
+    include_json = request.args.get("json", "false").lower() == "true"
+    include_splx = request.args.get("splx", "false").lower() == "true"
+
+    allowed_folders = []
+    allowed_extensions = []
+
+    if include_uvl:
+        allowed_extensions.append("uvl")
+    if include_cnf:
+        allowed_folders.append("type_cnf")
+        allowed_extensions.append("cnf")
+    if include_json:
+        allowed_folders.append("type_json")
+        allowed_extensions.append("json")
+    if include_splx:
+        allowed_folders.append("type_splx")
+        allowed_extensions.append("splx")
+
+    if not allowed_extensions:
+        return jsonify({"error": "No valid file types specified."}), 400
+
     temp_dir = tempfile.mkdtemp()
     zip_path = os.path.join(temp_dir, "all_relevant_datasets.zip")
 
-    # Crear el archivo ZIP con los datasets
     with ZipFile(zip_path, "w") as zipf:
         for dataset in datasets:
-            file_path = f"uploads/user_{dataset.user_id}/dataset_{dataset.id}/"
-            if os.path.exists(file_path):
-                for subdir, dirs, files in os.walk(file_path):
-                    for file in files:
-                        full_path = os.path.join(subdir, file)
-                        relative_path = os.path.relpath(full_path, file_path)
-                        zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+            dataset_path = f"uploads/user_{dataset.user_id}/dataset_{dataset.id}/"
+            if os.path.exists(dataset_path):
+                # Check files in the root of the dataset folder for uvl files
+                if include_uvl:
+                    for file in os.listdir(dataset_path):
+                        if file.lower().endswith(".uvl"):
+                            full_path = os.path.join(dataset_path, file)
+                            relative_path = os.path.relpath(full_path, dataset_path)
+                            zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
 
-    # Generar o recuperar la cookie de descarga
+                # Check specific subfolders for other types
+                for subdir, dirs, files in os.walk(dataset_path):
+                    relative_subdir = os.path.relpath(subdir, dataset_path)
+                    if any(folder in relative_subdir for folder in allowed_folders):
+                        for file in files:
+                            if any(file.lower().endswith(f".{ext}") for ext in allowed_extensions):
+                                full_path = os.path.join(subdir, file)
+                                relative_path = os.path.relpath(full_path, dataset_path)
+                                zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+
     user_cookie = request.cookies.get("download_cookie")
     if not user_cookie:
-        user_cookie = str(uuid.uuid4())  # Generar un UUID si no hay cookie de descarga
+        user_cookie = str(uuid.uuid4())
 
-    # Enviar el archivo ZIP como respuesta
     resp = make_response(
         send_from_directory(
             temp_dir,
@@ -388,23 +413,20 @@ def download_all_relevant_datasets():
     )
     resp.set_cookie("download_cookie", user_cookie)
 
-    # Registrar cada dataset descargado
     for dataset in datasets:
         existing_record = DSDownloadRecord.query.filter_by(
             dataset_id=dataset.id,
             download_cookie=user_cookie
         ).first()
 
-        # Registrar solo si no existe un registro previo
         if not existing_record:
             DSDownloadRecordService().create(
-                user_id=None,  # Sin usuario autenticado
+                user_id=None,
                 dataset_id=dataset.id,
                 download_date=datetime.now(timezone.utc),
                 download_cookie=user_cookie,
             )
 
-    # Limpieza de la carpeta temporal
     shutil.rmtree(temp_dir)
 
     return resp
