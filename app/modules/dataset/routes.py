@@ -285,7 +285,7 @@ def get_unsynchronized_dataset(dataset_id):
     return render_template("dataset/view_dataset.html", dataset=dataset)
 
 
-########## DOWNLOAD ALL ###############################################
+## DOWNLOAD ALL
 @dataset_bp.route("/dataset/download_all", methods=["GET"])
 def download_all_datasets():
     # Obtener todos los datasets
@@ -306,12 +306,10 @@ def download_all_datasets():
                         relative_path = os.path.relpath(full_path, file_path)
                         zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
 
-    # Generar o recuperar la cookie de descarga
     user_cookie = request.cookies.get("download_cookie")
     if not user_cookie:
-        user_cookie = str(uuid.uuid4())  # Generar un UUID si no hay cookie de descarga
+        user_cookie = str(uuid.uuid4())
 
-    # Enviar el archivo ZIP como respuesta
     resp = make_response(
         send_from_directory(
             temp_dir,
@@ -322,23 +320,20 @@ def download_all_datasets():
     )
     resp.set_cookie("download_cookie", user_cookie)
 
-    # Registrar cada dataset descargado
     for dataset in datasets:
         existing_record = DSDownloadRecord.query.filter_by(
             dataset_id=dataset.id,
             download_cookie=user_cookie
         ).first()
 
-        # Registrar solo si no existe un registro previo
         if not existing_record:
             DSDownloadRecordService().create(
-                user_id=None,  # Sin usuario autenticado
+                user_id=None,
                 dataset_id=dataset.id,
                 download_date=datetime.now(timezone.utc),
                 download_cookie=user_cookie,
             )
 
-    # Limpieza de la carpeta temporal
     shutil.rmtree(temp_dir)
 
     return resp
