@@ -2,6 +2,8 @@ import pytest
 from unittest.mock import patch, MagicMock
 
 from app.modules.dataset.services import DataSetService
+from app.modules.fakenodo.services import FakenodoService  # Assuming FakenodoService exists for deposition-related tests
+from app.modules.fakenodo.models import Fakenodo 
 
 
 @pytest.fixture(scope="module")
@@ -84,3 +86,28 @@ def test_download_all_returns_zip(test_client):
 
     assert response.data is not None
     assert response.content_type == 'application/zip'
+
+def test_create_deposition(test_client):
+    response = test_client.post('/fakenodo/api', json={'title': 'Test Deposition'})
+    assert response.status_code == 201
+    assert response.json == {"status": "success", "message": "Fakenodo deposition created"}
+
+
+# Test for retrieving a deposition by ID
+def test_get_deposition(test_client):
+    response = test_client.get('/fakenodo/api/1')  # Assuming the ID is 1
+    assert response.status_code == 200
+    assert response.json == {
+        "status": "success",
+        "message": "Retrieved deposition with ID 1",
+        "doi": "10.5072/fakenodo.1"
+    }
+
+# Test for deleting a deposition by ID
+def test_delete_deposition(test_client):
+    response = test_client.delete('/fakenodo/api/1')  # Assuming the ID is 1
+    assert response.status_code == 200
+    assert response.json == {
+        "status": "success",
+        "message": "Successfully deleted deposition 1"
+    }

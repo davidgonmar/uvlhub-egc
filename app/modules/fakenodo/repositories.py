@@ -4,4 +4,4 @@ from core.repositories.BaseRepository import BaseRepository
 
 class FakenodoRepository(BaseRepository):
     def __init__(self):
-        super().__init__(Fakenodo)
+        super().__init__(FakenodoRepository())
