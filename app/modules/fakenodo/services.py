@@ -28,7 +28,7 @@ class FakenodoService(BaseService):
 
     def __init__(self):
         # Call the BaseService constructor with the repository argument
-        self.FAKENODO_API_URL = self.get_fakenodo_url()
+        self.FAKENODO_API_URL = "http://localhost:5000/fakenodo/api"
         self.headers = {"Content-Type": "application/json"}
     
     def test_connection(self) -> bool:
@@ -91,16 +91,27 @@ class FakenodoService(BaseService):
         else:
             raise Exception(f"Failed to create deposition on Fakenodo. Response: {response.content}")
 
-    def upload_file(self, deposition_id: int, feature_model: FeatureModel = None) -> dict:
+    def upload_file(self, deposition_id: int, file_path: str) -> dict:
         """
         Simulate uploading a file to a deposition (POST /fakenodo/api/<depositionId>/files).
         """
-        # Simulate file upload logic
-        response = requests.post(f"{self.FAKENODO_API_URL}/{deposition_id}/files", headers=self.headers)
+        file_name = os.path.basename(file_path)  # Get the file name from the file path
+        
+        # Open the file to upload (in binary mode)
+        with open(file_path, 'rb') as file:
+            # Send the file using a POST request to Fakenodo
+            response = requests.post(
+                f"{self.FAKENODO_API_URL}/{deposition_id}/files",
+                headers=self.headers,
+                files={'file': (file_name, file)}  # Sending the file
+            )
+        
+        # Check the response status code
         if response.status_code == 201:
             return {"status": "success", "message": f"Successfully uploaded files to deposition {deposition_id}"}
         else:
-            return {"status": "failure", "message": f"Failed to upload files to deposition {deposition_id}"}
+            return {"status": "failure", "message": f"Failed to upload files to deposition {deposition_id}. Response: {response.text}"}
+
 
     def get_deposition(self, deposition_id: int) -> dict:
         """
