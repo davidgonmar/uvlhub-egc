@@ -1,10 +1,6 @@
 name: Run Tests with Coverage
 
 on:
-  push:
-    branches: 
-      - main
-      - build
   pull_request:
     branches:
       - main

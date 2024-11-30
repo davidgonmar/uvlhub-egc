@@ -181,10 +181,16 @@ El repositorio se alojará en GitHub, utilizado por ambos equipos para facilitar
 Se utilizarán **Issues** y **Projects** de GitHub para gestionar las tareas. Cada equipo tendrá su propio *Project* para organizar y asignar responsables.
 
 ### Política de ramas:
-Dado que GitFlow no es una opción viable, el equipo ha decidido adoptar un enfoque alternativo: crear una rama para cada tarea a realizar. Salvo excepciones, las ramas seguirán el siguiente patrón:
+Dado que GitFlow no es una opción viable, el equipo ha decidido adoptar un enfoque alternativo: crear una rama para cada tarea a realizar. Salvo excepciones, las ramas seguirán los siguientes patrones:
 
+Si son tareas:
 ```
 g2/task_<número_de_tarea>/<nombre_de_ticket>
+```
+
+Si son incidencias:
+```
+g2/incidence_<número_de_tarea>/<nombre_de_issue>
 ```
 
 La sección "*g2*" se utiliza para diferenciar las ramas del grupo 2 de aquellas del grupo 1. Por ejemplo, una rama podría verse así:
@@ -197,7 +203,7 @@ Entre las excepciones, se incluye la rama "main", que funcionará como la rama p
 
 ### Frecuencia de commits y merge:
 
-Se realizará un commit cada dos días (excluyendo fines de semana). Los cambios listos para producción se integrarán a la rama "main" con la misma frecuencia. Estos commits deben ser *atómicos* y deberán incluir todos los cambios listos para producción. Si ningún cambio está listo para ser integrado y desplegado, se permite realizar un commit vacío.
+Con el propósito de facilitar la integración continua, el equipo ha acordado realizar un mínimo de un commit cada tres días naturales, excluyendo el sábado y el domingo. El _commit_ ha de incluir todos los cambios listos para producción. Si ningún cambio está listo para ser integrado y desplegado, se permite realizar un commit vacío. Los cambios listos para producción se integrarán a la rama "main" con la misma frecuencia.
 
 ### Cierre de tareas:
 
@@ -236,7 +242,7 @@ El proyecto utilizará [Conventional Commits](https://www.conventionalcommits.or
 
 - `<body>` contiene una explicación más detallada de la motivación del cambio y/o cómo este contrasta con el código anterior. Este atributo es opcional.
 
-- `<footer>` contiene cualquier información extra, como cambios importantes en la API o referencias a problemas de GitHub o commits. En este campo deberá referenciarse el número de la issue vinculado con el commit.
+- `<footer>` contiene cualquier información extra, como cambios importantes en la API o referencias a problemas de GitHub o commits. Incluirá el ID de la issue (si procede), para poder relacionar el commit con ella.
 
 **Ejemplo**:
 
@@ -310,7 +316,7 @@ Si una pull request no se acepta, e trasladará a la columna del estado _Failed 
 ### Etiquetas de issues:
 Las siguientes etiquetas se utilizarán para clasificar los cambios en las _issues_:
 
-- Tipos de actividad: `task`, `incidencia`.
+- Tipos de actividad: `task`, `incidence`.
 - Tipos de cambio: `feat`, `fix`, `refactor`, `style`, `test`, `database`, `build`, `hotfix`.
 - Áreas del sistema: `backend`, `frontend`.
 
