@@ -1,6 +1,6 @@
 from flask import jsonify, make_response
 from app.modules.fakenodo import fakenodo_bp
-
+from app.modules.fakenodo.services import FakenodoService
 
 base_url = "/fakenodo/api"
 
@@ -11,6 +11,10 @@ def test_connection_fakenodo():
     response = {"status": "success", "message": "Connected to FakenodoAPI"}
     return jsonify(response)
 
+@fakenodo_bp.route(base_url + "/test", methods=["GET"])
+def test_full_connection_route():
+    service = FakenodoService()
+    return service.test_full_connection()
 
 # Create deposition (POST)
 @fakenodo_bp.route(base_url, methods=["POST"])
@@ -46,5 +50,14 @@ def delete_deposition_fakenodo(depositionId):
     response = {
         "status": "success",
         "message": f"Successfully deleted deposition {depositionId}",
+    }
+    return make_response(jsonify(response), 200)
+
+@fakenodo_bp.route(base_url + "/<depositionId>/doi", methods=["GET"])
+def get_doi_fakenodo(depositionId):
+    doi = f"10.5072/fakenodo.{depositionId}"  # This is a mock DOI for illustration
+    response = {
+        "status": "success",
+        "doi": doi,
     }
     return make_response(jsonify(response), 200)
