@@ -27,10 +27,10 @@ class FakenodoService(BaseService):
             return "http://localhost/fakenodo/api"
 
     def __init__(self):
-        super().__init__()
+        # Call the BaseService constructor with the repository argument
         self.FAKENODO_API_URL = self.get_fakenodo_url()
         self.headers = {"Content-Type": "application/json"}
-
+    
     def test_connection(self) -> bool:
         """
         Test connection to the Fakenodo API (GET /fakenodo/api).
