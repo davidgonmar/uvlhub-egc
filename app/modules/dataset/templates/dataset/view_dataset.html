@@ -105,17 +105,17 @@
                                             <a class="dropdown-item" href="{{ url_for('hubfile.download_file', file_id=file.id) }}">
                                                 UVL
                                             </a>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.to_glencoe', file_id=file.id) }}">
+                                            <a class="dropdown-item" href="{{ url_for('hubfile.download_file_json', file_id=file.id) }}">
                                                 Glencoe
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.to_cnf', file_id=file.id) }}">
+                                            <a class="dropdown-item" href="{{ url_for('hubfile.download_file_cnf', file_id=file.id) }}">
                                                 DIMACS
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.to_splot', file_id=file.id) }}">
+                                            <a class="dropdown-item" href="{{ url_for('hubfile.download_file_splx', file_id=file.id) }}">
                                                 SPLOT
                                             </a>
                                         </li>

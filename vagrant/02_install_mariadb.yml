@@ -17,17 +17,6 @@
         state: started
         enabled: yes
 
-    - name: Change default MariaDB password
-      become: yes
-      mysql_user:
-        login_unix_socket: /run/mysqld/mysqld.sock
-        login_user: 'root'
-        login_password: ''
-        name: 'root'
-        password: '{{ mariadb_root_password }}'
-        state: present
-
-
     - name: Create SQL script
       copy:
         content: |

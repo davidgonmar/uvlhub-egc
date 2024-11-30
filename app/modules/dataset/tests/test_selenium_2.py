@@ -12,7 +12,7 @@ class TestUI():
   def test_selenium(self):
     self.driver.get("http://localhost:5000/")
     self.driver.set_window_size(1536, 816)
-    self.driver.find_element(By.LINK_TEXT, "Sample dataset 4").click()
+    self.driver.find_element(By.LINK_TEXT, "Cats").click()
     self.driver.find_element(By.ID, "btnGroupDropExport3").click()
     self.driver.find_element(By.ID, "btnGroupDropExport3").click()
     self.driver.find_element(By.ID, "btnGroupDrop1").click()
