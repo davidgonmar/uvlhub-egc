@@ -1,0 +1,96 @@
+{% extends "base_template.html" %}
+
+{% block title %}Dataset Details{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Información del dataset -->
+        <div class="col-md-8">
+            <h1>{{ dataset.ds_meta_data.title }}</h1>
+            <p><strong>Description:</strong> {{ dataset.ds_meta_data.description }}</p>
+            <p><strong>Tags:</strong> 
+                {% for tag in dataset.ds_meta_data.tags.split(",") %}
+                    <span class="badge bg-secondary">{{ tag.strip() }}</span>
+                {% endfor %}
+            </p>
+            <p><strong>Authors:</strong>
+                {% for author in dataset.ds_meta_data.authors %}
+                    {{ author.name }}{% if author.affiliation %} ({{ author.affiliation }}){% endif %}
+                {% endfor %}
+            </p>
+            <p><strong>Status:</strong> 
+                {% if dataset.ds_meta_data.is_draft_mode %}
+                    <span class="badge bg-warning">Draft</span>
+                {% else %}
+                    <span class="badge bg-success">Published</span>
+                {% endif %}
+            </p>
+
+            {% if dataset.ds_meta_data.is_draft_mode %}
+            <!-- Formulario para editar el dataset -->
+            <h2>Edit Dataset</h2>
+            <form id="editDatasetForm">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ dataset.ds_meta_data.title }}">
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3">{{ dataset.ds_meta_data.description }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="tags" class="form-label">Tags (comma-separated)</label>
+                    <input type="text" class="form-control" id="tags" name="tags" value="{{ dataset.ds_meta_data.tags }}">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="updateDataset(false)">Save Changes</button>
+                <button type="button" class="btn btn-success" onclick="updateDataset(true)">Publish</button>
+            </form>
+            {% endif %}
+        </div>
+
+        <!-- Detalles adicionales -->
+        <div class="col-md-4">
+            <h2>Additional Information</h2>
+            <p><strong>Created At:</strong> {{ dataset.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+            {% if dataset.ds_meta_data.publication_doi %}
+            <p><strong>DOI:</strong> <a href="{{ dataset.ds_meta_data.publication_doi }}" target="_blank">{{ dataset.ds_meta_data.publication_doi }}</a></p>
+            {% endif %}
+            <p><strong>Total Files:</strong> {{ dataset.get_files_count() }}</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateDataset(publish) {
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const tags = document.getElementById('tags').value.split(',');
+
+        fetch(`/dataset/edit/{{ dataset.id }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: title,
+                description: description,
+                tags: tags,
+                publish: publish
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+                if (!data.is_draft_mode) {
+                    location.reload(); // Recargar la página si el dataset se publica
+                }
+            }
+        })
+        .catch(error => console.error('Error updating dataset:', error));
+    }
+</script>
+
+{% endblock %}
