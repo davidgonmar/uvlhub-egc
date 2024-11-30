@@ -310,7 +310,50 @@
 
                 </div>
 
-
+                
+                {% if current_user.is_anonymous %}
+                <div class="row mb-2">
+                    <div class="col-md-4 col-12">
+                        <span class="text-secondary">Rate Dataset</span>
+                    </div>
+                    <div class="col-md-8 col-12">
+                        <div class="rating-anonymous" 
+                            data-average="{{ average_rating }}" 
+                            data-dataset-id="{{ dataset.id }}" 
+                            data-user-rating="{{ user_rating }}">
+                            <!-- Estrellas no seleccionables para usuarios anónimos -->
+                            <span class="fa fa-star" data-value="1"></span>
+                            <span class="fa fa-star" data-value="2"></span>
+                            <span class="fa fa-star" data-value="3"></span>
+                            <span class="fa fa-star" data-value="4"></span>
+                            <span class="fa fa-star" data-value="5"></span>
+                        </div>
+                        <p id="average-rating" class="text-muted mt-2">
+                            Average Rating: {{ dataset.average_rating }} / 5
+                        </p>
+                        <div id="login-prompt" style="color: red;">
+                            <p>You must log in to rate this dataset.</p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+            <div class="row mb-2">
+                <div class="col-md-4 col-12">
+                    <span class="text-secondary">Rate dataset</span>
+                </div>
+                <div class="col-md-8 col-12">
+                    <div class="rating-container" 
+                         data-average="{{ average_rating }}" 
+                         data-dataset-id="{{ dataset.id }}" 
+                         data-user-rating="{{ user_rating }}">
+                        <!-- Las estrellas seleccionables para usuarios logueados serán generadas dinámicamente -->
+                    </div>
+                    <p id="average-rating" class="text-muted mt-2">
+                        Average Rating: 0 / 5
+                    </p>
+                </div>
+            </div>
+            {% endif %}           
 
             </div>
 
@@ -336,6 +379,163 @@
     </div>
 
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ratingContainers = document.querySelectorAll('.rating-container');
+
+        ratingContainers.forEach(container => {
+            const datasetId = container.getAttribute('data-dataset-id');
+
+            const averageRating = parseFloat(container.getAttribute('data-average'));
+            const userRating = parseInt(container.getAttribute('data-user-rating'));
+
+            document.getElementById('average-rating').textContent = `Average Rating: ${averageRating} / 5`;
+
+            // Crear las estrellas
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('i');
+                star.classList.add('fa', 'fa-star');
+
+                // Marcarlas segun el user rating
+                if (i <= userRating) {
+                    star.classList.add('active');
+                }
+
+                star.setAttribute('data-rating', i);
+                container.appendChild(star);
+            }
+
+            // Evento/Animacion de las estrellas
+            const stars = container.querySelectorAll('.fa-star');
+            stars.forEach(star => {
+                star.addEventListener('mouseover', () => {
+                    resetStars(stars);
+                    highlightStars(stars, star.dataset.rating);
+                });
+
+                star.addEventListener('click', () => {
+                    const selectedRating = parseInt(star.dataset.rating);
+                    submitRating(datasetId, selectedRating, stars);
+                });
+            });
+
+            container.addEventListener('mouseleave', () => {
+                resetStars(stars);
+                highlightStars(stars, userRating);
+            });
+        });
+
+        function resetStars(stars) {
+            stars.forEach(star => star.classList.remove('active'));
+        }
+
+        function highlightStars(stars, rating) {
+            for (let i = 0; i < rating; i++) {
+                stars[i].classList.add('active');
+            }
+        }
+
+        function submitRating(datasetId, rating, stars) {
+            fetch('/dataset/rate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    dataset_id: datasetId,
+                    rating: rating,
+                }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to save rating');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message || 'Rating saved successfully!');
+                    resetStars(stars);
+                    highlightStars(stars, rating);
+                    console.log("AVERAGE 2: " + data.average_rating);
+                    console.log("USER RATING 2: " + data.user_rating)
+                    location.reload()
+                })
+                .catch(error => {
+                    console.error('Error saving rating:', error);
+                    alert('Failed to save rating');
+                });
+        }
+    });
+</script>
+
+<style>
+    .rating-container {
+        display: flex;
+        gap: 5px;
+    }
+
+    .rating-container .fa-star {
+        font-size: 1.5rem;
+        color: #ccc; /* Gris por defecto */
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .rating-container .fa-star.active {
+        color: gold; /* Estrellas seleccionadas */
+    }
+
+    .rating-anonymous {
+        display: flex;
+        gap: 5px;
+    }
+
+    .rating-anonymous .fa-star {
+        font-size: 1.5rem;
+        color: #ccc; /* Gris por defecto */
+        transition: color 0.3s;
+    }
+
+    .star {
+        font-size: 30px;
+        color: gray;
+        cursor: pointer;
+    }
+
+    .star.active {
+        color: gold;
+    }
+
+    .star.disabled {
+        pointer-events: none;
+        color: lightgray;
+    }
+
+    #login-prompt {
+        color: red;
+        font-weight: bold;
+        margin-top: -10px;
+        margin-bottom: -25px;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ratingContainers = document.querySelectorAll('.rating-anonymous');
+
+        ratingContainers.forEach(container => {
+            const datasetId = container.getAttribute('data-dataset-id');
+            const averageRating = parseFloat(container.getAttribute('data-average'));
+            const userRating = parseInt(container.getAttribute('data-user-rating'));
+
+            // Mostrar el promedio al cargar la página
+            document.getElementById('average-rating').textContent = `Average Rating: ${averageRating} / 5`;
+
+        });
+    });
+
+</script>
 
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
