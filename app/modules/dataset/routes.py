@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from zipfile import ZipFile
 from app.modules.dataset.transformation_aux import transformation, delete_transformation
 
+from app import db
 from flask import (
     redirect,
     render_template,
@@ -274,6 +275,91 @@ def subdomain_index(doi):
     return resp
 
 
+@dataset_bp.route("/dataset/edit/<path:doi>/", methods=["GET", "POST"])
+@login_required
+def edit_dataset(doi):
+    # Buscar el dataset por DOI
+    ds_meta_data = dsmetadata_service.filter_by_doi(doi)
+
+    # Si no se encuentra el dataset, devolver un error 404
+    if not ds_meta_data:
+        abort(404)
+
+    # Obtener el dataset asociado
+    dataset = ds_meta_data.data_set
+
+    # Verificar que el usuario sea el propietario
+    if dataset.user_id != current_user.id:
+        return jsonify({"message": "You do not have permission to edit this dataset."}), 403
+
+    # Solo permitir edición si está en modo borrador
+    if not dataset.ds_meta_data.is_draft_mode and request.method == "POST":
+        return jsonify({"message": "This dataset is already published and cannot be edited."}), 400
+
+    if request.method == "POST":
+        data = request.get_json()
+
+        # Validar los datos recibidos
+        title = data.get("title")
+        description = data.get("description")
+        tags = data.get("tags")
+        publish = data.get("publish")  # Si el dataset debe publicarse
+
+        if not title or not description:
+            return jsonify({"message": "Title and description are required."}), 400
+
+        try:
+            # Actualizar los metadatos
+            dataset.ds_meta_data.title = title
+            dataset.ds_meta_data.description = description
+            dataset.ds_meta_data.tags = ",".join(tags) if tags else dataset.ds_meta_data.tags
+
+            # Publicar el dataset si corresponde
+            if publish:
+                dataset.ds_meta_data.is_draft_mode = False
+
+            db.session.commit()
+            return jsonify({"message": "Dataset updated successfully.", "is_draft_mode": dataset.ds_meta_data
+                            .is_draft_mode}), 200
+
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"message": f"An error occurred: {str(e)}"}), 500
+
+    # Renderizar el HTML para editar el dataset (GET)
+    return render_template("dataset/staging_area_dataset.html", dataset=dataset)
+
+
+@dataset_bp.route("/dataset/publish/<path:doi>/", methods=["POST"])
+@login_required
+def publish_dataset(doi):
+    # Buscar el dataset por DOI
+    ds_meta_data = dsmetadata_service.filter_by_doi(doi)
+
+    if not ds_meta_data:
+        abort(404)
+
+    dataset = ds_meta_data.data_set
+
+    # Verificar que el usuario sea el propietario
+    if dataset.user_id != current_user.id:
+        return jsonify({"message": "You do not have permission to publish this dataset."}), 403
+
+    # Verificar si ya está publicado
+    if not dataset.ds_meta_data.is_draft_mode:
+        return jsonify({"message": "This dataset is already published."}), 400
+
+    try:
+        # Publicar el dataset
+        dataset.ds_meta_data.is_draft_mode = False
+        db.session.commit()
+        return jsonify({"message": "Dataset published successfully."}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"An error occurred: {str(e)}"}), 500
+
+
 @dataset_bp.route("/dataset/unsynchronized/<int:dataset_id>/", methods=["GET"])
 @login_required
 def get_unsynchronized_dataset(dataset_id):
@@ -287,7 +373,7 @@ def get_unsynchronized_dataset(dataset_id):
     return render_template("dataset/view_dataset.html", dataset=dataset)
 
 
-## DOWNLOAD ALL
+# DOWNLOAD ALL
 @dataset_bp.route("/dataset/download_all", methods=["GET"])
 def download_all_datasets():
     # Obtener todos los datasets
@@ -339,6 +425,7 @@ def download_all_datasets():
     shutil.rmtree(temp_dir)
 
     return resp
+
 
 @dataset_bp.route("/dataset/download_relevant_datasets", methods=["GET"])
 def download_all_relevant_datasets():
@@ -427,8 +514,6 @@ def download_all_relevant_datasets():
     shutil.rmtree(temp_dir)
 
     return resp
-
-
 
 
 @login_required

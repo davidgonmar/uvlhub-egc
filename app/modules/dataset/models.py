@@ -7,6 +7,7 @@ from sqlalchemy.orm import validates
 from app import db
 from app.modules.auth.models import User
 
+
 class PublicationType(Enum):
     NONE = 'none'
     ANNOTATION_COLLECTION = 'annotationcollection'
@@ -63,6 +64,7 @@ class DSMetaData(db.Model):
     publication_doi = db.Column(db.String(120))
     dataset_doi = db.Column(db.String(120))
     tags = db.Column(db.String(120))
+    is_draft_mode = db.Column(db.Boolean, default=True, nullable=False)
     ds_metrics_id = db.Column(db.Integer, db.ForeignKey('ds_metrics.id'))
     ds_metrics = db.relationship('DSMetrics', uselist=False, backref='ds_meta_data', cascade="all, delete")
     authors = db.relationship('Author', backref='ds_meta_data', lazy=True, cascade="all, delete")
