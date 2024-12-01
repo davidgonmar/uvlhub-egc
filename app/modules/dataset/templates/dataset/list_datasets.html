@@ -40,11 +40,6 @@
                                     <a href="{{ url_for('dataset.download_dataset', dataset_id=dataset.id) }}">
                                         <i data-feather="download"></i>
                                     </a>
-                                    {% if dataset.ds_meta_data.is_draft_mode %}
-                                        <a href="{{ url_for('dataset.edit_dataset', doi=dataset.ds_meta_data.dataset_doi) }}">
-                                            <i data-feather="edit"></i>
-                                        </a>
-                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

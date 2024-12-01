@@ -76,34 +76,36 @@ def create_dataset():
         # send dataset as deposition to Zenodo
         data = {}
         try:
+            # Create a new deposition in Fakenodo (or Zenodo) using the dataset
             fakenodo_response_json = fakenodo_service.create_new_deposition(dataset)
-            response_data = json.dumps(fakenodo_response_json)
-            data = json.loads(response_data)
-        except Exception as exc:
-            data = {}
-            fakenodo_response_json = {}
-            logger.exception(f"Exception while create dataset data in Fakenodo {exc}")
 
-        if data.get("conceptrecid"):
-            deposition_id = data.get("id")
+            # Log the response for debugging purposes
+            logger.info(f"Fakenodo response: {fakenodo_response_json}")
 
-            # update dataset with deposition id in Zenodo
-            dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id)
+            # Check if the response contains the necessary deposition information (deposition_id and doi)
+            if 'deposition_id' in fakenodo_response_json and 'doi' in fakenodo_response_json:
+                deposition_id = fakenodo_response_json.get("deposition_id")  # Update to the correct key name
+                deposition_doi = fakenodo_response_json.get("doi")
 
-            try:
-                # iterate for each feature model (one feature model = one request to Zenodo)
-                for feature_model in dataset.feature_models:
-                    fakenodo_service.upload_file(dataset, deposition_id, feature_model)
+                # Update dataset metadata with the deposition ID and DOI
+                dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id, dataset_doi=deposition_doi)
 
-                # publish deposition
-                fakenodo_service.publish_deposition(deposition_id)
+                # Return success message with DOI
+                return jsonify({
+                    "status": "success",
+                    "message": "Dataset successfully uploaded and DOI generated.",
+                    "deposition_doi": deposition_doi
+                }), 200
+            else:
+                # If no deposition ID or DOI is returned, handle the failure case
+                logger.error("Failed to create deposition, missing deposition_id or DOI.")
+                return jsonify({"status": "error", "message": "Deposition creation failed, missing required information."}), 500
 
-                # update DOI
-                deposition_doi = fakenodo_service.get_doi(deposition_id)
-                dataset_service.update_dsmetadata(dataset.ds_meta_data_id, dataset_doi=deposition_doi)
-            except Exception as e:
-                msg = f"it has not been possible upload feature models in Fakenodo and update the DOI: {e}"
-                return jsonify({"message": msg}), 200
+        except Exception as e:
+            # Log and handle errors during the process
+            logger.exception(f"Error while creating or processing the deposition: {e}")
+            return jsonify({"status": "error", "message": str(e)}), 500
+
 
         # Delete temp folder
         file_path = current_user.temp_folder()
