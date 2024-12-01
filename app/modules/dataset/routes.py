@@ -77,34 +77,45 @@ def create_dataset():
         # send dataset as deposition to Zenodo
         data = {}
         try:
+            # Step 1: Create a new deposition in Fakenodo
             fakenodo_response_json = fakenodo_service.create_new_deposition(dataset)
             response_data = json.dumps(fakenodo_response_json)
             data = json.loads(response_data)
         except Exception as exc:
             data = {}
             fakenodo_response_json = {}
-            logger.exception(f"Exception while create dataset data in Fakenodo {exc}")
+            logger.exception(f"Exception while creating dataset data in Fakenodo: {exc}")
 
+        # Step 2: If we got a valid response with 'conceptrecid', update dataset
         if data.get("conceptrecid"):
             deposition_id = data.get("id")
-
-            # update dataset with deposition id in Zenodo
+            
+            # Update the dataset with the deposition id in the metadata
             dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id)
 
             try:
-                # iterate for each feature model (one feature model = one request to Zenodo)
+                # Step 3: Upload all feature models associated with the dataset
                 for feature_model in dataset.feature_models:
                     fakenodo_service.upload_file(dataset, deposition_id, feature_model)
-
-                # publish deposition
+                
+                # Step 4: Publish the deposition
                 fakenodo_service.publish_deposition(deposition_id)
 
-                # update DOI
+                # Step 5: Get the DOI and update dataset metadata
                 deposition_doi = fakenodo_service.get_doi(deposition_id)
                 dataset_service.update_dsmetadata(dataset.ds_meta_data_id, dataset_doi=deposition_doi)
+            
             except Exception as e:
-                msg = f"it has not been possible upload feature models in Fakenodo and update the DOI: {e}"
-                return jsonify({"message": msg}), 200
+                msg = f"It has not been possible to upload feature models to Fakenodo and update the DOI: {e}"
+                logger.error(msg)
+                return jsonify({"message": msg}), 500
+
+        else:
+            msg = "No conceptrecid received from Fakenodo"
+            logger.error(msg)
+            return jsonify({"message": msg}), 400
+
+        return jsonify({"message": "Deposition created and files uploaded successfully."}), 200
 
         # Delete temp folder
         file_path = current_user.temp_folder()
