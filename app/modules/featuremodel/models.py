@@ -3,6 +3,14 @@ from sqlalchemy import Enum as SQLAlchemyEnum
 
 from app.modules.dataset.models import Author, PublicationType
 
+from datetime import datetime
+from enum import Enum
+
+from flask import request
+from sqlalchemy import Enum as SQLAlchemyEnum, UniqueConstraint
+from sqlalchemy.orm import validates
+from app import db
+from app.modules.auth.models import User
 
 class FeatureModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,3 +48,25 @@ class FMMetrics(db.Model):
 
     def __repr__(self):
         return f'FMMetrics<solver={self.solver}, not_solver={self.not_solver}>'
+
+class FMRating(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    dataset_id = db.Column(db.Integer, db.ForeignKey('data_set.id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    model = db.relationship('FeatureModel', backref='ratings', lazy=True)
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'dataset_id', name='_user_dataset_uc'),
+    )
+
+    @validates('rating')
+    def validate_rating(self, key, value):
+        if value < 0 or value > 5:
+            raise ValueError("Rating must be between 0 and 5.")
+        return value
+
+    def __repr__(self):
+        return f'FMRating<{self.id}>'
