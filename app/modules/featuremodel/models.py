@@ -52,14 +52,15 @@ class FMMetrics(db.Model):
 class FMRating(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    dataset_id = db.Column(db.Integer, db.ForeignKey('data_set.id'), nullable=False)
+    feature_model_id = db.Column(db.Integer, db.ForeignKey('feature_model.id'), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    model = db.relationship('FeatureModel', backref='ratings', lazy=True)
-
+    feature_model = db.relationship('FeatureModel', backref='ratings', lazy=True)
+    user = db.relationship('User', backref='ratings', lazy=True)
+    
     __table_args__ = (
-        UniqueConstraint('user_id', 'dataset_id', name='_user_dataset_uc'),
+        UniqueConstraint('user_id', 'feature_model_id', name='_user_feature_model_uc'),
     )
 
     @validates('rating')
