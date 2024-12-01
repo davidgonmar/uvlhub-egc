@@ -14,13 +14,8 @@ logger = logging.getLogger(__name__)
 class FakenodoService(BaseService):
     
     def __init__(self):
-        super().__init__(FakenodoRepository())
+        self.deposition_repository = FakenodoRepository()
         # Initialize depositions as a dictionary to store the deposition data
-        self.depositions = {}
-        
-    def _generate_deposition_id(self):
-        """Generate a unique fake deposition ID."""
-        return str(uuid.uuid4())
 
     def _generate_doi(self, deposition_id):
         """Generate a fake DOI based on the deposition ID."""
@@ -37,11 +32,20 @@ class FakenodoService(BaseService):
         """
         Simulate creating a new deposition in Fakenodo.
         """
-        deposition_id = self._generate_deposition_id()
+        deposition_id = dataset.id  # Use dataset's existing ID as deposition ID
+        
+        # Generate DOI based on the deposition ID
         fake_doi = self._generate_doi(deposition_id)
 
-        deposition_metadata = {
+        # Prepare deposition metadata
+        dep_metadata = {
             "title": dataset.ds_meta_data.title,
+            "upload_type": "dataset" if dataset.ds_meta_data.publication_type.value == "none" else "publication",
+            "publication_type": (
+                dataset.ds_meta_data.publication_type.value
+                if dataset.ds_meta_data.publication_type.value != "none"
+                else None
+            ),
             "description": dataset.ds_meta_data.description,
             "creators": [
                 {
@@ -51,24 +55,23 @@ class FakenodoService(BaseService):
                 }
                 for author in dataset.ds_meta_data.authors
             ],
-            "keywords": dataset.ds_meta_data.tags.split(", ") if dataset.ds_meta_data.tags else [],
+            "keywords": (
+                ["uvlhub"] if not dataset.ds_meta_data.tags else dataset.ds_meta_data.tags.split(", ") + ["uvlhub"]
+            ),
             "access_right": "open",
-            "license": "CC-BY-4.0",
-            "doi": fake_doi,
+            "license": "CC-BY-4.0"
         }
 
-        # Store the deposition data locally
-        self.depositions[deposition_id] = {
-            "metadata": deposition_metadata,
-            "files": [],
-            "published": False,
-        }
+        # Store the DOI and metadata in the repository
+        deposition = self.deposition_repository.create_new_deposition(fake_doi, dep_metadata)
 
         return {
-            "deposition_id": deposition_id,
+            "deposition_id": deposition.id,  # ID from the repository
             "doi": fake_doi,
-            "metadata": deposition_metadata
+            "dep_metadata": dep_metadata,
+            "message": "Deposition successfully created in Fakenodo"
         }
+
 
     def upload_file(self, dataset: DataSet, deposition_id: str, feature_model: FeatureModel, user=None) -> dict:
         """
@@ -104,16 +107,34 @@ class FakenodoService(BaseService):
 
 
     def publish_deposition(self, deposition_id: str) -> dict:
-        """
-        Simulate publishing a deposition.
-        """
-        if deposition_id not in self.depositions:
-            raise Exception("Deposition not found.")
-        
-        # Simulate publishing by setting the 'published' status to True
-        self.depositions[deposition_id]["published"] = True
+        # Assuming depositions are stored in a dictionary or similar structure
+        deposition = self.depositions.get(deposition_id)
 
-        return {"message": "Deposition published successfully."}
+        if not deposition:
+            # Raise an error if the deposition with the provided ID is not found
+            raise Exception(f"Deposition with ID {deposition_id} not found.")
+        
+        try:
+            # Simulate generating a DOI for the deposition
+            deposition["doi"] = f"fakenodo.doi.{deposition_id}"
+            deposition["status"] = "published"  # Mark the deposition as published
+            
+            # Update the deposition in your storage (e.g., database or dictionary)
+            self.depositions[deposition_id] = deposition
+
+            # Return a success response with the deposition details
+            response = {
+                "id": deposition_id,
+                "status": "published",
+                "conceptdoi": deposition["doi"],  # Use the generated DOI here
+                "message": "Deposition published successfully in Fakenodo."
+            }
+            return response
+
+        except Exception as error:
+            # Handle any errors that occur during the process and raise a new exception
+            raise Exception(f"Failed to publish deposition with error: {str(error)}")
+
 
     def get_deposition(self, deposition_id: str) -> dict:
         """
@@ -138,19 +159,11 @@ class FakenodoService(BaseService):
         if "doi" not in deposition_metadata:
             # Simulate DOI generation (format: 10.xxxx/yyyyyy)
             # You could use UUID or the dataset ID to make the DOI unique
-            generated_doi = self.generate_doi(deposition_id)
+            generated_doi = self._generate_doi(deposition_id)
             deposition_metadata["doi"] = generated_doi
         
         return deposition_metadata["doi"]
 
-    def generate_doi(self, deposition_id: str) -> str:
-        """
-        Generate a unique DOI based on a predefined prefix and deposition ID.
-        This simulates DOI generation for the dataset.
-        """
-        prefix = "10.5281"  # Example prefix (Zenodo's prefix is 10.5281)
-        suffix = str(uuid.uuid5(uuid.NAMESPACE_DNS, deposition_id))  # Generate unique suffix from deposition ID
-        return f"{prefix}/{suffix}"
 
     def get_all_depositions(self) -> dict:
         """

@@ -8,7 +8,6 @@ from datetime import datetime, timezone
 from zipfile import ZipFile
 from app.modules.dataset.transformation_aux import transformation, delete_transformation
 
-from app import db
 from flask import (
     redirect,
     render_template,
@@ -77,45 +76,34 @@ def create_dataset():
         # send dataset as deposition to Zenodo
         data = {}
         try:
-            # Step 1: Create a new deposition in Fakenodo
             fakenodo_response_json = fakenodo_service.create_new_deposition(dataset)
             response_data = json.dumps(fakenodo_response_json)
             data = json.loads(response_data)
         except Exception as exc:
             data = {}
             fakenodo_response_json = {}
-            logger.exception(f"Exception while creating dataset data in Fakenodo: {exc}")
+            logger.exception(f"Exception while create dataset data in Fakenodo {exc}")
 
-        # Step 2: If we got a valid response with 'conceptrecid', update dataset
         if data.get("conceptrecid"):
             deposition_id = data.get("id")
-            
-            # Update the dataset with the deposition id in the metadata
+
+            # update dataset with deposition id in Zenodo
             dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id)
 
             try:
-                # Step 3: Upload all feature models associated with the dataset
+                # iterate for each feature model (one feature model = one request to Zenodo)
                 for feature_model in dataset.feature_models:
                     fakenodo_service.upload_file(dataset, deposition_id, feature_model)
-                
-                # Step 4: Publish the deposition
+
+                # publish deposition
                 fakenodo_service.publish_deposition(deposition_id)
 
-                # Step 5: Get the DOI and update dataset metadata
+                # update DOI
                 deposition_doi = fakenodo_service.get_doi(deposition_id)
                 dataset_service.update_dsmetadata(dataset.ds_meta_data_id, dataset_doi=deposition_doi)
-            
             except Exception as e:
-                msg = f"It has not been possible to upload feature models to Fakenodo and update the DOI: {e}"
-                logger.error(msg)
-                return jsonify({"message": msg}), 500
-
-        else:
-            msg = "No conceptrecid received from Fakenodo"
-            logger.error(msg)
-            return jsonify({"message": msg}), 400
-
-        return jsonify({"message": "Deposition created and files uploaded successfully."}), 200
+                msg = f"it has not been possible upload feature models in Fakenodo and update the DOI: {e}"
+                return jsonify({"message": msg}), 200
 
         # Delete temp folder
         file_path = current_user.temp_folder()
@@ -288,91 +276,6 @@ def subdomain_index(doi):
     return resp
 
 
-@dataset_bp.route("/dataset/edit/<path:doi>/", methods=["GET", "POST"])
-@login_required
-def edit_dataset(doi):
-    # Buscar el dataset por DOI
-    ds_meta_data = dsmetadata_service.filter_by_doi(doi)
-
-    # Si no se encuentra el dataset, devolver un error 404
-    if not ds_meta_data:
-        abort(404)
-
-    # Obtener el dataset asociado
-    dataset = ds_meta_data.data_set
-
-    # Verificar que el usuario sea el propietario
-    if dataset.user_id != current_user.id:
-        return jsonify({"message": "You do not have permission to edit this dataset."}), 403
-
-    # Solo permitir edición si está en modo borrador
-    if not dataset.ds_meta_data.is_draft_mode and request.method == "POST":
-        return jsonify({"message": "This dataset is already published and cannot be edited."}), 400
-
-    if request.method == "POST":
-        data = request.get_json()
-
-        # Validar los datos recibidos
-        title = data.get("title")
-        description = data.get("description")
-        tags = data.get("tags")
-        publish = data.get("publish")  # Si el dataset debe publicarse
-
-        if not title or not description:
-            return jsonify({"message": "Title and description are required."}), 400
-
-        try:
-            # Actualizar los metadatos
-            dataset.ds_meta_data.title = title
-            dataset.ds_meta_data.description = description
-            dataset.ds_meta_data.tags = ",".join(tags) if tags else dataset.ds_meta_data.tags
-
-            # Publicar el dataset si corresponde
-            if publish:
-                dataset.ds_meta_data.is_draft_mode = False
-
-            db.session.commit()
-            return jsonify({"message": "Dataset updated successfully.", "is_draft_mode": dataset.ds_meta_data
-                            .is_draft_mode}), 200
-
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({"message": f"An error occurred: {str(e)}"}), 500
-
-    # Renderizar el HTML para editar el dataset (GET)
-    return render_template("dataset/staging_area_dataset.html", dataset=dataset)
-
-
-@dataset_bp.route("/dataset/publish/<path:doi>/", methods=["POST"])
-@login_required
-def publish_dataset(doi):
-    # Buscar el dataset por DOI
-    ds_meta_data = dsmetadata_service.filter_by_doi(doi)
-
-    if not ds_meta_data:
-        abort(404)
-
-    dataset = ds_meta_data.data_set
-
-    # Verificar que el usuario sea el propietario
-    if dataset.user_id != current_user.id:
-        return jsonify({"message": "You do not have permission to publish this dataset."}), 403
-
-    # Verificar si ya está publicado
-    if not dataset.ds_meta_data.is_draft_mode:
-        return jsonify({"message": "This dataset is already published."}), 400
-
-    try:
-        # Publicar el dataset
-        dataset.ds_meta_data.is_draft_mode = False
-        db.session.commit()
-        return jsonify({"message": "Dataset published successfully."}), 200
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"message": f"An error occurred: {str(e)}"}), 500
-
-
 @dataset_bp.route("/dataset/unsynchronized/<int:dataset_id>/", methods=["GET"])
 @login_required
 def get_unsynchronized_dataset(dataset_id):
@@ -386,7 +289,7 @@ def get_unsynchronized_dataset(dataset_id):
     return render_template("dataset/view_dataset.html", dataset=dataset)
 
 
-# DOWNLOAD ALL
+## DOWNLOAD ALL
 @dataset_bp.route("/dataset/download_all", methods=["GET"])
 def download_all_datasets():
     # Obtener todos los datasets
@@ -438,7 +341,6 @@ def download_all_datasets():
     shutil.rmtree(temp_dir)
 
     return resp
-
 
 @dataset_bp.route("/dataset/download_relevant_datasets", methods=["GET"])
 def download_all_relevant_datasets():
@@ -527,6 +429,8 @@ def download_all_relevant_datasets():
     shutil.rmtree(temp_dir)
 
     return resp
+
+
 
 
 @login_required
