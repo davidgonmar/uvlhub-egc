@@ -1,141 +1,171 @@
 import logging
 import os
+import uuid
+import json
 from flask import jsonify, Response
-from app.modules.dataset.models import DataSet
-from app.modules.featuremodel.models import FeatureModel
-from core.configuration.configuration import uploads_folder_name
-from dotenv import load_dotenv
 from flask_login import current_user
+from app.modules.dataset.models import DataSet
+from app.modules.fakenodo.repositories import FakenodoRepository
+from app.modules.featuremodel.models import FeatureModel
 from core.services.BaseService import BaseService
-import requests
 
 logger = logging.getLogger(__name__)
 
-load_dotenv()
-
 class FakenodoService(BaseService):
-
-    def get_fakenodo_url(self):
-        """
-        Return the base URL for Fakenodo API (for local development or testing).
-        """
-        FLASK_ENV = os.getenv("FLASK_ENV", "development")
-        if FLASK_ENV == "development":
-            return "http://localhost/fakenodo/api"  # Fakenodo API for local environment
-        else:
-            # In production, you could point to the real Fakenodo API if applicable
-            return "http://localhost/fakenodo/api"
-
-    def __init__(self):
-        # Call the BaseService constructor with the repository argument
-        self.FAKENODO_API_URL = "http://localhost:5000/fakenodo/api"
-        self.headers = {"Content-Type": "application/json"}
     
+    def __init__(self):
+        super().__init__(FakenodoRepository())
+        # Initialize depositions as a dictionary to store the deposition data
+        self.depositions = {}
+        
+    def _generate_deposition_id(self):
+        """Generate a unique fake deposition ID."""
+        return str(uuid.uuid4())
+
+    def _generate_doi(self, deposition_id):
+        """Generate a fake DOI based on the deposition ID."""
+        return f"10.5281/fakenodo.{deposition_id}"
+
     def test_connection(self) -> bool:
         """
-        Test connection to the Fakenodo API (GET /fakenodo/api).
+        Test the connection with Fakenodo (simulated success).
         """
-        response = requests.get(self.FAKENODO_API_URL)
-        if response.status_code == 200:
-            logger.info("Successfully connected to Fakenodo API.")
-            return True
-        else:
-            logger.error(f"Failed to connect to Fakenodo API. Status Code: {response.status_code}")
-            return False
-
-    def test_full_connection(self) -> Response:
-        """
-        Test the full connection by interacting with Fakenodo API: create, upload, and delete.
-        """
-        # Simulate creating a deposition (POST request)
-        response = requests.post(self.FAKENODO_API_URL)
-        if response.status_code != 201:
-            return jsonify({
-                "success": False,
-                "message": "Failed to create a test deposition on Fakenodo."
-            })
-
-        deposition_id = 789  # In real implementation, you'd extract this from the response
-        file_upload_response = self.upload_file(deposition_id)
-        if file_upload_response["status"] != "success":
-            return jsonify({
-                "success": False,
-                "message": f"Failed to upload file for deposition {deposition_id}."
-            })
-
-        # Simulate deleting a deposition (DELETE request)
-        delete_response = self.delete_deposition(deposition_id)
-        if delete_response["status"] != "success":
-            return jsonify({
-                "success": False,
-                "message": f"Failed to delete deposition {deposition_id}."
-            })
-
-        return jsonify({"success": True, "message": "Successfully completed the full test on Fakenodo."})
+        # In a real-world scenario, you would check if the API is up.
+        return True
 
     def create_new_deposition(self, dataset: DataSet) -> dict:
         """
-        Simulate creating a new deposition on Fakenodo (POST /fakenodo/api).
+        Simulate creating a new deposition in Fakenodo.
         """
-        data = {
+        deposition_id = self._generate_deposition_id()
+        fake_doi = self._generate_doi(deposition_id)
+
+        deposition_metadata = {
             "title": dataset.ds_meta_data.title,
-            "upload_type": "dataset" if dataset.ds_meta_data.publication_type.value == "none" else "publication",
             "description": dataset.ds_meta_data.description,
-            "creators": [{"name": author.name} for author in dataset.ds_meta_data.authors],
-            "keywords": dataset.ds_meta_data.tags.split(", ") if dataset.ds_meta_data.tags else ["uvlhub"]
+            "creators": [
+                {
+                    "name": author.name,
+                    **({"affiliation": author.affiliation} if author.affiliation else {}),
+                    **({"orcid": author.orcid} if author.orcid else {}),
+                }
+                for author in dataset.ds_meta_data.authors
+            ],
+            "keywords": dataset.ds_meta_data.tags.split(", ") if dataset.ds_meta_data.tags else [],
+            "access_right": "open",
+            "license": "CC-BY-4.0",
+            "doi": fake_doi,
         }
 
-        response = requests.post(self.FAKENODO_API_URL, json=data, headers=self.headers)
-        if response.status_code == 201:
-            return response.json()  # Mock response with deposition ID and status
-        else:
-            raise Exception(f"Failed to create deposition on Fakenodo. Response: {response.content}")
+        # Store the deposition data locally
+        self.depositions[deposition_id] = {
+            "metadata": deposition_metadata,
+            "files": [],
+            "published": False,
+        }
 
-    def upload_file(self, deposition_id: int, file_path: str) -> dict:
+        return {
+            "deposition_id": deposition_id,
+            "doi": fake_doi,
+            "metadata": deposition_metadata
+        }
+
+    def upload_file(self, dataset: DataSet, deposition_id: str, feature_model: FeatureModel, user=None) -> dict:
         """
-        Simulate uploading a file to a deposition (POST /fakenodo/api/<depositionId>/files).
+        Simulate uploading a file to a deposition and return detailed file metadata.
         """
-        file_name = os.path.basename(file_path)  # Get the file name from the file path
+        if deposition_id not in self.depositions:
+            raise Exception("Deposition not found.")
+
+        file_name = feature_model.fm_meta_data.uvl_filename
+        file_path = os.path.join("uploads", f"user_{str(current_user.id)}", f"dataset_{dataset.id}", file_name)
+
+        # Simulate saving the file in local storage
+        if not os.path.exists(file_path):
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, 'w') as f:
+                f.write("Simulated file content.")
+
+        # Add the file to the deposition's local record
+        self.depositions[deposition_id]["files"].append(file_name)
+
+        # Simulate file metadata similar to what Zenodo might return
+        file_metadata = {
+            "file_name": file_name,
+            "file_size": os.path.getsize(file_path),
+            "file_url": f"/uploads/user_{current_user.id}/dataset_{dataset.id}/{file_name}",
+            "upload_time": "2024-12-01T12:00:00",  # Simulate a timestamp
+        }
+
+        return {
+            "message": f"File {file_name} uploaded successfully.",
+            "file_metadata": file_metadata
+        }
+
+
+    def publish_deposition(self, deposition_id: str) -> dict:
+        """
+        Simulate publishing a deposition.
+        """
+        if deposition_id not in self.depositions:
+            raise Exception("Deposition not found.")
         
-        # Open the file to upload (in binary mode)
-        with open(file_path, 'rb') as file:
-            # Send the file using a POST request to Fakenodo
-            response = requests.post(
-                f"{self.FAKENODO_API_URL}/{deposition_id}/files",
-                headers=self.headers,
-                files={'file': (file_name, file)}  # Sending the file
-            )
+        # Simulate publishing by setting the 'published' status to True
+        self.depositions[deposition_id]["published"] = True
+
+        return {"message": "Deposition published successfully."}
+
+    def get_deposition(self, deposition_id: str) -> dict:
+        """
+        Retrieve a deposition's details from Fakenodo.
+        """
+        if deposition_id not in self.depositions:
+            raise Exception("Deposition not found.")
+
+        return self.depositions[deposition_id]
+
+    def get_doi(self, deposition_id: str) -> str:
+        """
+        Simulate getting a DOI for a deposition.
         
-        # Check the response status code
-        if response.status_code == 201:
-            return {"status": "success", "message": f"Successfully uploaded files to deposition {deposition_id}"}
-        else:
-            return {"status": "failure", "message": f"Failed to upload files to deposition {deposition_id}. Response: {response.text}"}
+        If the DOI is not already generated, we will create one and store it in the deposition metadata.
+        """
+        if deposition_id not in self.depositions:
+            raise Exception(f"Deposition with ID {deposition_id} not found.")
+        
+        # Check if DOI is already assigned, otherwise generate one
+        deposition_metadata = self.depositions[deposition_id]["metadata"]
+        if "doi" not in deposition_metadata:
+            # Simulate DOI generation (format: 10.xxxx/yyyyyy)
+            # You could use UUID or the dataset ID to make the DOI unique
+            generated_doi = self.generate_doi(deposition_id)
+            deposition_metadata["doi"] = generated_doi
+        
+        return deposition_metadata["doi"]
 
+    def generate_doi(self, deposition_id: str) -> str:
+        """
+        Generate a unique DOI based on a predefined prefix and deposition ID.
+        This simulates DOI generation for the dataset.
+        """
+        prefix = "10.5281"  # Example prefix (Zenodo's prefix is 10.5281)
+        suffix = str(uuid.uuid5(uuid.NAMESPACE_DNS, deposition_id))  # Generate unique suffix from deposition ID
+        return f"{prefix}/{suffix}"
 
-    def get_deposition(self, deposition_id: int) -> dict:
+    def get_all_depositions(self) -> dict:
         """
-        Simulate retrieving a deposition from Fakenodo (GET /fakenodo/api/<depositionId>).
+        Get all depositions from Fakenodo.
         """
-        response = requests.get(f"{self.FAKENODO_API_URL}/{deposition_id}", headers=self.headers)
-        if response.status_code == 200:
-            return response.json()  # Returns deposition details with DOI
-        else:
-            raise Exception(f"Failed to get deposition from Fakenodo. Response: {response.content}")
+        return self.depositions
 
-    def delete_deposition(self, deposition_id: int) -> dict:
+    def delete_deposition(self, deposition_id: str) -> dict:
         """
-        Simulate deleting a deposition from Fakenodo (DELETE /fakenodo/api/<depositionId>).
+        Simulate deleting a deposition from Fakenodo.
         """
-        response = requests.delete(f"{self.FAKENODO_API_URL}/{deposition_id}", headers=self.headers)
-        if response.status_code == 200:
-            return {"status": "success", "message": f"Successfully deleted deposition {deposition_id}"}
-        else:
-            return {"status": "failure", "message": f"Failed to delete deposition {deposition_id}"}
+        if deposition_id not in self.depositions:
+            raise Exception("Deposition not found.")
 
-    def get_doi(self, deposition_id: int) -> str:
-        """
-        Simulate retrieving the DOI for a deposition (from the Fakenodo API).
-        """
-        deposition = self.get_deposition(deposition_id)
-        return deposition.get("doi")  # Mock DOI returned by fakenodo
+        # Simulate deletion
+        del self.depositions[deposition_id]
+
+        return {"message": "Deposition deleted successfully."}
