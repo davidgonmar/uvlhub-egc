@@ -24,10 +24,10 @@ class FMRatingRepository(BaseRepository):
 
     def get(self, feature_model_id: int, user_id: int) -> Optional[FMRating]:
         return self.model.query.filter_by(feature_model_id=feature_model_id, user_id=user_id).first()
-    
+
     def get_average_by_feature_model(self, feature_model_id: int) -> float:
         return self.model.query.filter_by(feature_model_id=feature_model_id).with_entities(func.avg(self.model.rating)).scalar()
-    
+
     def create_or_update(self, feature_model_id: int, user_id: int, rating: int) -> FMRating:
         rating = self.get(feature_model_id, user_id)
         if rating:

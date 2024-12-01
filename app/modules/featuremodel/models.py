@@ -4,13 +4,9 @@ from sqlalchemy import Enum as SQLAlchemyEnum
 from app.modules.dataset.models import Author, PublicationType
 
 from datetime import datetime
-from enum import Enum
 
-from flask import request
-from sqlalchemy import Enum as SQLAlchemyEnum, UniqueConstraint
+from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import validates
-from app import db
-from app.modules.auth.models import User
 
 class FeatureModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -58,7 +54,7 @@ class FMRating(db.Model):
 
     feature_model = db.relationship('FeatureModel', backref='ratings', lazy=True)
     user = db.relationship('User', backref='ratings', lazy=True)
-    
+
     __table_args__ = (
         UniqueConstraint('user_id', 'feature_model_id', name='_user_feature_model_uc'),
     )

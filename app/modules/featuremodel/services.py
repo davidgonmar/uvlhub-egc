@@ -29,9 +29,9 @@ class FMRatingService(BaseService):
 
     def get(self, feature_model_id: int, user_id: int) -> Optional[FMRating]:
         return self.repository.get(feature_model_id, user_id)
-    
+
     def get_average_by_feature_model(self, feature_model_id: int) -> float:
         return self.repository.get_average_by_feature_model(feature_model_id)
-    
+
     def create_or_update(self, feature_model_id: int, user_id: int, rating: int) -> FMRating:
         return self.repository.create_or_update(feature_model_id, user_id, rating)
