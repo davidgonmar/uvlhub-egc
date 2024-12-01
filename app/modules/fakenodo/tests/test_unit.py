@@ -1,96 +1,139 @@
 import pytest
-from flask import Flask
-from app.modules.fakenodo.routes import fakenodo_bp
+from unittest.mock import MagicMock
 from unittest.mock import patch
 from app.modules.fakenodo.services import FakenodoService
-
-@pytest.fixture(scope='module')
-def test_client():
-    # Create a new Flask app and register fakenodo blueprint
-    app = Flask(__name__)
-    app.register_blueprint(fakenodo_bp)
-
-    # Return the test client to interact with the app
-    with app.test_client() as client:
-        with app.app_context():
-            yield client
+from app.modules.dataset.models import DataSet
+from app.modules.featuremodel.models import FeatureModel
+from flask_login import current_user
+import os
 
 
-def test_test_connection_fakenodo(test_client):
-    response = test_client.get('/fakenodo/api')
-    assert response.status_code == 200
-    assert response.json == {"status": "success", "message": "Connected to FakenodoAPI"}
-
-@patch.object(FakenodoService, 'test_full_connection')
-def test_test_full_connection_route(mock_test_full_connection, test_client):
-    """
-    Test the /fakenodo/api/test route which calls the test_full_connection method in FakenodoService.
-    """
-    # Mock the response from the test_full_connection method to simulate a successful test
-    mock_test_full_connection.return_value = {
-        "success": True,
-        "message": "Successfully completed the full test on Fakenodo."
-    }
-
-    # Send GET request to the full connection route
-    response = test_client.get('/fakenodo/api/test')
-
-    # Assert that the response status code is 200
-    assert response.status_code == 200
-
-    # Assert that the response JSON matches the expected success message
-    assert response.json["success"] is True
-    assert response.json["message"] == "Successfully completed the full test on Fakenodo."
-
-def test_create_fakenodo(test_client):
-    response = test_client.post('/fakenodo/api')
-    assert response.status_code == 201
-    assert response.json == {"status": "success", "message": "Fakenodo deposition created"}
+@pytest.fixture
+def fakenodo_service():
+    return FakenodoService()
 
 
-def test_deposition_files_fakenodo(test_client):
-    # Assuming depositionId is 1
-    response = test_client.post('/fakenodo/api/1/files')
-    assert response.status_code == 201
-    assert response.json == {
-        "status": "success",
-        "message": "Successfully uploaded files to deposition 1"
-    }
+@pytest.fixture
+def mock_dataset():
+    # Create a mock dataset
+    mock_ds = MagicMock()
+    mock_ds.id = 1
+    mock_ds.ds_meta_data.title = "Test Dataset"
+    mock_ds.ds_meta_data.description = "A test dataset."
+    mock_ds.ds_meta_data.authors = []
+    mock_ds.ds_meta_data.tags = "tag1, tag2"
+    return mock_ds
 
 
-def test_get_deposition_fakenodo(test_client):
-    # Assuming depositionId is 1
-    response = test_client.get('/fakenodo/api/1')
-    assert response.status_code == 200
-    assert response.json == {
-        "status": "success",
-        "message": "Retrieved deposition with ID 1",
-        "doi": "10.5072/fakenodo.1"
-    }
+@pytest.fixture
+def mock_feature_model():
+    # Create a mock feature model
+    mock_fm = MagicMock()
+    mock_fm.fm_meta_data.uvl_filename = "test_file.uvl"
+    return mock_fm
 
 
-def test_delete_deposition_fakenodo(test_client):
-    # Assuming depositionId is 1
-    response = test_client.delete('/fakenodo/api/1')
-    assert response.status_code == 200
-    assert response.json == {
-        "status": "success",
-        "message": "Successfully deleted deposition 1"
-    }
+def test_test_connection(fakenodo_service):
+    # Test the connection to Fakenodo
+    assert fakenodo_service.test_connection() is True
 
-def test_get_doi_fakenodo(test_client):
-    """
-    Test the GET /fakenodo/api/<depositionId>/doi route to ensure it returns the correct DOI.
-    """
-    deposition_id = 123  # Example deposition ID
 
-    # Send GET request to the DOI endpoint
-    response = test_client.get(f'/fakenodo/api/{deposition_id}/doi')
+def test_create_new_deposition(fakenodo_service, mock_dataset):
+    # Test creating a new deposition
+    deposition = fakenodo_service.create_new_deposition(mock_dataset)
+    
+    # Check if deposition ID and DOI are generated
+    assert "deposition_id" in deposition
+    assert "doi" in deposition
+    assert deposition["doi"].startswith("10.5281/fakenodo.")
 
-    # Check if the response status code is 200
-    assert response.status_code == 200
 
-    # Check if the response JSON contains the expected DOI
-    expected_doi = f"10.5072/fakenodo.{deposition_id}"
-    assert response.json["status"] == "success"
-    assert response.json["doi"] == expected_doi
+def test_upload_file(fakenodo_service, mock_dataset, mock_feature_model):
+    # Test uploading a file to a deposition
+    
+    # Create a new deposition
+    deposition = fakenodo_service.create_new_deposition(mock_dataset)
+    deposition_id = deposition["deposition_id"]
+    
+    # Mock current_user using unittest.mock.patch, patching it at the correct import location
+    with patch('app.modules.fakenodo.services.current_user') as mock_current_user:
+        mock_current_user.id = 123
+        
+        # Simulate the file upload
+        result = fakenodo_service.upload_file(mock_dataset, deposition_id, mock_feature_model)
+    
+    # Check if the success message is in the result
+    assert "File test_file.uvl uploaded successfully." in result["message"]
+    
+    # Validate the returned file metadata
+    assert "file_metadata" in result
+    assert result["file_metadata"]["file_name"] == "test_file.uvl"
+    assert result["file_metadata"]["file_url"] == "/uploads/user_123/dataset_1/test_file.uvl"
+    assert "upload_time" in result["file_metadata"]
+    
+    # Check if the file is saved on disk
+    file_path = os.path.join("uploads", "user_123", f"dataset_{mock_dataset.id}", "test_file.uvl")
+    assert os.path.exists(file_path)
+
+    # Optionally, you can check if the file content is as expected
+    with open(file_path, 'r') as file:
+        content = file.read()
+        assert content == "Simulated file content."
+
+
+def test_publish_deposition(fakenodo_service, mock_dataset):
+    # Test publishing a deposition
+    deposition = fakenodo_service.create_new_deposition(mock_dataset)
+    deposition_id = deposition["deposition_id"]
+    
+    result = fakenodo_service.publish_deposition(deposition_id)
+    
+    # Check if deposition is published
+    assert "Deposition published successfully." in result["message"]
+    assert fakenodo_service.depositions[deposition_id]["published"] is True
+
+
+def test_get_deposition(fakenodo_service, mock_dataset):
+    # Test retrieving a deposition
+    deposition = fakenodo_service.create_new_deposition(mock_dataset)
+    deposition_id = deposition["deposition_id"]
+    
+    result = fakenodo_service.get_deposition(deposition_id)
+    
+    # Check if the returned deposition matches the metadata
+    assert "metadata" in result
+    assert result["metadata"]["title"] == mock_dataset.ds_meta_data.title
+
+
+def test_get_doi(fakenodo_service, mock_dataset):
+    # Test retrieving DOI of a deposition
+    deposition = fakenodo_service.create_new_deposition(mock_dataset)
+    deposition_id = deposition["deposition_id"]
+    
+    result = fakenodo_service.get_doi(deposition_id)
+    
+    # Check if the returned DOI matches the generated one
+    assert result.startswith("10.5281/fakenodo.")
+
+
+def test_get_all_depositions(fakenodo_service, mock_dataset):
+    # Test getting all depositions
+    fakenodo_service.create_new_deposition(mock_dataset)
+    
+    result = fakenodo_service.get_all_depositions()
+    
+    # Check if all depositions are returned
+    assert len(result) == 1
+    assert "metadata" in result[next(iter(result))]
+
+
+def test_delete_deposition(fakenodo_service, mock_dataset):
+    # Test deleting a deposition
+    deposition = fakenodo_service.create_new_deposition(mock_dataset)
+    deposition_id = deposition["deposition_id"]
+    
+    result = fakenodo_service.delete_deposition(deposition_id)
+    
+    # Check if the deposition is deleted
+    assert "Deposition deleted successfully." in result["message"]
+    assert deposition_id not in fakenodo_service.depositions
