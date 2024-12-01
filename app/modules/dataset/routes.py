@@ -373,7 +373,7 @@ def get_unsynchronized_dataset(dataset_id):
     return render_template("dataset/view_dataset.html", dataset=dataset)
 
 
-## DOWNLOAD ALL
+# DOWNLOAD ALL
 @dataset_bp.route("/dataset/download_all", methods=["GET"])
 def download_all_datasets():
     # Obtener todos los datasets
@@ -425,6 +425,7 @@ def download_all_datasets():
     shutil.rmtree(temp_dir)
 
     return resp
+
 
 @dataset_bp.route("/dataset/download_relevant_datasets", methods=["GET"])
 def download_all_relevant_datasets():
@@ -513,9 +514,6 @@ def download_all_relevant_datasets():
     shutil.rmtree(temp_dir)
 
     return resp
-
-
-
 
 
 @login_required
