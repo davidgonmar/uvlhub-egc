@@ -16,6 +16,8 @@ def test_client(test_client):
     yield test_client
     
 
+# Tecnique "Partición equivalente"
+
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_happy_path_title(mock_filter):
     # Create dataset mocks
@@ -343,7 +345,8 @@ def test_filter_functionality_no_input(mock_filter):
     assert response[1].to_dict()["title"] == "Dataset 2"
     mock_filter.assert_called_once_with(query="")
     
-
+    
+# Tecnique "Valores límite"
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_number_dataset_is_not_above_reality(mock_filter):
     # Create dataset mocks
@@ -419,6 +422,7 @@ def test_filter_functionality_number_dataset_is_not_less_than_reality_for_a_inpu
     mock_filter.assert_called_once_with(query="tag1")
 
 
+# Tecnique "Experiencia"
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sql_insertion(mock_filter):
     # Create dataset mocks
@@ -490,7 +494,8 @@ def test_filter_functionality_radom_insertion(mock_filter):
     assert len(response) == 0
     mock_filter.assert_called_once_with(query="djadoufhapsdufad")
     
- 
+
+# Although it is not a pure unit test, it can be classified under the "Partición Equivalente" technique.
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_search_queries_functionality_using_the_route_post_happy_path(mock_filter, test_client):
    
@@ -591,4 +596,6 @@ def test_search_queries_functionality_using_the_route_post_sad_path(mock_filter,
     # Verify that the repository was called correctly
     mock_filter.assert_called_once_with(
         query="Holidays"
-    )   
+    )
+  
+    
