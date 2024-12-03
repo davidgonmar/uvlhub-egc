@@ -1,7 +1,6 @@
 import unittest
 import pytest
 from unittest.mock import patch, MagicMock
-import unittest
 from app.modules.dataset.models import DSMetaData, DataSet
 from app.modules.dataset.services import DataSetService
 
@@ -158,15 +157,18 @@ class TestDatasetExport(unittest.TestCase):
         corrupted_feature_model.files = [MagicMock(id=3, name="corrupted_file.splx", size=-1)]
         corrupted_dataset = DataSet(
             id=4, user_id=1, ds_meta_data=self.ds_meta_data, feature_models=[corrupted_feature_model])
+        response = self.mock_export("SPLX", dataset=corrupted_dataset)
+        self.assertFalse(response["success"])
+        self.assertEqual(response["error"], "Archivo corrupto detectado")
     
-        # Mock del método export
-    def mock_export(self, format, dataset=None):
+    # Mock del método export
+    def mock_export(self, export_format, dataset=None):
         if dataset is None:
             dataset = self.dataset
-        if format not in ["UVL", "JSON", "CNF", "SPLX"]:
+        if export_format not in ["UVL", "JSON", "CNF", "SPLX"]:
             return {"success": False, "error": "Formato de exportación no válido"}
         if not dataset.files():
             return {"success": False, "error": "Dataset vacío no puede ser exportado"}
         if any(file.size < 0 for file in dataset.files()):
             return {"success": False, "error": "Archivo corrupto detectado"}
-        return {"success": True, "format": format}
+        return {"success": True, "export_format": format}
