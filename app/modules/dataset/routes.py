@@ -279,8 +279,8 @@ def subdomain_index(doi):
     resp = make_response(render_template(
         "dataset/view_dataset.html",
         dataset=dataset,
-        average_rating=round(average_rating, 2), 
-        user_rating=user_rating or 0  
+        average_rating=round(average_rating, 2),
+        user_rating=user_rating or 0
     ))
     resp.set_cookie("view_cookie", user_cookie)
 
@@ -546,7 +546,6 @@ def rate():
     if not dataset_id or not rating:
         return jsonify({"message": "Invalid request"}), 400
 
-    dataset = dataset_service.get_or_404(dataset_id)
     ds_rating_service.create_or_update(dataset_id, current_user.id, rating)
 
     average_rating = ds_rating_service.get_average_by_dataset(dataset_id) or 0.0

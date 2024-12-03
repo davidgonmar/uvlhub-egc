@@ -328,7 +328,6 @@
                             data-average="{{ average_rating }}" 
                             data-dataset-id="{{ dataset.id }}" 
                             data-user-rating="{{ user_rating }}">
-                            <!-- Estrellas no seleccionables para usuarios anónimos -->
                             <span class="fa fa-star" data-value="1"></span>
                             <span class="fa fa-star" data-value="2"></span>
                             <span class="fa fa-star" data-value="3"></span>
@@ -353,7 +352,6 @@
                          data-average="{{ average_rating }}" 
                          data-dataset-id="{{ dataset.id }}" 
                          data-user-rating="{{ user_rating }}">
-                        <!-- Las estrellas seleccionables para usuarios logueados serán generadas dinámicamente -->
                     </div>
                     <p id="average-rating" class="text-muted mt-2">
                         Average Rating: 0 / 5
@@ -399,12 +397,10 @@
 
             document.getElementById('average-rating').textContent = `Average Rating: ${averageRating} / 5`;
 
-            // Crear las estrellas
             for (let i = 1; i <= 5; i++) {
                 const star = document.createElement('i');
                 star.classList.add('fa', 'fa-star');
 
-                // Marcarlas segun el user rating
                 if (i <= userRating) {
                     star.classList.add('active');
                 }
@@ -413,7 +409,6 @@
                 container.appendChild(star);
             }
 
-            // Evento/Animacion de las estrellas
             const stars = container.querySelectorAll('.fa-star');
             stars.forEach(star => {
                 star.addEventListener('mouseover', () => {
@@ -484,13 +479,13 @@
 
     .rating-container .fa-star {
         font-size: 1.5rem;
-        color: #ccc; /* Gris por defecto */
+        color: #ccc;
         cursor: pointer;
         transition: color 0.3s;
     }
 
     .rating-container .fa-star.active {
-        color: gold; /* Estrellas seleccionadas */
+        color: gold;
     }
 
     .rating-anonymous {
@@ -500,7 +495,7 @@
 
     .rating-anonymous .fa-star {
         font-size: 1.5rem;
-        color: #ccc; /* Gris por defecto */
+        color: #ccc;
         transition: color 0.3s;
     }
 
@@ -536,7 +531,6 @@
             const averageRating = parseFloat(container.getAttribute('data-average'));
             const userRating = parseInt(container.getAttribute('data-user-rating'));
 
-            // Mostrar el promedio al cargar la página
             document.getElementById('average-rating').textContent = `Average Rating: ${averageRating} / 5`;
 
         });

@@ -209,7 +209,7 @@ class DSRating(db.Model):
 
     def __repr__(self):
         return f'<DSRating id={self.id} user_id={self.user_id} dataset_id={self.dataset_id} rating={self.rating}>'
-    
+
     def save(self):
         db.session.add(self)
         db.session.commit()
