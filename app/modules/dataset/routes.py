@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from zipfile import ZipFile
 from app.modules.dataset.transformation_aux import transformation, delete_transformation
 
+from app import db
 from flask import (
     redirect,
     render_template,
@@ -17,6 +18,7 @@ from flask import (
     make_response,
     abort,
     url_for,
+    session
 )
 from flask_login import login_required, current_user
 
@@ -36,6 +38,7 @@ from app.modules.dataset.services import (
 )
 
 from app.modules.zenodo.services import ZenodoService
+from app.modules.explore.services import ExploreService
 
 logger = logging.getLogger(__name__)
 
@@ -284,6 +287,91 @@ def subdomain_index(doi):
     return resp
 
 
+@dataset_bp.route("/dataset/edit/<path:doi>/", methods=["GET", "POST"])
+@login_required
+def edit_dataset(doi):
+    # Buscar el dataset por DOI
+    ds_meta_data = dsmetadata_service.filter_by_doi(doi)
+
+    # Si no se encuentra el dataset, devolver un error 404
+    if not ds_meta_data:
+        abort(404)
+
+    # Obtener el dataset asociado
+    dataset = ds_meta_data.data_set
+
+    # Verificar que el usuario sea el propietario
+    if dataset.user_id != current_user.id:
+        return jsonify({"message": "You do not have permission to edit this dataset."}), 403
+
+    # Solo permitir edición si está en modo borrador
+    if not dataset.ds_meta_data.is_draft_mode and request.method == "POST":
+        return jsonify({"message": "This dataset is already published and cannot be edited."}), 400
+
+    if request.method == "POST":
+        data = request.get_json()
+
+        # Validar los datos recibidos
+        title = data.get("title")
+        description = data.get("description")
+        tags = data.get("tags")
+        publish = data.get("publish")  # Si el dataset debe publicarse
+
+        if not title or not description:
+            return jsonify({"message": "Title and description are required."}), 400
+
+        try:
+            # Actualizar los metadatos
+            dataset.ds_meta_data.title = title
+            dataset.ds_meta_data.description = description
+            dataset.ds_meta_data.tags = ",".join(tags) if tags else dataset.ds_meta_data.tags
+
+            # Publicar el dataset si corresponde
+            if publish:
+                dataset.ds_meta_data.is_draft_mode = False
+
+            db.session.commit()
+            return jsonify({"message": "Dataset updated successfully.", "is_draft_mode": dataset.ds_meta_data
+                            .is_draft_mode}), 200
+
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"message": f"An error occurred: {str(e)}"}), 500
+
+    # Renderizar el HTML para editar el dataset (GET)
+    return render_template("dataset/staging_area_dataset.html", dataset=dataset)
+
+
+@dataset_bp.route("/dataset/publish/<path:doi>/", methods=["POST"])
+@login_required
+def publish_dataset(doi):
+    # Buscar el dataset por DOI
+    ds_meta_data = dsmetadata_service.filter_by_doi(doi)
+
+    if not ds_meta_data:
+        abort(404)
+
+    dataset = ds_meta_data.data_set
+
+    # Verificar que el usuario sea el propietario
+    if dataset.user_id != current_user.id:
+        return jsonify({"message": "You do not have permission to publish this dataset."}), 403
+
+    # Verificar si ya está publicado
+    if not dataset.ds_meta_data.is_draft_mode:
+        return jsonify({"message": "This dataset is already published."}), 400
+
+    try:
+        # Publicar el dataset
+        dataset.ds_meta_data.is_draft_mode = False
+        db.session.commit()
+        return jsonify({"message": "Dataset published successfully."}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"An error occurred: {str(e)}"}), 500
+
+
 @dataset_bp.route("/dataset/unsynchronized/<int:dataset_id>/", methods=["GET"])
 @login_required
 def get_unsynchronized_dataset(dataset_id):
@@ -297,7 +385,7 @@ def get_unsynchronized_dataset(dataset_id):
     return render_template("dataset/view_dataset.html", dataset=dataset)
 
 
-########## DOWNLOAD ALL ###############################################
+# DOWNLOAD ALL
 @dataset_bp.route("/dataset/download_all", methods=["GET"])
 def download_all_datasets():
     # Obtener todos los datasets
@@ -318,12 +406,10 @@ def download_all_datasets():
                         relative_path = os.path.relpath(full_path, file_path)
                         zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
 
-    # Generar o recuperar la cookie de descarga
     user_cookie = request.cookies.get("download_cookie")
     if not user_cookie:
-        user_cookie = str(uuid.uuid4())  # Generar un UUID si no hay cookie de descarga
+        user_cookie = str(uuid.uuid4())
 
-    # Enviar el archivo ZIP como respuesta
     resp = make_response(
         send_from_directory(
             temp_dir,
@@ -334,26 +420,121 @@ def download_all_datasets():
     )
     resp.set_cookie("download_cookie", user_cookie)
 
-    # Registrar cada dataset descargado
     for dataset in datasets:
         existing_record = DSDownloadRecord.query.filter_by(
             dataset_id=dataset.id,
             download_cookie=user_cookie
         ).first()
 
-        # Registrar solo si no existe un registro previo
         if not existing_record:
             DSDownloadRecordService().create(
-                user_id=None,  # Sin usuario autenticado
+                user_id=None,
                 dataset_id=dataset.id,
                 download_date=datetime.now(timezone.utc),
                 download_cookie=user_cookie,
             )
 
-    # Limpieza de la carpeta temporal
     shutil.rmtree(temp_dir)
 
     return resp
+
+
+@dataset_bp.route("/dataset/download_relevant_datasets", methods=["GET"])
+def download_all_relevant_datasets():
+    criteria = session.get('explore_criteria')
+    datasets = ExploreService().filter(**criteria)
+
+    if not datasets or not isinstance(datasets, list):
+        return jsonify({"error": "No datasets provided or invalid format"}), 400
+
+    include_uvl = request.args.get("uvl", "false").lower() == "true"
+    include_cnf = request.args.get("cnf", "false").lower() == "true"
+    include_json = request.args.get("json", "false").lower() == "true"
+    include_splx = request.args.get("splx", "false").lower() == "true"
+
+    allowed_folders = []
+    allowed_extensions = []
+
+    if include_uvl:
+        allowed_extensions.append("uvl")
+    if include_cnf:
+        allowed_folders.append("type_cnf")
+        allowed_extensions.append("cnf")
+    if include_json:
+        allowed_folders.append("type_json")
+        allowed_extensions.append("json")
+    if include_splx:
+        allowed_folders.append("type_splx")
+        allowed_extensions.append("splx")
+
+    if not allowed_extensions:
+        return jsonify({"error": "No valid file types specified."}), 400
+
+    temp_dir = tempfile.mkdtemp()
+    zip_path = os.path.join(temp_dir, "all_relevant_datasets.zip")
+
+    with ZipFile(zip_path, "w") as zipf:
+        for dataset in datasets:
+            dataset_path = f"uploads/user_{dataset.user_id}/dataset_{dataset.id}/"
+            if not os.path.exists(dataset_path):
+                print(f"Skipping missing path: {dataset_path}")
+                continue  # Skip if the directory doesn't exist
+
+            # Handle UVL files in the root directory
+            if include_uvl:
+                for file in os.listdir(dataset_path):
+                    if file.endswith(".uvl"):
+                        full_path = os.path.join(dataset_path, file)
+                        relative_path = os.path.relpath(full_path, dataset_path)
+                        zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+
+            # Handle other file types in subdirectories
+            allowed_folders = ["type_cnf", "type_json", "type_splx"]
+            allowed_extensions = ["cnf", "json", "splx"]
+            for folder in allowed_folders:
+                specific_path = os.path.join(dataset_path, folder)
+                if not os.path.exists(specific_path):
+                    print(f"Skipping missing folder: {specific_path}")
+                    continue
+
+                for file in os.listdir(specific_path):
+                    if any(file.endswith(f".{ext}") for ext in allowed_extensions):
+                        full_path = os.path.join(specific_path, file)
+                        relative_path = os.path.relpath(full_path, dataset_path)
+                        zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+
+    user_cookie = request.cookies.get("download_cookie")
+    if not user_cookie:
+        user_cookie = str(uuid.uuid4())
+
+    resp = make_response(
+        send_from_directory(
+            temp_dir,
+            "all_relevant_datasets.zip",
+            as_attachment=True,
+            mimetype="application/zip",
+        )
+    )
+    resp.set_cookie("download_cookie", user_cookie)
+
+    for dataset in datasets:
+        existing_record = DSDownloadRecord.query.filter_by(
+            dataset_id=dataset.id,
+            download_cookie=user_cookie
+        ).first()
+
+        if not existing_record:
+            DSDownloadRecordService().create(
+                user_id=None,
+                dataset_id=dataset.id,
+                download_date=datetime.now(timezone.utc),
+                download_cookie=user_cookie,
+            )
+
+    shutil.rmtree(temp_dir)
+
+    return resp
+
 
 @login_required
 @dataset_bp.route("/dataset/rate", methods=["POST"])

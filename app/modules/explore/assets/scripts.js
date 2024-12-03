@@ -1,9 +1,9 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     // Extract query parameters from the URL
     let urlParams = new URLSearchParams(window.location.search);
     let queryParam = urlParams.get('query');
-    let publicationTypeParam = urlParams.get('publication_type') || 'any';  // Default to 'any' if not present
-    let sortingParam = urlParams.get('sorting') || 'newest';  // Default to 'newest' if not present
+    let publicationTypeParam = urlParams.get('publication_type') || 'any'; // Default to 'any' if not present
+    let sortingParam = urlParams.get('sorting') || 'newest'; // Default to 'newest' if not present
     let startDateParam = urlParams.get('start_date') || '';
     let endDateParam = urlParams.get('end_date') || '';
     let minUvlParam = urlParams.get('min_uvl') || '';
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const queryInput = document.getElementById('query');
         queryInput.value = queryParam.trim();
         queryInput.dispatchEvent(new Event('input', { bubbles: true })); // Trigger input event (optional, depending on implementation)
-        
+
         // Trigger the search function with the query, publication type, and sorting options
         send_query(queryParam, publicationTypeParam, sortingParam, startDateParam, endDateParam, minUvlParam, maxUvlParam, minSizeParam, maxSizeParam, sizeUnitParam);
     } else {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
         send_query();
     }
     // Añadir evento al botón de búsqueda
-    document.getElementById('search-button').addEventListener('click', function () {
+    document.getElementById('search-button').addEventListener('click', function() {
         // Obtener los valores de los filtros
         const query = document.getElementById('query').value;
         const publicationType = document.getElementById('publication_type').value;
@@ -75,7 +75,7 @@ function clearFilters() {
 
     let endDateInput = document.querySelector('#end_date');
     endDateInput.value = "";
-    
+
     // Reset the number of UVL models filters
     let minUvlInput = document.querySelector('#min_uvl');
     minUvlInput.value = "";
@@ -150,43 +150,43 @@ function send_query(queryParam = '', publicationTypeParam = 'any', sortingParam 
 
     // Realizar la solicitud de búsqueda
     fetch('/explore', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(searchCriteria),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        console.log("Response Status:", response.status);
-        return response.json();
-    })
-    .then(data => {
-        console.log("Response Data:", data);
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(searchCriteria),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            console.log("Response Status:", response.status);
+            return response.json();
+        })
+        .then(data => {
+                console.log("Response Data:", data);
 
-        // Limpiar los resultados anteriores
-        document.getElementById('results').innerHTML = '';
+                // Limpiar los resultados anteriores
+                document.getElementById('results').innerHTML = '';
 
-        // Contador de resultados
-        const resultCount = data.length;
-        const resultText = resultCount === 1 ? 'dataset' : 'datasets';
-        document.getElementById('results_number').textContent = `${resultCount} ${resultText} found`;
+                // Contador de resultados
+                const resultCount = data.length;
+                const resultText = resultCount === 1 ? 'dataset' : 'datasets';
+                document.getElementById('results_number').textContent = `${resultCount} ${resultText} found`;
 
-        // Mostrar/ocultar el icono de "no encontrado"
-        if (resultCount === 0) {
-            document.getElementById("results_not_found").style.display = "block";
-        } else {
-            document.getElementById("results_not_found").style.display = "none";
-        }
+                // Mostrar/ocultar el icono de "no encontrado"
+                if (resultCount === 0) {
+                    document.getElementById("results_not_found").style.display = "block";
+                } else {
+                    document.getElementById("results_not_found").style.display = "none";
+                }
 
-        // Mostrar los resultados
-        if (resultCount > 0) {
-            data.forEach(dataset => {
-                let card = document.createElement('div');
-                card.className = 'col-12';
-                card.innerHTML = `
+                // Mostrar los resultados
+                if (resultCount > 0) {
+                    data.forEach(dataset => {
+                                let card = document.createElement('div');
+                                card.className = 'col-12';
+                                card.innerHTML = `
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between">
@@ -269,3 +269,80 @@ function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, options);
 }
+
+
+function download_relevant_dataset(selectedOptions) {
+    console.log('Downloading relevant datasets...');
+    
+
+
+    fetch(`/dataset/download_relevant_datasets?uvl=${selectedOptions.UVL}&cnf=${selectedOptions.DIMACS}&json=${selectedOptions.Glencoe}&splx=${selectedOptions.SPLOT}`, {
+        method: 'GET',
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to download relevant datasets');
+        return response.blob();
+    })
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'relevant_datasets.zip';
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+        console.error('Error downloading datasets:', error);
+        alert('An error occurred while downloading the datasets. Please try again.');
+    });
+}
+
+
+
+
+    // // Add event listener to the download relevant datasets button
+    // const downloadButton = document.getElementById('download-relevant-datasets');
+    // if (downloadButton) {
+    //     downloadButton.addEventListener('click', download_relevant_dataset);
+    // }
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleButtons = document.querySelectorAll('.toggle-button');
+    
+        // Prevent dropdown menu from closing on button click
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent default dropdown close behavior
+                const checkboxId = button.getAttribute('data-target');
+                const checkbox = document.getElementById(checkboxId);
+    
+                if (checkbox) {
+                    // Toggle the checkbox state
+                    checkbox.checked = !checkbox.checked;
+                    console.log(`${checkboxId} is now ${checkbox.checked ? 'checked' : 'unchecked'}`);
+                }
+            });
+        });
+    
+        // Ensure the "Download" button also doesn't close the dropdown
+        const downloadButton = document.getElementById('download-relevant-datasets');
+        if (downloadButton) {
+            downloadButton.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent dropdown from closing
+                // Handle the download action
+                const selectedOptions = {
+                    UVL: document.getElementById('checkbox_uvl')?.checked || false,
+                    Glencoe: document.getElementById('checkbox_glencoe')?.checked || false,
+                    DIMACS: document.getElementById('checkbox_dimacs')?.checked || false,
+                    SPLOT: document.getElementById('checkbox_splot')?.checked || false,
+                };
+                console.log('Selected options:', selectedOptions);
+        // Check if at least one option is selected
+        if (Object.values(selectedOptions).includes(true)) {
+            console.log('Downloading:', selectedOptions);
+            download_relevant_dataset(selectedOptions);
+        } else {
+            alert('No options selected!');
+        }
+            });
+        }
+    });
