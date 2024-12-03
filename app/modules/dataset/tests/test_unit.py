@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import patch, MagicMock
-
+from app.modules.dataset.models import  DataSet, DSMetaData
 from app.modules.dataset.services import DataSetService
-
+import unittest
 
 @pytest.fixture(scope="module")
 def test_client(test_client):
@@ -84,3 +84,47 @@ def test_download_all_returns_zip(test_client):
 
     assert response.data is not None
     assert response.content_type == 'application/zip'
+
+
+class TestDatasetExport(unittest.TestCase):
+
+    def setUp(self):
+        # Mock de DSMetaData y FeatureModel
+        self.ds_meta_data = DSMetaData(title="Test Dataset", description="Test description")
+        feature_model_mock = MagicMock()
+        feature_model_mock.files = [
+            MagicMock(id=1, name="test_file.uvl", size=1024),
+            MagicMock(id=2, name="test_file.json", size=2048),
+        ]
+
+        # Crear dataset con mocks
+        self.dataset = DataSet(
+            id=1,
+            user_id=1,
+            ds_meta_data=self.ds_meta_data,
+            feature_models=[feature_model_mock],
+        )
+
+    # 1. Prueba de exportación en formato UVL
+    def test_export_uvl(self):
+        response = self.mock_export("UVL")
+        self.assertTrue(response["success"])
+        self.assertEqual(response["format"], "UVL")
+
+    # 2. Prueba de exportación en formato JSON
+    def test_export_json(self):
+        response = self.mock_export("JSON")
+        self.assertTrue(response["success"])
+        self.assertEqual(response["format"], "JSON")
+    
+    # 3. Prueba de exportación en formato cnf
+    def test_export_cnf(self):
+        response = self.mock_export("CNF")
+        self.assertTrue(response["success"])
+        self.assertEqual(response["format"], "CNF")
+    
+    # 4. Prueba de exportación en formato splx
+    def test_export_splx(self):
+        response = self.mock_export("SPLX")
+        self.assertTrue(response["success"])
+        self.assertEqual(response["format"], "SPLX")
