@@ -1,9 +1,9 @@
-from flask import jsonify, make_response, request
+from flask import jsonify, request
 from app.modules.dataset.models import DataSet
 from app.modules.fakenodo import fakenodo_bp
 from app.modules.fakenodo.services import FakenodoService
 from app.modules.featuremodel.models import FeatureModel
-from flask_login import login_required, current_user
+from flask_login import login_required
 
 base_url = "/fakenodo/api"
 
@@ -26,7 +26,7 @@ def create_deposition():
     try:
         dataset_id = request.json.get("dataset_id")
         dataset = DataSet.query.get(dataset_id)
-        
+
         if not dataset:
             return jsonify({"status": "error", "message": "Dataset not found."}), 404
 

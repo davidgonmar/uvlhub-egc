@@ -1,8 +1,6 @@
 import logging
 import os
-import uuid
-import json
-from flask import jsonify, Response
+
 from flask_login import current_user
 from app.modules.dataset.models import DataSet
 from app.modules.fakenodo.repositories import FakenodoRepository
@@ -12,7 +10,7 @@ from core.services.BaseService import BaseService
 logger = logging.getLogger(__name__)
 
 class FakenodoService(BaseService):
-    
+
     def __init__(self):
         self.deposition_repository = FakenodoRepository()
         # Initialize depositions as a dictionary to store the deposition data

@@ -1,9 +1,6 @@
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from app.modules.fakenodo.services import FakenodoService
-from app.modules.dataset.models import DataSet
-from app.modules.featuremodel.models import FeatureModel
-import os
 
 
 @pytest.fixture
@@ -61,7 +58,7 @@ def test_create_new_deposition(fakenodo_service, mock_dataset):
     assert "deposition_id" in deposition
     assert "doi" in deposition
     assert deposition["doi"].startswith("10.5281/fakenodo.")
-    
+
     # Check that the repository method was called with the correct arguments
     fakenodo_service.deposition_repository.create_new_deposition.assert_called_once_with(
         deposition["doi"], deposition["dep_metadata"]
