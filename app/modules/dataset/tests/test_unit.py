@@ -130,6 +130,19 @@ class TestDatasetExport(unittest.TestCase):
         self.assertTrue(response["success"])
         self.assertEqual(response["format"], "SPLX")
     
+    # 5. Valores Límite: Exportación de dataset vacío
+    def test_export_empty_dataset(self):
+        empty_dataset = DataSet(id=2, user_id=1, ds_meta_data=self.ds_meta_data, feature_models=[])
+        response = self.mock_export("JSON", dataset=empty_dataset)
+        self.assertFalse(response["success"])
+        self.assertEqual(response["error"], "Dataset vacío no puede ser exportado")
+
+    # 6. Partición Equivalente: Formato no válido
+    def test_invalid_format(self):
+        response = self.mock_export("INVALID_FORMAT")
+        self.assertFalse(response["success"])
+        self.assertEqual(response["error"], "Formato de exportación no válido")
+    
         # Mock del método export
     def mock_export(self, format, dataset=None):
         if dataset is None:
