@@ -597,5 +597,54 @@ def test_search_queries_functionality_using_the_route_post_sad_path(mock_filter,
     mock_filter.assert_called_once_with(
         query="Holidays"
     )
+    
+
+@patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
+def test_filter_functionality__the_route_post_happy_path_title(mock_filter, test_client):
+    # Create dataset mocks
+    mock_dataset_1 = MagicMock()
+    mock_dataset_1.to_dict.return_value = {
+        "id": 1,
+        "title": "Dataset 1",
+        "description": "Description for dataset 1",
+        "url": "/dataset/1",
+        "authors": [{"name": "Author 1"}],
+        "tags": ["tag1", "tag2"],
+        "created_at": "2023-01-01",
+    }
+
+    mock_dataset_2 = MagicMock()
+    mock_dataset_2.to_dict.return_value = {
+        "id": 2,
+        "title": "Dataset 2",
+        "description": "Description for dataset 2",
+        "url": "/dataset/2",
+        "authors": [{"name": "Author 2"}],
+        "tags": ["tag3"],
+        "created_at": "2023-02-01",
+    }
+    # Configure the mock
+    mock_filter.return_value = [mock_dataset_1, mock_dataset_2]
+
+    # Make a request to the endpoint
+    response = test_client.post(
+        '/explore',
+        json={
+            "query": "Dataset",
+            **{}
+        }
+    )
+
+    # Verificar que la respuesta tiene el estado correcto
+    assert response.status_code == 200
+    
+    # Verify that the response has the correct status
+    data = response.json
+
+    # Assertions
+    assert len(data) == 2
+    assert data[0]["title"] == "Dataset 1"
+    assert data[1]["title"] == "Dataset 2"
+    mock_filter.assert_called_once_with(query="Dataset", **{})
   
     
