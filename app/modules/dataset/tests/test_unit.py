@@ -109,25 +109,25 @@ class TestDatasetExport(unittest.TestCase):
     def test_export_uvl(self):
         response = self.mock_export("UVL")
         self.assertTrue(response["success"])
-        self.assertEqual(response["format"], "UVL")
+        self.assertEqual(response["export_format"], "UVL")
 
     # 2. Prueba de exportación en formato JSON
     def test_export_json(self):
         response = self.mock_export("JSON")
         self.assertTrue(response["success"])
-        self.assertEqual(response["format"], "JSON")
+        self.assertEqual(response["export_format"], "JSON")
     
     # 3. Prueba de exportación en formato cnf
     def test_export_cnf(self):
         response = self.mock_export("CNF")
         self.assertTrue(response["success"])
-        self.assertEqual(response["format"], "CNF")
+        self.assertEqual(response["export_format"], "CNF")
     
     # 4. Prueba de exportación en formato splx
     def test_export_splx(self):
         response = self.mock_export("SPLX")
         self.assertTrue(response["success"])
-        self.assertEqual(response["format"], "SPLX")
+        self.assertEqual(response["export_format"], "SPLX")
     
     # 5. Valores Límite: Exportación de dataset vacío
     def test_export_empty_dataset(self):
@@ -149,7 +149,7 @@ class TestDatasetExport(unittest.TestCase):
         large_dataset = DataSet(id=3, user_id=1, ds_meta_data=self.ds_meta_data, feature_models=[large_feature_model])
         response = self.mock_export("CNF", dataset=large_dataset)
         self.assertTrue(response["success"])
-        self.assertEqual(response["format"], "CNF")
+        self.assertEqual(response["export_format"], "CNF")
 
     #8. Errores Conocidos: Archivo corrupto
     def test_export_corrupted_file(self):
@@ -171,4 +171,4 @@ class TestDatasetExport(unittest.TestCase):
             return {"success": False, "error": "Dataset vacío no puede ser exportado"}
         if any(file.size < 0 for file in dataset.files()):
             return {"success": False, "error": "Archivo corrupto detectado"}
-        return {"success": True, "export_format": format}
+        return {"success": True, "export_format": export_format}
