@@ -381,24 +381,32 @@ def download_all_relevant_datasets():
     with ZipFile(zip_path, "w") as zipf:
         for dataset in datasets:
             dataset_path = f"uploads/user_{dataset.user_id}/dataset_{dataset.id}/"
-            if os.path.exists(dataset_path):
-                # Check files in the root of the dataset folder for uvl files
-                if include_uvl:
-                    for file in os.listdir(dataset_path):
-                        if file.lower().endswith(".uvl"):
-                            full_path = os.path.join(dataset_path, file)
-                            relative_path = os.path.relpath(full_path, dataset_path)
-                            zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+            if not os.path.exists(dataset_path):
+                print(f"Skipping missing path: {dataset_path}")
+                continue  # Skip if the directory doesn't exist
 
-                # Check specific subfolders for other types
-                for subdir, files in os.walk(dataset_path):
-                    relative_subdir = os.path.relpath(subdir, dataset_path)
-                    if any(folder in relative_subdir for folder in allowed_folders):
-                        for file in files:
-                            if any(file.lower().endswith(f".{ext}") for ext in allowed_extensions):
-                                full_path = os.path.join(subdir, file)
-                                relative_path = os.path.relpath(full_path, dataset_path)
-                                zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+            # Handle UVL files in the root directory
+            if include_uvl:
+                for file in os.listdir(dataset_path):
+                    if file.endswith(".uvl"):
+                        full_path = os.path.join(dataset_path, file)
+                        relative_path = os.path.relpath(full_path, dataset_path)
+                        zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+
+            # Handle other file types in subdirectories
+            allowed_folders = ["type_cnf", "type_json", "type_splx"]
+            allowed_extensions = ["cnf", "json", "splx"]
+            for folder in allowed_folders:
+                specific_path = os.path.join(dataset_path, folder)
+                if not os.path.exists(specific_path):
+                    print(f"Skipping missing folder: {specific_path}")
+                    continue
+
+                for file in os.listdir(specific_path):
+                    if any(file.endswith(f".{ext}") for ext in allowed_extensions):
+                        full_path = os.path.join(specific_path, file)
+                        relative_path = os.path.relpath(full_path, dataset_path)
+                        zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
 
     user_cookie = request.cookies.get("download_cookie")
     if not user_cookie:
