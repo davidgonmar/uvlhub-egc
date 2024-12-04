@@ -144,7 +144,7 @@ class FakenodoService(BaseService):
     def get_doi(self, deposition_id: str) -> str:
         """
         Simulate getting a DOI for a deposition.
-        
+
         If the DOI is not already generated, we will create one and store it in the deposition metadata.
         """
         if deposition_id not in self.depositions:
@@ -156,7 +156,7 @@ class FakenodoService(BaseService):
             # Simulate DOI generation (format: 10.xxxx/yyyyyy)
             # You could use UUID or the dataset ID to make the DOI unique
             generated_doi = self._generate_doi(deposition_id)
-            deposition_metadata["doi"] = generated_doi  
+            deposition_metadata["doi"] = generated_doi
         return deposition_metadata["doi"]
 
     def get_all_depositions(self) -> dict:
