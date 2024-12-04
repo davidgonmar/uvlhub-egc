@@ -48,7 +48,7 @@ def test_create_new_deposition(fakenodo_service, mock_dataset):
         "keywords": ["tag1", "tag2", "uvlhub"],
         "license": "CC-BY-4.0"
     }
-    
+
     fakenodo_service.deposition_repository.create_new_deposition.return_value = mock_deposition
 
     # Test creating a new deposition

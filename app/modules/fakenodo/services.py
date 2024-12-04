@@ -31,7 +31,7 @@ class FakenodoService(BaseService):
         Simulate creating a new deposition in Fakenodo.
         """
         deposition_id = dataset.id  # Use dataset's existing ID as deposition ID
-        
+
         # Generate DOI based on the deposition ID
         fake_doi = self._generate_doi(deposition_id)
 

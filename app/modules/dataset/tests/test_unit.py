@@ -1,9 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-
 from app.modules.dataset.services import DataSetService
-from app.modules.fakenodo.services import FakenodoService  # Assuming FakenodoService exists for deposition-related tests
-from app.modules.fakenodo.models import Fakenodo 
 
 
 @pytest.fixture(scope="module")
