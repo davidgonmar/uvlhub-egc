@@ -40,7 +40,7 @@ def test_create_new_deposition(fakenodo_service, mock_dataset):
     # Mock the repository method
     mock_deposition = MagicMock()
     mock_deposition.id = 123
-    mock_deposition.doi = "10.5281/fakenodo.123"
+    mock_deposition.doi = "10.5281/dataset123"
     mock_deposition.metadata = {
         "title": "Test Dataset",
         "description": "A test dataset.",
@@ -57,7 +57,7 @@ def test_create_new_deposition(fakenodo_service, mock_dataset):
     # Check if deposition ID and DOI are generated
     assert "deposition_id" in deposition
     assert "doi" in deposition
-    assert deposition["doi"].startswith("10.5281/fakenodo.")
+    assert deposition["doi"].startswith("10.5281/dataset")
 
     # Check that the repository method was called with the correct arguments
     fakenodo_service.deposition_repository.create_new_deposition.assert_called_once_with(
