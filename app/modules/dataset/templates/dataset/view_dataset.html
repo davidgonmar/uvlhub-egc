@@ -459,8 +459,6 @@
                     alert(data.message || 'Rating saved successfully!');
                     resetStars(stars);
                     highlightStars(stars, rating);
-                    console.log("AVERAGE 2: " + data.average_rating);
-                    console.log("USER RATING 2: " + data.user_rating)
                     location.reload()
                 })
                 .catch(error => {

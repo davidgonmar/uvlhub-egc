@@ -550,9 +550,7 @@ def rate():
 
     average_rating = ds_rating_service.get_average_by_dataset(dataset_id) or 0.0
 
-    user_rating = ds_rating_service.get(dataset_id, current_user.id)
-    print("AVG route: "+str(average_rating))
-    print("USER RAT route: "+str(user_rating.rating))
+    user_rating = ds_rating_service.get(dataset_id, current_user.id) 
 
     return jsonify({
         "message": "Rating saved successfully",
