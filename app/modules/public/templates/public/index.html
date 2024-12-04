@@ -64,7 +64,31 @@
                                     </div>
                                 
                                 </div>
-                                <div class="row  mt-4">
+                                <div class="row mb-2">
+                                    <div class="col-md-8 col-12">
+                                        <div class="rating-container" data-average="{{ dataset.average_rating }}">
+                                            <div class="stars-background">
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                            </div>
+                                            <div class="stars-foreground" style="width: '{{ dataset.average_rating * 20 }}%'">
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                            </div>
+                                            <p id="average-rating" class="text-muted mt-2" style="margin-bottom: -20px; margin-top: 0px !important;">
+                                                Rating: {{ dataset.average_rating }}
+                                            </p>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="row  mt-4" style="margin-top: 0px !important;">
                                     <div class="col-12">
                                         <a href="{{ dataset.get_uvlhub_doi() }}" class="btn btn-outline-primary btn-sm"
                                            style="border-radius: 5px;">
@@ -140,7 +164,31 @@
                                     </div>
                                 
                                 </div>
-                                <div class="row  mt-4">
+                                <div class="row mb-2">
+                                    <div class="col-md-8 col-12">
+                                        <div class="rating-container" data-average="{{ dataset.average_rating }}">
+                                            <div class="stars-background">
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                            </div>
+                                            <div class="stars-foreground" style="width: '{{ dataset.average_rating * 20 }}%'">
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                            </div>
+                                            <p id="average-rating" class="text-muted mt-2" style="margin-bottom: -20px; margin-top: 0px !important;">
+                                                Rating: {{ dataset.average_rating }}
+                                            </p>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="row  mt-4"  style="margin-top: 0px !important;">
                                     <div class="col-12">
                                         <a href="{{ dataset.get_uvlhub_doi() }}" class="btn btn-outline-primary btn-sm"
                                            style="border-radius: 5px;">
@@ -282,6 +330,57 @@
         </div>
 
     </div>
+
+    <style>
+        .rating-container {
+            position: relative;
+            display: inline-block;
+            font-size: 1rem;
+            margin-bottom: -20px; margin-top: 0px !important;
+        }
+
+        .stars-background {
+            font-size: 1.3rem;
+            color: #ccc;
+        }
+
+        .stars-foreground {
+            font-size: 1.3rem;
+            color: gold;
+            position: absolute;
+            top: 0;
+            left: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+        }
+
+        .stars-foreground .fa-star,
+        .stars-background .fa-star {
+            display: inline-block;
+        }
+    
+        #login-prompt {
+            color: red;
+            font-weight: bold;
+            margin-top: -10px;
+            margin-bottom: -25px;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ratings = document.querySelectorAll('.rating-container');
+
+            ratings.forEach(container => {
+                const average = parseFloat(container.getAttribute('data-average'));
+                const starsForeground = container.querySelector('.stars-foreground');
+                if (starsForeground) {
+                    starsForeground.style.width = `${average * 20}%`;
+                }
+            });
+        });
+    </script>
 
 {% endblock %}
 

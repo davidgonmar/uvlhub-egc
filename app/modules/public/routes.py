@@ -4,7 +4,9 @@ from flask import render_template
 
 from app.modules.featuremodel.services import FeatureModelService
 from app.modules.public import public_bp
-from app.modules.dataset.services import DataSetService
+from app.modules.dataset.services import DSRatingService, DataSetService
+
+ds_rating_service = DSRatingService()
 
 logger = logging.getLogger(__name__)
 
@@ -27,9 +29,14 @@ def index():
     total_dataset_views = dataset_service.total_dataset_views()
     total_feature_model_views = feature_model_service.total_feature_model_views()
 
+    # Obtener la lista de datasets y calcular el average_rating para cada uno
+    datasets = dataset_service.latest_synchronized()
+    for dataset in datasets:
+        dataset.average_rating = round(ds_rating_service.get_average_by_dataset(dataset.id) or 0.0, 2)
+
     return render_template(
         "public/index.html",
-        datasets=dataset_service.latest_synchronized(),
+        datasets=datasets,
         datasets_counter=datasets_counter,
         feature_models_counter=feature_models_counter,
         total_dataset_downloads=total_dataset_downloads,
