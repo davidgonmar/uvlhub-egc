@@ -26,7 +26,7 @@ A continuación se detallan las fuentes para obtener las métricas clave del pro
     - Enlace: [Estadísticas de Líneas de Código](https://github.com/davidgonmar/uvlhub-egc/graphs/contributors)
 - **Test**:
   - Los tests realizados por el equipo no tienen una métrica directa en GitHub, pero pueden ser encontrados en el código fuente o en los resultados de integración continua a través de **GitHub Actions**.
-    - Enlace para revisar los **resultados de test en GitHub Actions**: [GitHub Actions Tests](https://github.com/davidgonmar/uvlhub-egc/actions/workflows/ tests.yml)
+    - Enlace para revisar los **resultados de test en GitHub Actions**: [GitHub Actions Tests](https://github.com/davidgonmar/uvlhub-egc/actions/workflows/tests.yml)
 - **Issues gestionadas**:
   - Enlace: [Issues en GitHub](https://github.com/davidgonmar/uvlhub-egc/issues)
     - Se puede filtrar por etiquetas, autor o estado de la issue (abierta/cerrada) para ver la gestión de las tareas e incidencias.
