@@ -141,14 +141,14 @@ class DSRatingRepository(BaseRepository):
         return self.model.query.filter_by(dataset_id=dataset_id).all()
 
     def create_or_update(self, dataset_id: int, user_id: int, rating: int) -> DSRating:
-        rating = self.get_rating(dataset_id, user_id)
-        if rating:
-            rating.rating = rating
-            rating.save()
+        existing_rating = self.get(dataset_id, user_id)
+        if existing_rating:
+            existing_rating.rating = rating
+            existing_rating.save()
         else:
-            rating = self.create(
+            existing_rating = self.create(
                 user_id=user_id,
                 dataset_id=dataset_id,
                 rating=rating,
             )
-        return rating
+        return existing_rating

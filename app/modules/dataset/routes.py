@@ -269,7 +269,19 @@ def subdomain_index(doi):
 
     # Save the cookie to the user's browser
     user_cookie = ds_view_record_service.create_cookie(dataset=dataset)
-    resp = make_response(render_template("dataset/view_dataset.html", dataset=dataset))
+
+    average_rating = ds_rating_service.get_average_by_dataset(dataset.id) or 0.0
+    user_rating = None
+    if current_user.is_authenticated:
+        user_rating_obj = ds_rating_service.get(dataset.id, current_user.id)
+        user_rating = user_rating_obj.rating if user_rating_obj else 0
+
+    resp = make_response(render_template(
+        "dataset/view_dataset.html",
+        dataset=dataset,
+        average_rating=round(average_rating, 2),
+        user_rating=user_rating or 0
+    ))
     resp.set_cookie("view_cookie", user_cookie)
 
     return resp
@@ -534,7 +546,14 @@ def rate():
     if not dataset_id or not rating:
         return jsonify({"message": "Invalid request"}), 400
 
-    dataset = dataset_service.get_or_404(dataset_id)
-    ds_rating_service.create_or_update(dataset, current_user, rating)
+    ds_rating_service.create_or_update(dataset_id, current_user.id, rating)
 
-    return jsonify({"message": "Rating saved successfully"}), 200
+    average_rating = ds_rating_service.get_average_by_dataset(dataset_id) or 0.0
+
+    user_rating = ds_rating_service.get(dataset_id, current_user.id)
+
+    return jsonify({
+        "message": "Rating saved successfully",
+        "average_rating": round(average_rating, 2),
+        "user_rating": user_rating.rating if user_rating else 0
+    }), 200

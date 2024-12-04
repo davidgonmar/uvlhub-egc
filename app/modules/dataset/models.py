@@ -80,6 +80,12 @@ class DataSet(db.Model):
     ds_meta_data = db.relationship('DSMetaData', backref=db.backref('data_set', uselist=False))
     feature_models = db.relationship('FeatureModel', backref='data_set', lazy=True, cascade="all, delete")
 
+    def get_average_rating(self):
+        ratings = DSRating.query.filter_by(dataset_id=self.id).all()
+        if ratings:
+            return round(sum(rating.rating for rating in ratings) / len(ratings), 2)
+        return 0.0
+
     def name(self):
         return self.ds_meta_data.title
 
@@ -129,6 +135,7 @@ class DataSet(db.Model):
             'files_count': self.get_files_count(),
             'total_size_in_bytes': self.get_file_total_size(),
             'total_size_in_human_format': self.get_file_total_size_for_human(),
+            'average_rating': self.get_average_rating(),
         }
 
     def __repr__(self):
@@ -202,3 +209,7 @@ class DSRating(db.Model):
 
     def __repr__(self):
         return f'<DSRating id={self.id} user_id={self.user_id} dataset_id={self.dataset_id} rating={self.rating}>'
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
