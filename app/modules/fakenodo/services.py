@@ -111,7 +111,7 @@ class FakenodoService(BaseService):
         if not deposition:
             # Raise an error if the deposition with the provided ID is not found
             raise Exception(f"Deposition with ID {deposition_id} not found.")
-        
+
         try:
             # Simulate generating a DOI for the deposition
             deposition["doi"] = f"fakenodo.doi.{deposition_id}"
