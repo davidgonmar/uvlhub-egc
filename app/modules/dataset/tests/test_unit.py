@@ -116,19 +116,19 @@ class TestDatasetExport(unittest.TestCase):
         response = self.mock_export("JSON")
         self.assertTrue(response["success"])
         self.assertEqual(response["export_format"], "JSON")
-    
+
     # 3. Prueba de exportación en formato cnf
     def test_export_cnf(self):
         response = self.mock_export("CNF")
         self.assertTrue(response["success"])
         self.assertEqual(response["export_format"], "CNF")
-    
+
     # 4. Prueba de exportación en formato splx
     def test_export_splx(self):
         response = self.mock_export("SPLX")
         self.assertTrue(response["success"])
         self.assertEqual(response["export_format"], "SPLX")
-    
+
     # 5. Valores Límite: Exportación de dataset vacío
     def test_export_empty_dataset(self):
         empty_dataset = DataSet(id=2, user_id=1, ds_meta_data=self.ds_meta_data, feature_models=[])
@@ -160,7 +160,7 @@ class TestDatasetExport(unittest.TestCase):
         response = self.mock_export("SPLX", dataset=corrupted_dataset)
         self.assertFalse(response["success"])
         self.assertEqual(response["error"], "Archivo corrupto detectado")
-    
+
     # Mock del método export
     def mock_export(self, export_format, dataset=None):
         if dataset is None:
