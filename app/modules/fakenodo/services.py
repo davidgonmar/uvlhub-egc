@@ -116,7 +116,7 @@ class FakenodoService(BaseService):
             # Simulate generating a DOI for the deposition
             deposition["doi"] = f"fakenodo.doi.{deposition_id}"
             deposition["status"] = "published"  # Mark the deposition as published
-            
+
             # Update the deposition in your storage (e.g., database or dictionary)
             self.depositions[deposition_id] = deposition
 
