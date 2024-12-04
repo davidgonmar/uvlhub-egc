@@ -67,7 +67,7 @@ def upgrade():
     sa.UniqueConstraint('google_id'),
     sa.UniqueConstraint('orcid_id')
     )
-    op.create_table('fakenodo',
+    op.create_table('zenodo',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -212,7 +212,7 @@ def downgrade():
     op.drop_table('notepad')
     op.drop_table('fm_meta_data')
     op.drop_table('ds_meta_data')
-    op.drop_table('fakenodo')
+    op.drop_table('zenodo')
     op.drop_table('user')
     op.drop_table('sign_up_verification_token')
     op.drop_table('reset_password_verification_token')
