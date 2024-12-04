@@ -151,7 +151,7 @@ class FakenodoService(BaseService):
         """
         if deposition_id not in self.depositions:
             raise Exception(f"Deposition with ID {deposition_id} not found.")
-        
+
         # Check if DOI is already assigned, otherwise generate one
         deposition_metadata = self.depositions[deposition_id]["metadata"]
         if "doi" not in deposition_metadata:
