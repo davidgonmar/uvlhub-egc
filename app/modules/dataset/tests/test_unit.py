@@ -148,6 +148,38 @@ class TestDatasetExport(unittest.TestCase):
         self.assertFalse(response["success"])
         self.assertEqual(response["error"], "Formato de exportación no válido")
 
+    # 7. Valores Límite: Exportación con tamaño máximo permitido
+    def test_max_size_export(self):
+        large_feature_model = MagicMock()
+        large_feature_model.files = [
+            MagicMock(id=i, name=f"file_{i}.uvl", size=1024) for i in range(1000)
+        ]
+        large_dataset = DataSet(
+            id=3,
+            user_id=1,
+            ds_meta_data=self.ds_meta_data,
+            feature_models=[large_feature_model],
+        )
+        response = self.mock_export("CNF", dataset=large_dataset)
+        self.assertTrue(response["success"])
+        self.assertEqual(response["format"], "CNF")
+
+    # 8. Errores Conocidos: Archivo corrupto
+    def test_export_corrupted_file(self):
+        corrupted_feature_model = MagicMock()
+        corrupted_feature_model.files = [
+            MagicMock(id=3, name="corrupted_file.splx", size=-1)
+        ]
+        corrupted_dataset = DataSet(
+            id=4,
+            user_id=1,
+            ds_meta_data=self.ds_meta_data,
+            feature_models=[corrupted_feature_model],
+        )
+        response = self.mock_export("SPLX", dataset=corrupted_dataset)
+        self.assertFalse(response["success"])
+        self.assertEqual(response["error"], "Archivo corrupto detectado")
+
     # Mock del método export
 
     def mock_export(self, format, dataset=None):
