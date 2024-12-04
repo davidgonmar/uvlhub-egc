@@ -56,9 +56,117 @@ Se sintetizará de un vistazo lo hecho en el trabajo y los datos fundamentales. 
 
 Se explicará el sistema desarrollado desde un punto de vista funcional y arquitectónico. Se hará una descripción tanto funcional como técnica de sus componentes y su relación con el resto de subsistemas. Habrá una sección que enumere explícitamente cuáles son los cambios que se han desarrollado para el proyecto.
 
-## Visión global del proceso de desarrollo (1.500 palabras aproximadamente)
+## Visión Global del Proceso de Desarrollo
 
-Debe dar una visión general del proceso que ha seguido enlazándolo con las herramientas que ha utilizado. Ponga un ejemplo de un cambio que se proponga al sistema y cómo abordaría todo el ciclo hasta tener ese cambio en producción. Los detalles de cómo hacer el cambio vendrán en el apartado correspondiente.
+En el desarrollo de software, es esencial seguir un proceso claro y bien definido que permita la evolución controlada del producto, garantizando la calidad y la satisfacción del cliente. Este proceso abarca desde la fase de planificación hasta la puesta en producción de los cambios, pasando por el desarrollo, pruebas y gestión de la configuración. A lo largo del ciclo de vida del proyecto, se utilizan diversas herramientas para facilitar la gestión de código, la integración continua, la automatización de pruebas y la comunicación entre los equipos de trabajo.
+
+### 1. Introducción
+
+El proceso de desarrollo de este proyecto se organiza de manera ágil, dividido en *milestones* que funcionan como *sprints*, con una duración aproximada de un mes. Cada *milestone* es un conjunto de tareas y objetivos que el equipo debe cumplir en ese periodo. Durante cada sprint, se seleccionan y priorizan los *Work Items* (WI), que representan funcionalidades o tareas específicas del proyecto. Este enfoque permite mantener un ciclo de trabajo iterativo y flexible, con el fin de adaptar el producto a los requisitos cambiantes y mejorar continuamente la calidad y el rendimiento del sistema. Además, se hace uso de herramientas como GitHub y GitHub Projects para la gestión de las tareas, el seguimiento del progreso y la colaboración entre los miembros del equipo.
+
+### 2. Fases del proceso de desarrollo
+
+El proceso de desarrollo está dividido en varias fases interrelacionadas, cada una con su propio conjunto de tareas y herramientas que facilitan la evolución controlada del producto.
+
+#### Fase de planificación
+
+La planificación es clave en este proceso, ya que establece el alcance y los requisitos de cada *Work Item* (WI). Los WI se desglosan en tareas específicas, y se priorizan según lo acordado en el acta fundacional del proyecto. Cada tarea se asigna a un miembro del equipo y se registra como *issue* en GitHub. Esta fase también contempla la colaboración entre los grupos, la identificación de posibles conflictos o solapamientos entre las tareas de los distintos equipos, y la definición de los tests que deberán cubrir las tareas.
+
+- **Herramientas utilizadas:** GitHub (para registrar *issues* y gestionar proyectos con GitHub Projects).
+
+**Ejemplo:**
+Durante la fase de planificación, el equipo selecciona los WI que se trabajarán en el sprint y los desglosa en tareas más pequeñas y manejables. Estas tareas se priorizan con base en los objetivos del proyecto y se etiquetan según su importancia. Además, se asignan a los miembros del equipo, quienes serán responsables de llevarlas a cabo dentro del plazo establecido. Todo este proceso se gestiona a través de GitHub, donde se vinculan los *issues* con los WI correspondientes, y se organiza el trabajo en los proyectos de GitHub (GitHub Projects), tanto para el grupo 1 como para el grupo 2.
+
+#### Fase de diseño
+
+El diseño se lleva a cabo de manera colaborativa, en paralelo a la planificación. Se crean los primeros prototipos visuales de la aplicación, se identifican los módulos a modificar y se definen los tests necesarios. Esta fase también incluye la supervisión para identificar solapamientos entre los WI de los dos grupos, garantizando que no haya conflictos durante el desarrollo.
+
+- **Herramientas utilizadas:** Herramientas de diseño colaborativo (por ejemplo, Draw.io o Sketch), y también GitHub para el seguimiento de posibles solapamientos.
+
+**Ejemplo:**
+En la fase de diseño, el equipo trabaja de manera colaborativa para crear los prototipos visuales y la arquitectura de la aplicación. También se identifican los módulos a modificar y se definen las pruebas necesarias para cubrir las tareas del sprint. Además, se asegura de que no haya conflictos con los WI de otros grupos, lo que se gestiona en GitHub a través de la organización de las tareas y su vinculación con los proyectos correspondientes.
+
+#### Fase de desarrollo
+
+En esta fase, cada miembro del equipo trabaja de manera individual sobre las tareas asignadas. La actualización del estado de cada tarea se realiza a través de GitHub Projects. Se fomenta el uso de commits atómicos y el uso de *pull requests* (PR) para actualizar la rama principal, siguiendo las pautas establecidas en el acta fundacional.
+
+- **Herramientas utilizadas:** GitHub (para commits, *pull requests* y seguimiento del progreso a través de GitHub Projects).
+
+**Ejemplo:**
+Durante el desarrollo, cada miembro del equipo trabaja en sus tareas asignadas, realizando commits atómicos y utilizando ramas específicas para cada *task* o *incidence*. La actualización de las tareas se realiza en GitHub Projects, donde se registra el progreso de cada tarea. Además, se generan *pull requests* para actualizar la rama principal (`main`), las cuales son revisadas y aprobadas por otros miembros del equipo según las condiciones establecidas en el acta fundacional.
+
+#### Fase de pruebas
+
+Los encargados de realizar las pruebas se encargan de verificar que el WI esté completado y funcione correctamente, comenzando con pruebas unitarias. Dependiendo de la complejidad del WI, se pueden realizar también pruebas de integración, interfaz (con Selenium) y carga (con Locust). La cantidad y el tipo de pruebas se adaptan a las necesidades del WI, y se fomenta la utilización de diversas técnicas de testeo. Frecuentemente, los encargados de testear una característica no son los desarrolladores de dicha tarea. Esto se hace para crear una dinámica de revisión continua.
+
+- **Herramientas utilizadas:** Selenium (para pruebas de interfaz), Locust (para pruebas de carga), etc.
+
+**Ejemplo:**
+En la fase de pruebas, los encargados de testing verifican que todas las funcionalidades implementadas cumplan con los requisitos establecidos. Se realizan pruebas unitarias, y en función de la complejidad de cada WI, también se llevan a cabo pruebas de integración y de carga. Las pruebas de interfaz se realizan con Selenium, mientras que las pruebas de carga se llevan a cabo con Locust. Se fomenta la adopción de técnicas de testeo avanzadas, como el testeo de valores límite y el *pairwise*, cuando es necesario.
+
+#### Fase de despliegue
+
+El despliegue se realiza automáticamente utilizando Render cada vez que hay un *push* a la rama principal. Las *pull requests* a main son aceptadas cuando se cumplen las condiciones definidas en el acta fundacional, y el sistema se actualiza automáticamente en el entorno de producción.
+
+- **Herramientas utilizadas:** Render (para despliegue automático).
+
+**Ejemplo:**
+El proceso de despliegue es completamente automatizado mediante Render. Cada vez que se hace un *push* a la rama principal (`main`), el sistema se actualiza automáticamente en producción. Las *pull requests* se revisan y aceptan solo cuando cumplen con los requisitos establecidos en el acta fundacional, lo que garantiza que las actualizaciones sean seguras y estables.
+
+#### Fase de mantenimiento
+
+Una vez el sistema está en producción, se realiza un seguimiento continuo de los WI completados. Si se detectan incidencias o mejoras, se registran como *issues* en GitHub, siguiendo el protocolo definido en el acta fundacional.
+
+- **Herramientas utilizadas:** GitHub (para la gestión de incidencias y mejoras).
+
+**Ejemplo:**
+En la fase de mantenimiento, el equipo realiza un seguimiento de las tareas ya completadas. Si surge una incidencia, se registra como *issue* en GitHub siguiendo el protocolo establecido. También se registran posibles mejoras o nuevas funcionalidades que se consideran para los siguientes sprints.
+
+### 3. Ejercicio de cambio propuesto
+
+**Cambio propuesto:** Añadir una API que devuelva una imagen aleatoria de un gato cada vez que se suba un nuevo dataset a la aplicación.
+
+#### Descripción del cambio
+
+Este cambio tiene como objetivo mejorar la interacción del usuario con la aplicación al proporcionar una imagen aleatoria de un gato cada vez que se sube un nuevo dataset. Este cambio es simple, pero ilustrativo del proceso de evolución del proyecto. A continuación, se detallan los pasos para implementar este cambio.
+
+#### Proceso para implementar el cambio
+
+**1. Planificación**
+
+- **Requisitos:**
+  - Cada vez que un usuario suba un nuevo dataset a la aplicación, se debe llamar a una API externa que proporcione una imagen aleatoria de un gato.
+  - La imagen de gato debe mostrarse junto al dataset recién subido en la interfaz de usuario.
+
+- **Tareas:**
+  - Integrar la API de gatos en el backend.
+  - Modificar el frontend para que pueda recibir y mostrar la imagen del gato junto con el dataset.
+  - Verificar que la integración funcione correctamente mediante pruebas.
+
+**2. Desarrollo**
+
+- **Acciones a realizar:**
+  - Se creará una nueva función en el backend que haga la solicitud a la API de gatos.
+  - El frontend se actualizará para mostrar la imagen de gato junto con el dataset.
+
+- **Asignación de tareas:**
+  - Un miembro del equipo se encargará de la integración de la API.
+  - Otro miembro actualizará la interfaz de usuario para mostrar la imagen.
+
+**3. Pruebas**
+
+- **Pruebas necesarias:**
+  - Pruebas unitarias para verificar que la API de gatos devuelve correctamente la imagen.
+  - Pruebas de interfaz para asegurar que la imagen se muestra correctamente en el frontend después de subir el dataset.
+  - Pruebas de carga para comprobar que la API funciona correctamente con un gran volumen de solicitudes.
+
+**4. Despliegue**
+
+El cambio se desplegará automáticamente a través de Render, utilizando el proceso de despliegue automatizado cada vez que se haga un *push* a la rama principal.
+
+**5. Mantenimiento**
+
+Una vez en producción, se hará un seguimiento para asegurar que la integración con la API de gatos funciona correctamente. Si hay incidencias, se registrarán como *issues* en GitHub y se gestionarán en los siguientes sprints.
 
 ## Entorno de Desarrollo
 
