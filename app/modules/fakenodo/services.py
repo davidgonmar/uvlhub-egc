@@ -9,6 +9,7 @@ from core.services.BaseService import BaseService
 
 logger = logging.getLogger(__name__)
 
+
 class FakenodoService(BaseService):
 
     def __init__(self):
@@ -70,7 +71,6 @@ class FakenodoService(BaseService):
             "message": "Deposition successfully created in Fakenodo"
         }
 
-
     def upload_file(self, dataset: DataSet, deposition_id: str, feature_model: FeatureModel, user=None) -> dict:
         """
         Simulate uploading a file to a deposition and return detailed file metadata.
@@ -103,7 +103,6 @@ class FakenodoService(BaseService):
             "file_metadata": file_metadata
         }
 
-
     def publish_deposition(self, deposition_id: str) -> dict:
         # Assuming depositions are stored in a dictionary or similar structure
         deposition = self.depositions.get(deposition_id)
@@ -133,7 +132,6 @@ class FakenodoService(BaseService):
             # Handle any errors that occur during the process and raise a new exception
             raise Exception(f"Failed to publish deposition with error: {str(error)}")
 
-
     def get_deposition(self, deposition_id: str) -> dict:
         """
         Retrieve a deposition's details from Fakenodo.
@@ -158,10 +156,8 @@ class FakenodoService(BaseService):
             # Simulate DOI generation (format: 10.xxxx/yyyyyy)
             # You could use UUID or the dataset ID to make the DOI unique
             generated_doi = self._generate_doi(deposition_id)
-            deposition_metadata["doi"] = generated_doi
-        
+            deposition_metadata["doi"] = generated_doi  
         return deposition_metadata["doi"]
-
 
     def get_all_depositions(self) -> dict:
         """

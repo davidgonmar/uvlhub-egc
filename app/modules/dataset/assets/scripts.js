@@ -130,7 +130,6 @@ var currentId = 0;
 
         window.onload = function () {
 
-            test_fakenodo_connection();
 
             document.getElementById('upload_button').addEventListener('click', function () {
 
