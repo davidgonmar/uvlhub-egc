@@ -17,7 +17,7 @@ class FakenodoService(BaseService):
 
     def _generate_doi(self, deposition_id):
         """Generate a fake DOI based on the deposition ID."""
-        return f"10.5281/fakenodo.{deposition_id}"
+        return f"10.5281/dataset{deposition_id}"
 
     def test_connection(self) -> bool:
         """
