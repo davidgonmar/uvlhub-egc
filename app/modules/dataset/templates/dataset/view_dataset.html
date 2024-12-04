@@ -276,32 +276,32 @@
                 <div class="row mb-2 ">
 
                     <div class="col-md-4 col-12 ">
-                        <span class=" text-secondary ">
-                            Zenodo record
+                        <span class="text-secondary">
+                            Fakenodo record
                         </span>
                     </div>
-
+                
                     {% if FLASK_ENV == 'production' %}
                     <div class="col-md-8 col-12 ">
-                        <a href="https://zenodo.org/records/{{ dataset.ds_meta_data.deposition_id }} " target="_blank ">
-                            https://zenodo.org/records/{{ dataset.ds_meta_data.deposition_id }}
+                        <a href="http://localhost/fakenodo/{{ dataset.ds_meta_data.deposition_id }}" target="_blank">
+                            http://localhost/fakenodo/{{ dataset.ds_meta_data.deposition_id }}
                         </a>
                     </div>
                     {% elif FLASK_ENV == 'development' %}
                     <div class="col-md-8 col-12 ">
-                        <a href="https://sandbox.zenodo.org/records/{{ dataset.ds_meta_data.deposition_id }} " target="_blank ">
-                            https://sandbox.zenodo.org/records/{{ dataset.ds_meta_data.deposition_id }}
+                        <a href="http://localhost/fakenodo/{{ dataset.ds_meta_data.deposition_id }}" target="_blank">
+                            http://localhost/fakenodo/{{ dataset.ds_meta_data.deposition_id }}
                         </a>
                     </div>
                     {% else %}
                     <div class="col-md-8 col-12 ">
-                        <a href="https://zenodo.org/records/{{ dataset.ds_meta_data.deposition_id }} " target="_blank ">
-                            https://sandbox.zenodo.org/records/{{ dataset.ds_meta_data.deposition_id }}
+                        <a href="http://localhost/fakenodo/{{ dataset.ds_meta_data.deposition_id }}" target="_blank">
+                            http://localhost/fakenodo/{{ dataset.ds_meta_data.deposition_id }}
                         </a>
                     </div>
                     {% endif %}
-
-                </div>
+                
+                </div>                
                 {% endif %}
                 <div class="row mb-2 ">
 

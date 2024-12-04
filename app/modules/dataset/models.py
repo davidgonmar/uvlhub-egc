@@ -102,6 +102,9 @@ class DataSet(db.Model):
     def get_zenodo_url(self):
         return f'https://zenodo.org/record/{self.ds_meta_data.deposition_id}' if self.ds_meta_data.dataset_doi else None
 
+    def get_fakenodo_url(self):
+        return f'http://localhost/fakenodo/{self.ds_meta_data.deposition_id}' if self.ds_meta_data.dataset_doi else None
+
     def get_files_count(self):
         return sum(len(fm.files) for fm in self.feature_models)
 
@@ -130,7 +133,7 @@ class DataSet(db.Model):
             'tags': self.ds_meta_data.tags.split(",") if self.ds_meta_data.tags else [],
             'url': self.get_uvlhub_doi(),
             'download': f'{request.host_url.rstrip("/")}/dataset/download/{self.id}',
-            'zenodo': self.get_zenodo_url(),
+            'zenodo': self.get_fakenodo_url(),
             'files': [file.to_dict() for fm in self.feature_models for file in fm.files],
             'files_count': self.get_files_count(),
             'total_size_in_bytes': self.get_file_total_size(),
