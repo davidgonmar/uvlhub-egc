@@ -415,9 +415,102 @@ Siguiendo estos pasos, podrás ejecutar la aplicación en un entorno Docker y re
 
 Siguiendo estos pasos, deberías poder configurar, ejecutar y gestionar tu máquina virtual con Vagrant de manera eficiente.
 
-## Ejercicio de propuesta de cambio
+## Ejercicio de Propuesta de Cambio
 
-Se presentará un ejercicio con una propuesta concreta de cambio en la que a partir de un cambio que se requiera, se expliquen paso por paso (incluyendo comandos y uso de herramientas) lo que hay que hacer para realizar dicho cambio. Debe ser un ejercicio ilustrativo de todo el proceso de evolución y gestión de la configuración del proyecto.
+### 1. Planificación
+
+#### 1.1. Requisitos
+El cambio propuesto consiste en agregar un mensaje de bienvenida estático a la página principal de la aplicación. Este mensaje debe ser visible cada vez que se acceda a la página principal.
+
+#### 1.2. Crear y Desglosar Tareas
+
+1. **Desglosar tareas**:
+   - **Tarea 1**: Modificar el archivo HTML (`base_template.html`) para incluir el mensaje de bienvenida.
+   - **Tarea 2**: (Opcional) Estilizar el mensaje de bienvenida con CSS.
+
+2. **Crear las tareas**: 
+    - Se crean las tareas correspondientes definidas en el paso anterior, haciendo uso de la plantilla.
+    - Asignamos a un responsable, escribimos una descripción, la etiquetamos, asignamos a un proyecto y ponemos una fecha límite, en este caso en forma de milestone. En el proyecto, marcamos su estado como "Todo" y le asignamos una prioridad. En este caso será Baja. 
+    
+    ![Texto alternativo](https://i.imgur.com/gKrPmeO.png)
+
+### 2. Desarrollo
+
+Antes de comenzar el desarrollo, crearíamos una rama específica para esta tarea. Como solo tenemos una tarea (la segunda es opcional, y en un desarrollo real, se completaría junto con la primera) en este caso solo necesitaríamos una. Siguiendo las convenciones del acta fundacional, la llamaremos: `g2/task_42/welcome_message` durante la duración de la explicación.
+
+#### 2.1. Modificar el archivo HTML (`base_template.html`)
+
+Lo primero que necesitamos hacer es modificar el archivo `base_template.html` (que se encuentra en la carpeta `app/templates`) para incluir el mensaje de bienvenida.
+
+1. **Edición de `base_template.html`**:
+   
+   Vamos al archivo `base_template.html` y agregamos el siguiente bloque de HTML para mostrar el mensaje de bienvenida.
+
+   ```html
+        <main class="content">
+            <div class="container p-0">
+                <div id="welcome-message" class="alert alert-success">
+                    <h2>¡Bienvenido a la aplicación!</h2>
+                    <p>Estamos felices de tenerte aquí. ¡Disfruta de la experiencia!</p>
+                </div>
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    ```
+
+2. **Estilizar el mensaje de bienvenida con CSS**:
+  
+    Hemos estilizado el mensaje utilizando la clase `alert alert-success` (y por simplicidad en este tutorial, omitiremos el CSS personalizado). El resultado ya es visualmente aceptable.
+
+### 3. Pruebas
+
+#### 3.1. Pruebas manuales
+
+Dado que el cambio es sencillo y no requiere lógica compleja (y por simplicidad en este tutorial), el encargado haría una verificación manual de su funcionamiento. Para ello, seguiría los siguientes pasos de forma aproximada:
+
+1. **Acceso a la página principal de la aplicación**.
+   - Asegúrate de estar viendo la página que ha sido modificada.
+   
+2. **Verificación de que el mensaje de bienvenida se muestra correctamente**.
+   - El mensaje debe ser visible en la parte superior de la página principal.
+   - El texto debe ser "¡Bienvenido a la aplicación!" seguido de "Estamos felices de tenerte aquí. ¡Disfruta de la experiencia!".
+
+3. **Verificación de que el estilo del mensaje es el adecuado**.
+   - El fondo del mensaje debe ser verde claro.
+
+Si todo se muestra correctamente, el cambio ha sido implementado correctamente.
+
+### 4. Creación de la Pull Request
+
+#### 4.1. Hacer commit de los cambios
+
+Una vez que se haya realizado todos los cambios y verificado que todo está funcionando, es el momento de hacer commit de los archivos modificados y hacer push al repositorio.
+
+1. En la terminal, dentro del directorio del proyecto, se ejecutarían los siguientes comandos:
+    ```sql
+    git add . 
+    git commit -m "feat: add welcome message
+                  Agregado un mensaje de bienvenida estático en la página principal. 
+                  #42"
+    git push origin g2/task_42/welcome_message
+    ```
+
+#### 4.2. Crear la Pull Request (PR)
+
+1. Se iría a la página del repositorio en GitHub y seleccionaría la opción **Pull Requests**.
+2. Clic en **New Pull Request**.
+3. Se aseguraría de que la base de la pull request esté en la rama `main` y de que esté comparando la rama de trabajo con esta base.
+4. Se escribiría una descripción breve para la PR, como: "Se ha agregado un mensaje de bienvenida estático en la página principal". También incluiríamos "Closes #42" para que la tarea (issue) se cierre automáticamente una vez se apruebe.
+5. Clic en **Create Pull Request** y esperaríamos a que fuese revisado y aprobado por otro miembro del equipo. Nosotros, como encargados de la tarea, designamos a este revisor.
+
+### 5. Despliegue
+
+Los cambios se reflejarán automáticamente en el entorno de producción después de que la Pull Request sea aceptada y fusionada con la rama `main`.
+
+### 6. Mantenimiento
+
+Este cambio es muy simple, por lo que el mantenimiento consiste en asegurarse de que el mensaje de bienvenida siga funcionando correctamente. Si más adelante se decide modificar el mensaje, el estilo o cualquier aspecto relacionado, se puede editar directamente el archivo `base_html.html`. Todo esto tendría que gestionarse a través de una incidencia. El proceso es similar a este, pero con otras plantillas de issues y ramas.
+
 
 ## Conclusiones y trabajo futuro
 
