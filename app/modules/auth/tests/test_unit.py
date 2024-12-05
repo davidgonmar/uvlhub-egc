@@ -430,3 +430,27 @@ def test_forgot_password_route_unregistered_email(test_client):
         # Verifica que se muestra el mensaje de error en la plantilla
         assert b"The email address nonexistent@example.com is not registered." in response.data
         assert response.status_code == 200
+
+
+def test_forgot_password_route_sends_otp_successfully(test_client):
+    mock_auth_service = MagicMock()
+    mock_auth_service.is_email_available.return_value = False
+    mock_auth_service.generate_resetpassword_verification_token.return_value = "123456"
+
+    mock_email_service = MagicMock()
+
+    with patch("app.modules.auth.routes.authentication_service", mock_auth_service), \
+         patch("app.modules.auth.routes.email_service", mock_email_service):
+        response = test_client.post("/forgotpassword/", data={"email": "test@example.com"})
+        mock_auth_service.generate_resetpassword_verification_token.assert_called_once_with("test@example.com")
+        mock_email_service.send_mail.assert_called_once_with(
+            "test@example.com",
+            "Your OTP code is: 123456. Please use this to reset your password.",
+            "Password Reset OTP"
+        )
+        with test_client.session_transaction() as session:
+            assert session['temp_user_data']['email'] == "test@example.com"
+        assert response.status_code == 200
+        assert b'<form' in response.data
+
+
