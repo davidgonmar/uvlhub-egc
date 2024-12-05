@@ -610,3 +610,15 @@ def test_reset_password_passwords_do_not_match(test_client):
     )
     assert response.status_code == 200
     assert b"Passwords do not match." in response.data
+
+
+def test_reset_password_successful(test_client):
+    """Verifica que la contraseña se restablezca correctamente."""
+    mock_auth_service = MagicMock()
+    with patch("app.modules.auth.routes.authentication_service", mock_auth_service):
+        with test_client.session_transaction() as session:
+            session['temp_user_data'] = {'email': 'test@example.com'}
+        response = test_client.post("/resetpassword/", data={"password": "newpassword", "confirm_password": "newpassword"})
+        mock_auth_service.reset_password.assert_called_once_with("test@example.com", "newpassword")
+        assert response.status_code == 302
+        assert response.headers["Location"] == "/" 
