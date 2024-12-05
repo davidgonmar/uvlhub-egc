@@ -636,7 +636,18 @@ def test_reset_password_error(test_client):
             session['temp_user_data'] = {'email': 'test@example.com'}
 
         response = test_client.post(
-            "/resetpassword/", 
+            "/resetpassword/",
             data={"password": "newpassword", "confirm_password": "newpassword"})
         assert response.status_code == 200
         assert b"Error resetting password: Unexpected error" in response.data
+
+
+def test_reset_password_authenticated_user_redirect(test_client):
+    """Verifica que los usuarios autenticados sean redirigidos al intentar acceder a la ruta de restablecimiento de contraseña."""
+    mock_user = MagicMock()
+    mock_user.is_authenticated = True
+    with patch("flask_login.utils._get_user", return_value=mock_user):
+        response = test_client.get("/resetpassword/")
+
+        assert response.status_code == 302
+        assert response.headers["Location"] == "/"
