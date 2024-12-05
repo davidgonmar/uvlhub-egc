@@ -503,7 +503,7 @@ def test_code_validation_authenticated_user_redirect(test_client):
 def test_code_validation_route_invalid_otp(test_client):
     """Verifica que se muestre un error si el código OTP es inválido"""
     mock_auth_service = MagicMock()
-    mock_auth_service.validate_resetpassword_verification_token.return_value = False 
+    mock_auth_service.validate_resetpassword_verification_token.return_value = False
 
     with patch("app.modules.auth.routes.authentication_service", mock_auth_service):
         with test_client.session_transaction() as session:
@@ -594,7 +594,10 @@ def test_reset_password_no_temp_user_data(test_client):
     with test_client.session_transaction() as session:
         session.clear()
 
-    response = test_client.post("/resetpassword/", data={"password": "newpassword", "confirm_password": "newpassword"})
+    response = test_client.post(
+        "/resetpassword/",
+        data={"password": "newpassword", "confirm_password": "newpassword"}
+    )
     assert response.status_code == 200
     assert b"Invalid session data: did not find temp_user_data" in response.data
 
@@ -621,4 +624,19 @@ def test_reset_password_successful(test_client):
         response = test_client.post("/resetpassword/", data={"password": "newpassword", "confirm_password": "newpassword"})
         mock_auth_service.reset_password.assert_called_once_with("test@example.com", "newpassword")
         assert response.status_code == 302
-        assert response.headers["Location"] == "/" 
+        assert response.headers["Location"] == "/"
+
+
+def test_reset_password_error(test_client):
+    """Verifica que se maneje un error al restablecer la contraseña."""
+    mock_auth_service = MagicMock()
+    mock_auth_service.reset_password.side_effect = Exception("Unexpected error")
+    with patch("app.modules.auth.routes.authentication_service", mock_auth_service):
+        with test_client.session_transaction() as session:
+            session['temp_user_data'] = {'email': 'test@example.com'}
+
+        response = test_client.post(
+            "/resetpassword/", 
+            data={"password": "newpassword", "confirm_password": "newpassword"})
+        assert response.status_code == 200
+        assert b"Error resetting password: Unexpected error" in response.data
