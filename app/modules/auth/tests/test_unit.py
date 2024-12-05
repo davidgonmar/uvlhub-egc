@@ -592,8 +592,21 @@ def test_code_validation_no_temp_user_data(test_client):
 def test_reset_password_no_temp_user_data(test_client):
     """Verifica que se muestre un error si la sesión no tiene datos de usuario temporal (`temp_user_data`)."""
     with test_client.session_transaction() as session:
-        session.clear()  
+        session.clear()
 
     response = test_client.post("/resetpassword/", data={"password": "newpassword", "confirm_password": "newpassword"})
     assert response.status_code == 200
     assert b"Invalid session data: did not find temp_user_data" in response.data
+
+
+def test_reset_password_passwords_do_not_match(test_client):
+    """Verifica que se muestre un error si las contraseñas no coinciden."""
+    with test_client.session_transaction() as session:
+        session['temp_user_data'] = {'email': 'test@example.com'}  
+
+    response = test_client.post(
+        "/resetpassword/",
+        data={"password": "newpassword", "confirm_password": "differentpassword"}
+    )
+    assert response.status_code == 200
+    assert b"Passwords do not match." in response.data
