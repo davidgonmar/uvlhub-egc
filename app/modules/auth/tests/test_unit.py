@@ -10,18 +10,6 @@ from unittest.mock import patch, MagicMock
 from app.modules.auth.models import User
 from app.modules.auth.repositories import ResetPasswordVerificationTokenRepository
 
-@pytest.fixture(scope="module")
-def test_client(test_client):
-    """
-    Extends the test_client fixture to add additional specific data for module testing.
-    """
-    with test_client.application.app_context():
-        # Add HERE new elements to the database that you want to exist in the test context.
-        # DO NOT FORGET to use db.session.add(<element>) and db.session.commit() to save the data.
-        pass
-
-    yield test_client
-
 
 @pytest.fixture
 def mock_user():
@@ -410,7 +398,6 @@ def test_forgot_password_route_authenticated_user_redirect(test_client):
 
     with patch.object(flask_login.utils, "_get_user", return_value=mock_user):
         response = test_client.get("/forgotpassword/")
-        # Verifica si redirige a home
         assert response.status_code == 302
         assert response.headers["Location"] == "/"
 
@@ -423,10 +410,8 @@ def test_forgot_password_route_unregistered_email(test_client):
     mock_auth_service.is_email_available.return_value = True
     with patch("app.modules.auth.routes.authentication_service", mock_auth_service):
         response = test_client.post("/forgotpassword/", data={"email": "nonexistent@example.com"})
-        # Verifica que se llamó al servicio con el email correcto
-        mock_auth_service.is_email_available.assert_called_once_with("nonexistent@example.com")
 
-        # Verifica que se muestra el mensaje de error en la plantilla
+        mock_auth_service.is_email_available.assert_called_once_with("nonexistent@example.com")
         assert b"The email address nonexistent@example.com is not registered." in response.data
         assert response.status_code == 200
 
@@ -495,7 +480,6 @@ def test_code_validation_authenticated_user_redirect(test_client):
 
     with patch.object(flask_login.utils, "_get_user", return_value=mock_user):
         response = test_client.get("/forgotpassword/code-validation")
-        # Verifica si redirige a home
         assert response.status_code == 302
         assert response.headers["Location"] == "/"
 
@@ -518,7 +502,7 @@ def test_code_validation_route_invalid_otp(test_client):
 def test_code_validation_success_otp(test_client):
     """Verifica que el código OTP correcto permite avanzar al formulario de restablecimiento de contraseña"""
     mock_auth_service = MagicMock()
-    mock_auth_service.validate_resetpassword_verification_token.return_value = True  # OTP válido
+    mock_auth_service.validate_resetpassword_verification_token.return_value = True
 
     with patch("app.modules.auth.routes.authentication_service", mock_auth_service):
         with test_client.session_transaction() as session:
@@ -605,7 +589,7 @@ def test_reset_password_no_temp_user_data(test_client):
 def test_reset_password_passwords_do_not_match(test_client):
     """Verifica que se muestre un error si las contraseñas no coinciden."""
     with test_client.session_transaction() as session:
-        session['temp_user_data'] = {'email': 'test@example.com'}  
+        session['temp_user_data'] = {'email': 'test@example.com'}
 
     response = test_client.post(
         "/resetpassword/",
