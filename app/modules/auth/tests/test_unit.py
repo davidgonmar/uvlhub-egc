@@ -499,3 +499,20 @@ def test_code_validation_authenticated_user_redirect(test_client):
         # Verifica si redirige a home
         assert response.status_code == 302
         assert response.headers["Location"] == "/"
+
+
+def test_code_validation_route_invalid_otp(test_client):
+    """Verifica que se muestre un error si el código OTP es inválido"""
+    mock_auth_service = MagicMock()
+    mock_auth_service.validate_resetpassword_verification_token.return_value = False 
+
+    with patch("app.modules.auth.routes.authentication_service", mock_auth_service):
+        with test_client.session_transaction() as session:
+            session['temp_user_data'] = {'email': 'user@example.com'}
+        response = test_client.post("/forgotpassword/code-validation", data={"code": "654321"})
+        assert response.status_code == 200
+        assert b'<form' in response.data
+        assert b'action="/forgotpassword/code-validation"' in response.data
+        assert b"Invalid OTP code. Please try again." in response.data
+
+
