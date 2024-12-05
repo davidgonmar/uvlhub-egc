@@ -651,3 +651,13 @@ def test_reset_password_authenticated_user_redirect(test_client):
 
         assert response.status_code == 302
         assert response.headers["Location"] == "/"
+
+
+def test_reset_password_form_render_initial(test_client):
+    """Verifica que la plantilla de restablecimiento de contraseña se renderice correctamente en una solicitud GET."""
+    response = test_client.get("/resetpassword/")
+
+    assert response.status_code == 200
+    assert b'<form' in response.data
+    assert b'name="password"' in response.data
+    assert b'name="confirm_password"' in response.data
