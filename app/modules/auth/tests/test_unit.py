@@ -409,9 +409,24 @@ def test_forgot_password_authenticated_user_redirect(test_client):
     mock_user = MagicMock()
     mock_user.is_authenticated = True
 
-    # Mock `_get_user` to return an authenticated user
     with patch.object(flask_login.utils, "_get_user", return_value=mock_user):
         response = test_client.get("/forgotpassword/")
-        # Assert redirection
+        # Verifica si redirige a home
         assert response.status_code == 302
         assert response.headers["Location"] == "/"
+
+
+# Reset password tests routes
+
+
+def test_forgot_password_route_unregistered_email(test_client):
+    mock_auth_service = MagicMock()
+    mock_auth_service.is_email_available.return_value = True
+    with patch("app.modules.auth.routes.authentication_service", mock_auth_service):
+        response = test_client.post("/forgotpassword/", data={"email": "nonexistent@example.com"})
+        # Verifica que se llamó al servicio con el email correcto
+        mock_auth_service.is_email_available.assert_called_once_with("nonexistent@example.com")
+
+        # Verifica que se muestra el mensaje de error en la plantilla
+        assert b"The email address nonexistent@example.com is not registered." in response.data
+        assert response.status_code == 200
