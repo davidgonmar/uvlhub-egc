@@ -454,3 +454,18 @@ def test_forgot_password_route_sends_otp_successfully(test_client):
         assert b'<form' in response.data
 
 
+def test_forgot_password_email_send_failure(test_client):
+    """Verifica que se maneje un error al enviar el correo."""
+    mock_auth_service = MagicMock()
+    mock_auth_service.is_email_available.return_value = False
+    mock_auth_service.generate_resetpassword_verification_token.return_value = "123456"
+
+    mock_email_service = MagicMock()
+    mock_email_service.send_mail.side_effect = Exception("SMTP error")
+
+    with patch("app.modules.auth.routes.authentication_service", mock_auth_service), \
+         patch("app.modules.auth.routes.email_service", mock_email_service):
+        response = test_client.post("/forgotpassword/", data={"email": "user@example.com"})
+        assert response.status_code == 200
+        assert b"Error sending OTP: SMTP error" in response.data
+
