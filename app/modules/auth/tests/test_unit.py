@@ -5,7 +5,7 @@ from flask import url_for
 from app.modules.auth.services import AuthenticationService
 from app.modules.auth.repositories import UserRepository, SignUpVerificationTokenRepository
 from app.modules.profile.repositories import UserProfileRepository
-
+import flask_login.utils
 from unittest.mock import patch, MagicMock
 from app.modules.auth.models import User
 from app.modules.auth.services import *
@@ -55,6 +55,9 @@ def invalid_token():
     return "token_invalido"
 
 
+# LOGIN TESTS
+
+
 def test_login_success(test_client):
     response = test_client.post(
         "/login", data=dict(email="test@example.com", password="test1234"), follow_redirects=True
@@ -85,6 +88,9 @@ def test_login_unsuccessful_bad_password(test_client):
     test_client.get("/logout", follow_redirects=True)
 
 
+# SIGNUP TESTS
+
+
 def test_signup_user_no_name(test_client):
     response = test_client.post(
         "/signup", data=dict(surname="Foo", email="test@example.com", password="test1234"), follow_redirects=True
@@ -110,6 +116,8 @@ def test_signup_user_successful(test_client):
     )
     assert response.request.path == url_for("auth.show_signup_form"), "Signup was unsuccessful"
 
+
+# Service tests
 
 def test_service_create_with_profile_success(clean_database):
     data = {
@@ -156,6 +164,9 @@ def test_service_create_with_profile_fail_no_password(clean_database):
 
     assert UserRepository().count() == 0
     assert UserProfileRepository().count() == 0
+
+
+# Sign up code validation tests
 
 
 def test_signup_code_validation_no_code(test_client):
@@ -255,6 +266,8 @@ def test_service_verify_code_succesful(clean_database):
     assert acceptance
     assert UserProfileRepository().count() == 0
 
+
+# Reset password tests
 
 def test_reset_password_valid_email(auth_service, mock_user):
     with patch.object(UserRepository, 'get_by_email', return_value=mock_user):
@@ -387,3 +400,18 @@ def test_generate_resetpassword_verification_token_replace_old(auth_service, val
     mock_repo.delete.assert_called_once_with(mock_token_instance.id)
 
     mock_repo.create.assert_called_once_with(email=valid_email, token=new_token)
+
+
+# Redirection tests
+
+
+def test_forgot_password_authenticated_user_redirect(test_client):
+    mock_user = MagicMock()
+    mock_user.is_authenticated = True
+
+    # Mock `_get_user` to return an authenticated user
+    with patch.object(flask_login.utils, "_get_user", return_value=mock_user):
+        response = test_client.get("/forgotpassword/")
+        # Assert redirection
+        assert response.status_code == 302
+        assert response.headers["Location"] == "/"
