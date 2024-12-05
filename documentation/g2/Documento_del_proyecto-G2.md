@@ -1,8 +1,47 @@
-# Documento del proyecto
+# Documento del Proyecto
+
+- **Grupo**: G3
+- **Nombre del grupo**: jamon-hub-2
+- **Tutor**: Jesús Moreno León
+- **Curso Escolar**: 2024/2025  
+- **Asignatura**: Evolución y Gestión de la Configuración
+
+## Índice
+
+1. [Indicadores del Proyecto](#indicadores-del-proyecto)  
+2. [Integración con Otros Equipos](#integración-con-otros-equipos)  
+3. [Resumen Ejecutivo](#resumen-ejecutivo)  
+4. [Descripción del Sistema](#descripción-del-sistema)  
+5. [Visión Global del Proceso de Desarrollo](#visión-global-del-proceso-de-desarrollo)  
+    - [Introducción](#1-introducción)  
+    - [Fases del proceso de desarrollo](#2-fases-del-proceso-de-desarrollo)  
+        - [Fase de planificación](#fase-de-planificación)  
+        - [Fase de diseño](#fase-de-diseño)  
+        - [Fase de desarrollo](#fase-de-desarrollo)  
+        - [Fase de pruebas](#fase-de-pruebas)  
+        - [Fase de despliegue](#fase-de-despliegue)  
+        - [Fase de mantenimiento](#fase-de-mantenimiento)
+    - [Ejercicio de Cambio Propuesto](#3-ejercicio-de-cambio-propuesto)  
+7. [Entorno de Desarrollo](#entorno-de-desarrollo)  
+    - [Entornos de desarrollo utilizados](#entorno-de-desarrollo-utilizado)  
+    - [Métodos de instalación](#métodos-de-instalación)  
+        - [Instalación manual](#1-instalación-manual)  
+        - [Instalación con Docker](#2-instalación-con-docker)  
+        - [Instalación con Vagrant](#3-instalación-con-vagrant)
+8. [Ejercicio de Propuesta de Cambio](#ejercicio-de-propuesta-de-cambio)  
+   - [Planificación](#1-planificación)  
+   - [Desarrollo](#2-desarrollo)  
+   - [Pruebas](#3-pruebas)  
+   - [Creación de la Pull Request](#4-creación-de-la-pull-request)  
+   - [Despliegue](#5-despliegue)  
+   - [Mantenimiento](#6-mantenimiento)
+9. [Conclusiones y Trabajo Futuro](#conclusiones-y-trabajo-futuro)  
+
+---
 
 El presente documento tiene como objetivo sintetizar los aspectos clave del proyecto elegido para su desarrollo, en relación con los temas abordados durante las clases. En él, se identifican claramente los miembros del equipo, los grupos a los que pertenecen, el curso académico, y el nombre del proyecto, siguiendo la política de nomenclatura establecida. 
 
-## Indicadores del proyecto
+## Indicadores del Proyecto
 
 | Miembro del equipo                             | Horas | Commits | LoC  | Test | Issues | Work Item         |
 |------------------------------------------------|-------|---------|------|------|--------|-------------------|
@@ -34,7 +73,7 @@ A continuación se detallan las fuentes para obtener las métricas clave del pro
   - Los work items del proyecto se asocian con las **Issues** en GitHub. Aunque cada miembro del equipo ha dedicado más tiempo a ciertos WI que a otros, todos han participado activamente en diversas tareas relacionadas con diferentes WI. Este enfoque busca promover un ambiente colaborativo, favoreciendo la revisión continua y el trabajo en equipo para alcanzar los objetivos del proyecto de manera eficiente.
     - Enlace: [Issues en GitHub](https://github.com/davidgonmar/uvlhub-egc/issues)
 
-## Integración con otros equipos
+## Integración con Otros Equipos
 
 Equipos con los que se ha integrado y los motivos por los que lo ha hecho y lugar en el que se ha dado la integración:
 
@@ -46,13 +85,15 @@ Equipos con los que se ha integrado y los motivos por los que lo ha hecho y luga
 
   - **Different Versions of Models**, **Search Queries** y **Download All Datasets**: Estos tres WIs estaban interconectados en términos de la descarga y manejo de datasets. *Different Versions of Models* establecía el proceso de conversión a diferentes formatos, *Search Queries* permitía seleccionar modelos específicos, y *Download All Datasets* facilitaba la descarga de todos los formatos. La implementación coordinada de estos WIs fue crucial para asegurar que se reutilizaran las funcionalidades desarrolladas en cada uno.
 
+  - **Fakenodo**: La implementación de *Fakenodo* fue un trabajo colaborativo entre los dos grupos. El grupo 2 se encargó de desarrollar la funcionalidad principal, mientras que el grupo 1 se centró en las pruebas, ajustes finales y la corrección de errores. Esta colaboración permitió entregar una solución funcional.
+
 Esta integración se dio en un esfuerzo por optimizar el flujo de trabajo entre los equipos, mejorar la cohesión del proyecto y garantizar la calidad del producto final.
 
-## Resumen ejecutivo (800 palabras aproximadamente)
+## Resumen Ejecutivo
 
 Se sintetizará de un vistazo lo hecho en el trabajo y los datos fundamentales. Se usarán palabras para resumir el proyecto presentado. Contendrá, al menos la siguiente información:
 
-## Descripción del sistema (1.500 palabras aproximadamente)
+## Descripción del Sistema
 
 Se explicará el sistema desarrollado desde un punto de vista funcional y arquitectónico. Se hará una descripción tanto funcional como técnica de sus componentes y su relación con el resto de subsistemas. Habrá una sección que enumere explícitamente cuáles son los cambios que se han desarrollado para el proyecto.
 
@@ -88,7 +129,7 @@ En la fase de diseño, el equipo trabaja de manera colaborativa para crear los p
 
 #### Fase de desarrollo
 
-En esta fase, cada miembro del equipo trabaja de manera individual sobre las tareas asignadas. La actualización del estado de cada tarea se realiza a través de GitHub Projects. Se fomenta el uso de commits atómicos y el uso de *pull requests* (PR) para actualizar la rama principal, siguiendo las pautas establecidas en el acta fundacional.
+En esta fase, cada miembro del equipo trabaja de manera individual sobre las tareas asignadas. La actualización del estado de cada tarea se realiza a través de GitHub Projects. Se fomenta el uso de commits atómicos y el uso de *pull requests* (PR) para actualizar la rama principal, siguiendo las pautas establecidas en el acta fundacional. Antes de comenzar la fase, se crean las *ramas* acorde con lo definido en el acta fundacional. 
 
 - **Herramientas utilizadas:** GitHub (para commits, *pull requests* y seguimiento del progreso a través de GitHub Projects).
 
@@ -143,9 +184,13 @@ Este cambio tiene como objetivo mejorar la interacción del usuario con la aplic
   - Modificar el frontend para que pueda recibir y mostrar la imagen del gato junto con el dataset.
   - Verificar que la integración funcione correctamente mediante pruebas.
 
+- **Acciones a realizar:**
+  - Se crea la issue correspondiente por cada tarea definida en la planificación y acorde a lo definido en el acta fundacional.
+
 **2. Desarrollo**
 
 - **Acciones a realizar:**
+  - Se crea la rama correspondiente acorde a lo definido en el acta fundacional.
   - Se creará una nueva función en el backend que haga la solicitud a la API de gatos.
   - El frontend se actualizará para mostrar la imagen de gato junto con el dataset.
 
@@ -438,6 +483,10 @@ El cambio propuesto consiste en agregar un mensaje de bienvenida estático a la 
 
 Antes de comenzar el desarrollo, crearíamos una rama específica para esta tarea. Como solo tenemos una tarea (la segunda es opcional, y en un desarrollo real, se completaría junto con la primera) en este caso solo necesitaríamos una. Siguiendo las convenciones del acta fundacional, la llamaremos: `g2/task_42/welcome_message` durante la duración de la explicación.
 
+```sql
+git checkout -b g2/task_42/welcome_message
+```
+
 #### 2.1. Modificar el archivo HTML (`base_template.html`)
 
 Lo primero que necesitamos hacer es modificar el archivo `base_template.html` (que se encuentra en la carpeta `app/templates`) para incluir el mensaje de bienvenida.
@@ -512,6 +561,6 @@ Los cambios se reflejarán automáticamente en el entorno de producción despué
 Este cambio es muy simple, por lo que el mantenimiento consiste en asegurarse de que el mensaje de bienvenida siga funcionando correctamente. Si más adelante se decide modificar el mensaje, el estilo o cualquier aspecto relacionado, se puede editar directamente el archivo `base_html.html`. Todo esto tendría que gestionarse a través de una incidencia. El proceso es similar a este, pero con otras plantillas de issues y ramas.
 
 
-## Conclusiones y trabajo futuro
+## Conclusiones y Trabajo Futuro
 
 Se enunciarán algunas conclusiones y se presentará un apartado sobre las mejoras que se proponen para el futuro (curso siguiente) y que no han sido desarrolladas en el sistema que se entrega.
