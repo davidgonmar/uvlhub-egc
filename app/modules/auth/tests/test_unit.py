@@ -533,3 +533,18 @@ def test_code_validation_success_otp(test_client):
         assert b'name="confirm_password"' in response.data
 
 
+def test_code_validation_exception_handling(test_client):
+    """Verifica que se maneje correctamente una excepción durante la validación del OTP"""
+    mock_auth_service = MagicMock()
+    mock_auth_service.validate_resetpassword_verification_token.side_effect = Exception("Unexpected error")
+
+    with patch("app.modules.auth.routes.authentication_service", mock_auth_service):
+        with test_client.session_transaction() as session:
+            session['temp_user_data'] = {'email': 'user@example.com'}
+
+        response = test_client.post("/forgotpassword/code-validation", data={"code": "123456"})
+
+        assert response.status_code == 200
+        assert b'<form' in response.data
+        assert b'action="/forgotpassword/code-validation"' in response.data
+        assert b"Error validating OTP: Unexpected error" in response.data
