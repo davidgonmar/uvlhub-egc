@@ -8,7 +8,6 @@ from app.modules.profile.repositories import UserProfileRepository
 import flask_login.utils
 from unittest.mock import patch, MagicMock
 from app.modules.auth.models import User
-from app.modules.auth.services import *
 from app.modules.auth.repositories import ResetPasswordVerificationTokenRepository
 
 @pytest.fixture(scope="module")
@@ -565,3 +564,24 @@ def test_code_validation_form_invalid(test_client):
         assert b"Invalid OTP code" not in response.data
         assert b"Invalid session data" not in response.data
         assert b"Error validating OTP" not in response.data
+
+
+def test_code_validation_no_temp_user_data(test_client):
+    """Verifica que se muestre un error si la sesión no tiene datos de usuario temporal (`temp_user_data`)."""
+    mock_auth_service = MagicMock()
+
+    with patch("app.modules.auth.routes.authentication_service", mock_auth_service):
+        with test_client.session_transaction() as session:
+            session.clear()
+        response = test_client.post("/forgotpassword/code-validation", data={"code": "123456"})
+
+        assert response.status_code == 200
+        assert b'<form' in response.data
+        assert b'action="/forgotpassword/code-validation"' in response.data
+        assert any(
+            error_message in response.data
+            for error_message in [
+                b"Invalid session data",
+                b"did not find temp_user_data"
+            ]
+        )
