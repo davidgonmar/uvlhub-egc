@@ -217,6 +217,30 @@ function send_query(queryParam = '', publicationTypeParam = 'any', sortingParam 
                                     ${dataset.tags.map(tag => `<span class="badge bg-primary me-1" style="cursor: pointer;" onclick="set_tag_as_query('${tag}')">${tag}</span>`).join('')}
                                 </div>
                             </div>
+                            
+                            <div class="row mb-2">
+                                <div class="col-md-8 col-12">
+                                    <div class="rating-container" data-average="${ dataset.average_rating }">
+                                        <div class="stars-background">
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                        </div>
+                                        <div class="stars-foreground" style="width: ${ dataset.average_rating * 20 }%">
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                        </div>
+                                        <p id="average-rating" class="text-muted mt-2" style="margin-bottom: -20px; margin-top: 0px !important;">
+                                            Rating: ${ dataset.average_rating }
+                                        </p>
+                                    </div>    
+                                </div>
+                            </div>
 
                             <div class="row">
                                 <div class="col-md-4 col-12"></div>

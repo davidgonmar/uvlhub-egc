@@ -80,6 +80,12 @@ class DataSet(db.Model):
     ds_meta_data = db.relationship('DSMetaData', backref=db.backref('data_set', uselist=False))
     feature_models = db.relationship('FeatureModel', backref='data_set', lazy=True, cascade="all, delete")
 
+    def get_average_rating(self):
+        ratings = DSRating.query.filter_by(dataset_id=self.id).all()
+        if ratings:
+            return round(sum(rating.rating for rating in ratings) / len(ratings), 2)
+        return 0.0
+
     def name(self):
         return self.ds_meta_data.title
 
@@ -95,6 +101,9 @@ class DataSet(db.Model):
 
     def get_zenodo_url(self):
         return f'https://zenodo.org/record/{self.ds_meta_data.deposition_id}' if self.ds_meta_data.dataset_doi else None
+
+    def get_fakenodo_url(self):
+        return f'http://localhost/fakenodo/{self.ds_meta_data.deposition_id}' if self.ds_meta_data.dataset_doi else None
 
     def get_files_count(self):
         return sum(len(fm.files) for fm in self.feature_models)
@@ -124,11 +133,12 @@ class DataSet(db.Model):
             'tags': self.ds_meta_data.tags.split(",") if self.ds_meta_data.tags else [],
             'url': self.get_uvlhub_doi(),
             'download': f'{request.host_url.rstrip("/")}/dataset/download/{self.id}',
-            'zenodo': self.get_zenodo_url(),
+            'zenodo': self.get_fakenodo_url(),
             'files': [file.to_dict() for fm in self.feature_models for file in fm.files],
             'files_count': self.get_files_count(),
             'total_size_in_bytes': self.get_file_total_size(),
             'total_size_in_human_format': self.get_file_total_size_for_human(),
+            'average_rating': self.get_average_rating(),
         }
 
     def __repr__(self):
@@ -202,3 +212,7 @@ class DSRating(db.Model):
 
     def __repr__(self):
         return f'<DSRating id={self.id} user_id={self.user_id} dataset_id={self.dataset_id} rating={self.rating}>'
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
