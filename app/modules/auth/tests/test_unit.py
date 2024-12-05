@@ -405,7 +405,7 @@ def test_generate_resetpassword_verification_token_replace_old(auth_service, val
 # Redirection tests
 
 
-def test_forgot_password_authenticated_user_redirect(test_client):
+def test_forgot_password_route_authenticated_user_redirect(test_client):
     mock_user = MagicMock()
     mock_user.is_authenticated = True
 
@@ -454,7 +454,7 @@ def test_forgot_password_route_sends_otp_successfully(test_client):
         assert b'<form' in response.data
 
 
-def test_forgot_password_email_send_failure(test_client):
+def test_forgot_password_email_route_send_failure(test_client):
     """Verifica que se maneje un error al enviar el correo."""
     mock_auth_service = MagicMock()
     mock_auth_service.is_email_available.return_value = False
@@ -468,4 +468,20 @@ def test_forgot_password_email_send_failure(test_client):
         response = test_client.post("/forgotpassword/", data={"email": "user@example.com"})
         assert response.status_code == 200
         assert b"Error sending OTP: SMTP error" in response.data
+
+
+def test_forgot_password_route_invalid_form(test_client):
+    """Verifica que se muestre la plantilla inicial cuando el formulario no es válido."""
+    mock_auth_service = MagicMock()
+    mock_auth_service.is_email_available.return_value = False
+    mock_auth_service.generate_resetpassword_verification_token.return_value = "123456"
+
+    mock_email_service = MagicMock()
+    with patch("app.modules.auth.routes.authentication_service", mock_auth_service), \
+         patch("app.modules.auth.routes.email_service", mock_email_service):
+        response = test_client.post("/forgotpassword/", data={"email": ""})
+        assert response.status_code == 200
+        assert b'Forgot your password?' in response.data
+        assert b'<form' in response.data
+        assert b'name="email"' in response.data
 
