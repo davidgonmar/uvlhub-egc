@@ -548,3 +548,20 @@ def test_code_validation_exception_handling(test_client):
         assert b'<form' in response.data
         assert b'action="/forgotpassword/code-validation"' in response.data
         assert b"Error validating OTP: Unexpected error" in response.data
+
+
+def test_code_validation_form_invalid(test_client):
+    """Verifica que si el formulario no es válido, se muestre el formulario inicial sin errores adicionales"""
+    mock_auth_service = MagicMock()
+
+    with patch("app.modules.auth.routes.authentication_service", mock_auth_service):
+        response = test_client.post("/forgotpassword/code-validation", data={})
+
+        assert response.status_code == 200
+
+        assert b'<form' in response.data
+        assert b'action="/forgotpassword/code-validation"' in response.data
+
+        assert b"Invalid OTP code" not in response.data
+        assert b"Invalid session data" not in response.data
+        assert b"Error validating OTP" not in response.data
