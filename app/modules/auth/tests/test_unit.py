@@ -485,3 +485,17 @@ def test_forgot_password_route_invalid_form(test_client):
         assert b'<form' in response.data
         assert b'name="email"' in response.data
 
+
+# forgot password code -validation tests
+
+
+def test_code_validation_authenticated_user_redirect(test_client):
+    """Verifica que los usuarios autenticados sean redirigidos al home"""
+    mock_user = MagicMock()
+    mock_user.is_authenticated = True
+
+    with patch.object(flask_login.utils, "_get_user", return_value=mock_user):
+        response = test_client.get("/forgotpassword/code-validation")
+        # Verifica si redirige a home
+        assert response.status_code == 302
+        assert response.headers["Location"] == "/"
