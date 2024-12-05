@@ -516,3 +516,20 @@ def test_code_validation_route_invalid_otp(test_client):
         assert b"Invalid OTP code. Please try again." in response.data
 
 
+def test_code_validation_success_otp(test_client):
+    """Verifica que el código OTP correcto permite avanzar al formulario de restablecimiento de contraseña"""
+    mock_auth_service = MagicMock()
+    mock_auth_service.validate_resetpassword_verification_token.return_value = True  # OTP válido
+
+    with patch("app.modules.auth.routes.authentication_service", mock_auth_service):
+        with test_client.session_transaction() as session:
+            session['temp_user_data'] = {'email': 'user@example.com'}
+
+        response = test_client.post("/forgotpassword/code-validation", data={"code": "123456"})
+        assert response.status_code == 200
+        assert b'<form' in response.data
+        assert b'action="/resetpassword/"' in response.data
+        assert b'name="password"' in response.data
+        assert b'name="confirm_password"' in response.data
+
+
