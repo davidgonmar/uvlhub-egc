@@ -13,7 +13,7 @@ from core.selenium.common import initialize_driver
 # from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
-class TestTest2:
+class TestDifferentModels:
     def setup_method(self, method):
         self.driver = initialize_driver()
         self.vars = {}
