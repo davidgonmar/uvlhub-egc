@@ -495,7 +495,7 @@ def test_filter_functionality_radom_insertion(mock_filter):
     mock_filter.assert_called_once_with(query="djadoufhapsdufad")
     
 
-# Although it is not a pure unit test, it can be classified under the "Partición Equivalente" technique.
+# Technique "Partición Equivalente"
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_search_queries_functionality_using_the_route_post_happy_path(mock_filter, test_client):
    
@@ -534,10 +534,10 @@ def test_search_queries_functionality_using_the_route_post_happy_path(mock_filte
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
 
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
     assert len(data) == 1
     assert data[0]["title"] == "Dataset 1"
@@ -550,7 +550,7 @@ def test_search_queries_functionality_using_the_route_post_happy_path(mock_filte
 
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_search_queries_functionality_using_the_route_post_sad_path(mock_filter, test_client):
-   
+
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -586,10 +586,10 @@ def test_search_queries_functionality_using_the_route_post_sad_path(mock_filter,
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
 
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
     assert len(data) == 0
 
@@ -635,10 +635,10 @@ def test_filter_functionality__the_route_post_happy_path_title(mock_filter, test
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
@@ -684,10 +684,10 @@ def test_filter_functionality__the_route_post_sad_path_title(mock_filter, test_c
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
@@ -731,10 +731,10 @@ def test_filter_functionality__the_route_post_happy_path_tag(mock_filter, test_c
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
@@ -779,10 +779,10 @@ def test_filter_functionality__the_route_sad_happy_path_tag(mock_filter, test_cl
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
@@ -826,10 +826,10 @@ def test_filter_functionality__the_route_happy_happy_path_description(mock_filte
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
@@ -875,10 +875,10 @@ def test_filter_functionality__the_route_happy_sad_path_description(mock_filter,
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
@@ -922,10 +922,10 @@ def test_filter_functionality__the_route_happy_happy_path_author(mock_filter, te
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
@@ -969,10 +969,10 @@ def test_filter_functionality__the_route_sad_happy_path_author(mock_filter, test
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
@@ -1016,10 +1016,10 @@ def test_filter_functionality_no_input_the_route_post(mock_filter, test_client):
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
@@ -1028,6 +1028,8 @@ def test_filter_functionality_no_input_the_route_post(mock_filter, test_client):
     assert data[1]["title"] == "Dataset 2"
     mock_filter.assert_called_once_with(query="")
     
+
+# Tecnique "Valores límite"
 
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_number_dataset_is_not_above_reality_post_route(mock_filter, test_client):
@@ -1065,10 +1067,10 @@ def test_filter_functionality_number_dataset_is_not_above_reality_post_route(moc
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
@@ -1125,7 +1127,7 @@ def test_filter_functionality_number_dataset_is_not_less_than_reality_for_a_inpu
     assert data[0]["title"] == "Dataset 1"
     mock_filter.assert_called_once_with(query="tag1")
 
-
+# Tecnique "Experiencia"
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_random_insertion_post_route(mock_filter, test_client):
     # Create dataset mocks
@@ -1162,10 +1164,10 @@ def test_filter_functionality_random_insertion_post_route(mock_filter, test_clie
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
@@ -1173,7 +1175,6 @@ def test_filter_functionality_random_insertion_post_route(mock_filter, test_clie
     mock_filter.assert_called_once_with(query="djadoufhapsdufad")
 
 
-# Tecnique "Experiencia"
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sql_insertion_post_route(mock_filter, test_client):
     # Create dataset mocks
@@ -1210,10 +1211,10 @@ def test_filter_functionality_sql_insertion_post_route(mock_filter, test_client)
         }
     )
 
-    # Verificar que la respuesta tiene el estado correcto
+    # Verify that the response has the correct status
     assert response.status_code == 200
     
-    # Verify that the response has the correct status
+    # Verify that the response contains the correct content
     data = response.json
 
     # Assertions
