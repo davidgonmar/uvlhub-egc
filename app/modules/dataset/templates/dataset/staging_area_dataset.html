@@ -248,21 +248,21 @@
 
 
 
-    // Función para visualizar archivos (modificado)
+
+
     function viewFile(fileId) {
-        let url = `/dataset/file/view/${fileId}`; // Ruta para obtener contenido
-        fetch(url)
+        fetch(`/file/view/${fileId}`)
             .then(response => response.json())
             .then(data => {
-                if (data.content) {
-                    document.getElementById('fileContent').textContent = data.content;
-                    document.getElementById('downloadButton').href = `/dataset/file/download/${fileId}`;
-                    $('#fileViewerModal').modal('show');
-                } else {
-                    alert('Unable to load file content');
-                }
+                document.getElementById('fileContent').textContent = data.content;
+                currentFileId = fileId;
+                document.getElementById('downloadButton').href = `/file/download/${fileId}`;
+                var modal = new bootstrap.Modal(document.getElementById('fileViewerModal'));
+                modal.show();
             })
-            .catch(error => console.error('Error loading file content:', error));
+
+        .catch(error => console.error('Error loading file:', error));
+
     }
 </script>
 
