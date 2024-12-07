@@ -52,8 +52,8 @@ def test_filter_functionality_happy_path_title(mock_filter):
     assert len(response) == 2
     assert response[0].to_dict()["title"] == "Dataset 1"
     assert response[1].to_dict()["title"] == "Dataset 2"
-    mock_filter.assert_called_once_with(query="Dataset")   
-
+    mock_filter.assert_called_once_with(query="Dataset")
+    
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sad_path_title(mock_filter):
     # Create dataset mocks
@@ -124,8 +124,7 @@ def test_filter_functionality_happy_path_tag(mock_filter):
     # Assertions
     assert len(response) == 1
     mock_filter.assert_called_once_with(query="tag1")
-    
-       
+                       
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sad_path_tag(mock_filter):
     # Create dataset mocks
