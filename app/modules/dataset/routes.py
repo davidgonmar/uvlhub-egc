@@ -53,6 +53,7 @@ fakenodo_service = FakenodoService()
 doi_mapping_service = DOIMappingService()
 ds_view_record_service = DSViewRecordService()
 ds_rating_service = DSRatingService()
+fm_rating_service = FMRatingService()
 
 
 @dataset_bp.route("/dataset/upload", methods=["GET", "POST"])
@@ -308,7 +309,6 @@ def download_dataset(dataset_id):
 
     return resp
 
-fm_rating_service = FMRatingService()
 @dataset_bp.route("/doi/<path:doi>/", methods=["GET"])
 def subdomain_index(doi):
 
@@ -338,7 +338,7 @@ def subdomain_index(doi):
 
     fm_rating_data = {}
     for feature_model in dataset.feature_models:
-        for file in feature_model.files:
+        for _ in feature_model.files:
             file_average_rating = fm_rating_service.get_average_by_feature_model(feature_model.id) or 0.0
             file_user_rating = None
             if current_user.is_authenticated:
@@ -348,7 +348,7 @@ def subdomain_index(doi):
                 'average_rating': round(file_average_rating, 2),
                 'user_rating': file_user_rating or 0
             }
- 
+
     resp = make_response(render_template(
         "dataset/view_dataset.html",
         dataset=dataset,

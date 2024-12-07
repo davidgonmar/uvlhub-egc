@@ -71,7 +71,7 @@ class FMRating(db.Model):
 
     def __repr__(self):
         return f'FMRating<{self.id}>'
-    
+
     def save(self):
         db.session.add(self)
         db.session.commit()

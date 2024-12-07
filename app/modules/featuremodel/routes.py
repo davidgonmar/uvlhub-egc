@@ -19,7 +19,7 @@ def rate():
     data = request.get_json()
     model_id = data.get("model_id")
     rating = data.get("rating")
-    
+
 
     if not model_id or not rating:
         return jsonify({"message": "Invalid request"}), 400
