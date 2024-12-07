@@ -693,7 +693,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const averageModelRating = parseFloat(container.getAttribute('data-model-average'));
             const modelUserRating = parseInt(container.getAttribute('data-model-user-rating'));
 
-            document.getElementById('average-model-rating').textContent = `Average Rating: ${averageModelRating} / 5`;
+            const modelAverageRatingElement = container.closest('.row').querySelector('.text-muted.mt-2');
+            if (modelAverageRatingElement) {
+                modelAverageRatingElement.textContent = `Average Rating: ${averageModelRating} / 5`;
+            }
 
         });
     });
