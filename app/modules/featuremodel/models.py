@@ -61,9 +61,17 @@ class FMRating(db.Model):
 
     @validates('rating')
     def validate_rating(self, key, value):
-        if value < 0 or value > 5:
-            raise ValueError("Rating must be between 0 and 5.")
+        if value is None:
+            raise ValueError("Rating cannot be null.")
+        if not isinstance(value, int):
+            raise ValueError("Rating must be an integer.")
+        if value < 1 or value > 5:
+            raise ValueError("Rating must be between 1 and 5.")
         return value
 
     def __repr__(self):
         return f'FMRating<{self.id}>'
+    
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
