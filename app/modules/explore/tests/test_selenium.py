@@ -6,11 +6,9 @@ from core.selenium.common import initialize_driver
 class TestSeleniumverdadero():
     def setup_method(self):
         self.driver = initialize_driver()
-        self.vars = {}
-  
+        self.vars = {} 
     def teardown_method(self, method):
-        self.driver.quit()
-         
+        self.driver.quit()     
     def test_seleniumverdadero(self):
         self.driver.get("http://localhost:5000/")
         self.driver.set_window_size(1850, 1053)
