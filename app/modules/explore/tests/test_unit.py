@@ -14,7 +14,6 @@ def test_client(test_client):
         pass
 
     yield test_client
-    
 
 # Tecnique "Partición equivalente"
 
@@ -53,8 +52,7 @@ def test_filter_functionality_happy_path_title(mock_filter):
     assert len(response) == 2
     assert response[0].to_dict()["title"] == "Dataset 1"
     assert response[1].to_dict()["title"] == "Dataset 2"
-    mock_filter.assert_called_once_with(query="Dataset")
-    
+    mock_filter.assert_called_once_with(query="Dataset")   
 
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sad_path_title(mock_filter):
@@ -91,7 +89,7 @@ def test_filter_functionality_sad_path_title(mock_filter):
     assert len(response) == 0
     mock_filter.assert_called_once_with(query="Cat")
 
-  
+
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_happy_path_tag(mock_filter):
     # Create dataset mocks
@@ -127,7 +125,7 @@ def test_filter_functionality_happy_path_tag(mock_filter):
     assert len(response) == 1
     mock_filter.assert_called_once_with(query="tag1")
     
-    
+       
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sad_path_tag(mock_filter):
     # Create dataset mocks
@@ -544,8 +542,7 @@ def test_search_queries_functionality_using_the_route_post_happy_path(mock_filte
 
     # Verify that the repository was called correctly
     mock_filter.assert_called_once_with(
-        query="tag1"
-    ) 
+        query="tag1")
 
 
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
@@ -911,7 +908,7 @@ def test_filter_functionality__the_route_happy_happy_path_author(mock_filter, te
         "created_at": "2023-02-01",
     }
     # Configure the mock
-    mock_filter.return_value = [ mock_dataset_2]
+    mock_filter.return_value = [mock_dataset_2]
 
     # Make a request to the endpoint
     response = test_client.post(
@@ -932,6 +929,7 @@ def test_filter_functionality__the_route_happy_happy_path_author(mock_filter, te
     assert len(data) == 1
     assert data[0]["title"] == "Dataset 2"
     mock_filter.assert_called_once_with(query="Author 2", **{})
+ 
  
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality__the_route_sad_happy_path_author(mock_filter, test_client):
@@ -1126,6 +1124,7 @@ def test_filter_functionality_number_dataset_is_not_less_than_reality_for_a_inpu
     assert len(data) > 0
     assert data[0]["title"] == "Dataset 1"
     mock_filter.assert_called_once_with(query="tag1")
+
 
 # Tecnique "Experiencia"
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
