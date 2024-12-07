@@ -65,3 +65,60 @@ def test_create_new_deposition(fakenodo_service, mock_dataset):
     )
 
 
+## GET SERVICES TESTS
+def test_get_deposition(fakenodo_service):
+    fakenodo_service.depositions = {
+        "1": {"metadata": {"title": "Test Dataset"}, "files": [], "status": "draft"}
+    }
+
+    deposition = fakenodo_service.get_deposition("1")
+
+    assert deposition["metadata"]["title"] == "Test Dataset"
+    assert deposition["status"] == "draft"
+
+def test_get_doi(fakenodo_service):
+    fakenodo_service.depositions = {
+        "1": {"metadata": {"title": "Test Dataset"}, "files": [], "status": "draft"}
+    }
+
+    doi = fakenodo_service.get_doi("1")
+
+    assert doi == "10.5281/dataset1"
+    assert fakenodo_service.depositions["1"]["metadata"]["doi"] == "10.5281/dataset1"
+
+def test_get_all_depositions(fakenodo_service):
+    fakenodo_service.depositions = {
+        "1": {"metadata": {"title": "Test Dataset 1"}, "status": "draft"},
+        "2": {"metadata": {"title": "Test Dataset 2"}, "status": "published"},
+    }
+
+    all_depositions = fakenodo_service.get_all_depositions()
+
+    assert len(all_depositions) == 2
+    assert "1" in all_depositions
+    assert "2" in all_depositions
+
+# PUBLISH SERVICE TEST
+def test_publish_deposition(fakenodo_service):
+    fakenodo_service.depositions = {
+        "1": {"metadata": {}, "files": [], "status": "draft"}
+    }
+
+    response = fakenodo_service.publish_deposition("1")
+
+    assert response["status"] == "published"
+    assert response["conceptdoi"] == "fakenodo.doi.1"
+    assert response["message"].startswith("Deposition published successfully")
+    assert fakenodo_service.depositions["1"]["status"] == "published"
+
+
+# DELETE SERVICE TEST
+def test_delete_deposition(fakenodo_service):
+    fakenodo_service.depositions = {
+        "1": {"metadata": {"title": "Test Dataset"}, "status": "draft"}
+    }
+
+    response = fakenodo_service.delete_deposition("1")
+
+    assert response["message"] == "Deposition deleted successfully."
+    assert "1" not in fakenodo_service.depositions
