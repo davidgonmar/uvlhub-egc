@@ -70,7 +70,6 @@ def test_create_new_deposition_invalid_dataset(fakenodo_service):
     # Test con un dataset inválido
     invalid_dataset = MagicMock()
     invalid_dataset.ds_meta_data = None  # Simula un dataset sin metadata
-    
     with pytest.raises(AttributeError):
         fakenodo_service.create_new_deposition(invalid_dataset)
 
