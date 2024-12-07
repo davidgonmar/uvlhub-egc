@@ -5,7 +5,7 @@ on:
     types: [submitted]
 jobs:
   auto_approve:
-    if: github.event.pull_request.base.ref == 'g1/test_PRbot' && github.event.review.state == 'approved' && github.event.review.user.login == 'codiumai-pr-agent-free[bot]'
+    if: github.event.pull_request.base.ref == 'main' && github.event.review.state == 'approved' && github.event.review.user.login == 'codiumai-pr-agent-free[bot]'
     runs-on: ubuntu-latest
 
     permissions:
