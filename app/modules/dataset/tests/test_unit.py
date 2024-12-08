@@ -341,3 +341,65 @@ def test_edit_dataset_success(mock_filter_by_doi, test_client):
 
     assert response.json == {"message": "Dataset updated successfully.", "is_draft_mode": True}
     assert response.status_code == 200
+    
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_edit_dataset_permission_denied(mock_filter_by_doi, test_client):
+    """
+    Caso negativo: El usuario no es el propietario del dataset.
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    mock_dataset = MagicMock()
+    mock_dataset.user_id = test_client.user_id + 1 # Simulando que el usuario no es el propietario
+
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = True # Simula que está en modo borrador
+    mock_ds_meta_data.to_dict.return_value = {
+        "title": "Initial Dataset Title",
+        "description": "Initial description",
+    }
+
+    mock_dataset.ds_meta_data = mock_ds_meta_data
+
+    mock_filter_by_doi.return_value = MagicMock(data_set=mock_dataset)
+
+    response = test_client.post("/dataset/edit/10.1234/test_doi/", json={})
+
+    # Verificar que se devuelve error 403
+    assert response.status_code == 403
+    assert response.json == {"message": "You do not have permission to edit this dataset."}
+    
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_edit_dataset_already_published(mock_filter_by_doi, test_client):
+    """
+    Caso negativo: El dataset ya está publicado y no se puede editar.
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was unsuccessful."
+    
+    mock_dataset = MagicMock()
+    mock_dataset.user_id = test_client.user_id 
+
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False # Simula que está publicado
+    mock_ds_meta_data.to_dict.return_value = {
+        "title": "Initial Dataset Title",
+        "description": "Initial description",
+    }
+
+    mock_dataset.ds_meta_data = mock_ds_meta_data
+
+    mock_filter_by_doi.return_value = MagicMock(data_set=mock_dataset)
+
+    # Datos para la solicitud de edición
+    data = {
+        "title": "Updated title",
+        "description": "Updated description"
+    }
+
+    response = test_client.post("/dataset/edit/10.1234/test_doi/", json = data)
+
+    # Verificar que se devuelve error 400
+    assert response.status_code == 400
+    assert response.json == {"message": "This dataset is already published and cannot be edited."}
