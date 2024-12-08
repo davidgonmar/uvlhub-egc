@@ -403,3 +403,93 @@ def test_edit_dataset_already_published(mock_filter_by_doi, test_client):
     # Verificar que se devuelve error 400
     assert response.status_code == 400
     assert response.json == {"message": "This dataset is already published and cannot be edited."}
+
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_edit_dataset_missing_title_description(mock_filter_by_doi, test_client):
+    """
+    Caso negativo: Faltan datos obligatorios (título o descripción).
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    mock_dataset = MagicMock()
+    mock_dataset.user_id = test_client.user_id 
+
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = True # Simula que está en modo borrador
+    mock_ds_meta_data.to_dict.return_value = {
+        "title": "Initial Dataset Title",
+        "description": "Initial description",
+    }
+
+    mock_dataset.ds_meta_data = mock_ds_meta_data
+
+    mock_filter_by_doi.return_value = MagicMock(data_set=mock_dataset)
+
+    # Datos incompletos: falta título y descripción.
+    data = {}
+
+    response = test_client.post("/dataset/edit/10.1234/test_doi/", json=data)
+
+    assert response.status_code == 400
+    assert response.json == {"message": "Title and description are required."}
+    
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_edit_dataset_missing_title(mock_filter_by_doi, test_client):
+    """
+    Caso negativo: Faltan datos obligatorios (título o descripción).
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    mock_dataset = MagicMock()
+    mock_dataset.user_id = test_client.user_id 
+
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = True # Simula que está en modo borrador
+    mock_ds_meta_data.to_dict.return_value = {
+        "title": "Initial Dataset Title",
+        "description": "Initial description",
+    }
+
+    mock_dataset.ds_meta_data = mock_ds_meta_data
+
+    mock_filter_by_doi.return_value = MagicMock(data_set=mock_dataset)
+
+    # Datos incompletos: falta título.
+    data = {"description": "Updated description"}
+
+    response = test_client.post("/dataset/edit/10.1234/test_doi/", json=data)
+
+    assert response.status_code == 400
+    assert response.json == {"message": "Title and description are required."}
+    
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_edit_dataset_missing_description(mock_filter_by_doi, test_client):
+    """
+    Caso negativo: Faltan datos obligatorios (título o descripción).
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    mock_dataset = MagicMock()
+    mock_dataset.user_id = test_client.user_id 
+
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = True # Simula que está en modo borrador
+    mock_ds_meta_data.to_dict.return_value = {
+        "title": "Initial Dataset Title",
+        "description": "Initial description",
+    }
+
+    mock_dataset.ds_meta_data = mock_ds_meta_data
+
+    mock_filter_by_doi.return_value = MagicMock(data_set=mock_dataset)
+
+    # Datos incompletos: falta descripción.
+    data = {"title": "Updated title"}
+
+    response = test_client.post("/dataset/edit/10.1234/test_doi/", json=data)
+
+    assert response.status_code == 400
+    assert response.json == {"message": "Title and description are required."}
