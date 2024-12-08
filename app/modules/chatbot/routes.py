@@ -8,14 +8,15 @@ api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("No se encontró la clave de API 'OPENAI_API_KEY' en el entorno.")
 
-instrucciones = """
+instructions = """
         Eres un asistente diseñado para responder únicamente preguntas relacionadas con la WikiEGC (Evolución de la Gestión y Configuración), 
         de la Universidad de Sevilla, de InnoSoft y sobre el formato de archivo uvl.
         No respondas preguntas relacionadas con política, religión, u otros temas no relacionados con los temas mencionados anteriormente.
         Si alguien pregunta sobre otro tema, responde: 'Lo siento, solo atiendo preguntas sobre EGC y uvl.'
+        En caso de preguntas en otro idioma distinto al español, responde: 'Lo siento, solo tengo soporte para conversaciones en español.'
         """
 
-chatbot_service = ChatbotService(api_key, instrucciones)
+chatbot_service = ChatbotService(api_key, instructions)
 
 
 @chatbot_bp.route('/chatbot', methods=['GET'])
