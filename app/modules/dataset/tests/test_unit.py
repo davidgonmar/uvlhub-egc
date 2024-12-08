@@ -228,3 +228,83 @@ def test_publish_dataset_success(mock_filter_by_doi, test_client):
 
     assert response.status_code == 200
     assert response.json == {"message": "Dataset published successfully."}
+    
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_publish_dataset_not_found(mock_filter_by_doi, test_client):
+    """
+    Caso negativo: El DOI no existe.
+    """
+    
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+    
+    mock_filter_by_doi.return_value = None  # No se encuentra el dataset
+
+    response = test_client.post("/dataset/publish/10.1234/non_existent_doi/")
+
+    assert response.status_code == 404
+
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_publish_dataset_permission_denied(mock_filter_by_doi, test_client):
+    """
+    Caso negativo: El usuario no es el propietario del dataset.
+    """
+    
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+    
+    mock_ds_meta_data = MagicMock()
+    mock_dataset = MagicMock()
+    mock_ds_meta_data.data_set = mock_dataset
+    mock_dataset.user_id = test_client.user_id + 1
+
+    mock_filter_by_doi.return_value = mock_ds_meta_data
+
+    with test_client.session_transaction() as session:
+        session["user_id"] = 1  # Usuario actual
+
+    response = test_client.post("/dataset/publish/10.1234/test_doi/")
+
+    assert response.status_code == 403
+    assert response.json == {"message": "You do not have permission to publish this dataset."}
+
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_publish_dataset_already_published(mock_filter_by_doi, test_client):
+    """
+    Caso negativo: El dataset ya está publicado.
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    mock_ds_meta_data = MagicMock()
+    mock_dataset = MagicMock()
+    mock_ds_meta_data.data_set = mock_dataset
+    mock_dataset.user_id = test_client.user_id
+    mock_ds_meta_data.is_draft_mode = True 
+
+    mock_filter_by_doi.return_value = mock_ds_meta_data
+
+    aux_call = test_client.post("/dataset/publish/10.1234/test_doi/") # Lo publicamos
+    response = test_client.post("/dataset/publish/10.1234/test_doi/") # Lo intentamos publicar otra vez
+
+    assert response.status_code == 400
+    assert response.json == {"message": "This dataset is already published."}
+
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_publish_dataset_not_logged_in(mock_filter_by_doi, test_client):
+    """
+    Caso negativo: El usuario no está autenticado.
+    """
+    logout_reponse = logout(test_client)
+    assert logout_reponse.status_code == 200
+
+    mock_ds_meta_data = MagicMock()
+    mock_dataset = MagicMock()
+    mock_ds_meta_data.data_set = mock_dataset
+    mock_ds_meta_data.is_draft_mode = True
+
+    mock_filter_by_doi.return_value = mock_ds_meta_data
+
+    response = test_client.post("/dataset/publish/10.1234/test_doi/")
+
+    assert response.status_code == 302
