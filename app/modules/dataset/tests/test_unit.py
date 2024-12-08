@@ -321,10 +321,6 @@ def test_edit_dataset_success(mock_filter_by_doi, test_client):
 
     mock_ds_meta_data = MagicMock()
     mock_ds_meta_data.is_draft_mode = True  # Simula que está en modo borrador
-    mock_ds_meta_data.to_dict.return_value = {
-        "title": "Initial Dataset Title",
-        "description": "Initial description",
-    }
 
     mock_dataset.ds_meta_data = mock_ds_meta_data
 
@@ -355,10 +351,6 @@ def test_edit_dataset_permission_denied(mock_filter_by_doi, test_client):
 
     mock_ds_meta_data = MagicMock()
     mock_ds_meta_data.is_draft_mode = True # Simula que está en modo borrador
-    mock_ds_meta_data.to_dict.return_value = {
-        "title": "Initial Dataset Title",
-        "description": "Initial description",
-    }
 
     mock_dataset.ds_meta_data = mock_ds_meta_data
 
@@ -383,10 +375,6 @@ def test_edit_dataset_already_published(mock_filter_by_doi, test_client):
 
     mock_ds_meta_data = MagicMock()
     mock_ds_meta_data.is_draft_mode = False # Simula que está publicado
-    mock_ds_meta_data.to_dict.return_value = {
-        "title": "Initial Dataset Title",
-        "description": "Initial description",
-    }
 
     mock_dataset.ds_meta_data = mock_ds_meta_data
 
@@ -417,10 +405,6 @@ def test_edit_dataset_missing_title_description(mock_filter_by_doi, test_client)
 
     mock_ds_meta_data = MagicMock()
     mock_ds_meta_data.is_draft_mode = True # Simula que está en modo borrador
-    mock_ds_meta_data.to_dict.return_value = {
-        "title": "Initial Dataset Title",
-        "description": "Initial description",
-    }
 
     mock_dataset.ds_meta_data = mock_ds_meta_data
 
@@ -447,10 +431,6 @@ def test_edit_dataset_missing_title(mock_filter_by_doi, test_client):
 
     mock_ds_meta_data = MagicMock()
     mock_ds_meta_data.is_draft_mode = True # Simula que está en modo borrador
-    mock_ds_meta_data.to_dict.return_value = {
-        "title": "Initial Dataset Title",
-        "description": "Initial description",
-    }
 
     mock_dataset.ds_meta_data = mock_ds_meta_data
 
@@ -477,11 +457,6 @@ def test_edit_dataset_missing_description(mock_filter_by_doi, test_client):
 
     mock_ds_meta_data = MagicMock()
     mock_ds_meta_data.is_draft_mode = True # Simula que está en modo borrador
-    mock_ds_meta_data.to_dict.return_value = {
-        "title": "Initial Dataset Title",
-        "description": "Initial description",
-    }
-
     mock_dataset.ds_meta_data = mock_ds_meta_data
 
     mock_filter_by_doi.return_value = MagicMock(data_set=mock_dataset)
