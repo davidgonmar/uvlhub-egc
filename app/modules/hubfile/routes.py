@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 import os
 import uuid
 from flask import current_app, jsonify, make_response, request, send_from_directory
-from flask_login import current_user
+from flask_login import current_user, login_required
 from app.modules.hubfile import hubfile_bp
 from app.modules.hubfile.models import HubfileDownloadRecord, HubfileViewRecord
 from app.modules.hubfile.services import HubfileDownloadRecordService, HubfileService
@@ -219,6 +219,7 @@ def view_file(file_id):
 
 
 @hubfile_bp.route("/file/delete", methods=["POST"])
+@login_required
 def delete_file():
     # Get data from the request
     data = request.get_json()
