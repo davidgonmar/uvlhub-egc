@@ -339,6 +339,35 @@ def test_edit_dataset_success(mock_filter_by_doi, test_client):
     assert response.status_code == 200
     
 @patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_edit_dataset_publish_success(mock_filter_by_doi, test_client):
+    """
+    Caso positivo: El dataset se publica con éxito (is_draft_mode cambia a False).
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    mock_dataset = MagicMock()
+    mock_dataset.user_id = test_client.user_id
+
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = True
+    mock_dataset.ds_meta_data = mock_ds_meta_data
+
+    mock_filter_by_doi.return_value = MagicMock(data_set=mock_dataset)
+
+    # Datos para publicar el dataset
+    data = {
+        "title": "Updated Title",
+        "description": "Updated Description",
+        "publish": True
+    }
+
+    response = test_client.post("/dataset/edit/10.1234/test_doi/", json=data)
+
+    assert response.status_code == 200
+    assert response.json == {"message": "Dataset updated successfully.", "is_draft_mode": False}
+    
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
 def test_edit_dataset_permission_denied(mock_filter_by_doi, test_client):
     """
     Caso negativo: El usuario no es el propietario del dataset.
@@ -468,3 +497,24 @@ def test_edit_dataset_missing_description(mock_filter_by_doi, test_client):
 
     assert response.status_code == 400
     assert response.json == {"message": "Title and description are required."}
+
+    
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_edit_dataset_not_found(mock_filter_by_doi, test_client):
+    """
+    Caso negativo: El DOI no corresponde a ningún dataset (404).
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    # Simula que no se encuentra el dataset
+    mock_filter_by_doi.return_value = None
+    
+    data = {
+        "title": "Updated title",
+        "description": "Updated description"
+    }
+
+    response = test_client.post("/dataset/edit/10.1234/nonexistent_doi/", json=data)
+
+    assert response.status_code == 404
