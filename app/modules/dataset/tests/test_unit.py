@@ -3,6 +3,11 @@ import pytest
 from unittest.mock import patch, MagicMock
 from app.modules.dataset.models import DataSet, DSMetaData
 from app.modules.dataset.services import DataSetService
+from app.modules.conftest import login, logout
+from app import db
+from app.modules.auth.models import User
+from app.modules.profile.models import UserProfile
+from flask_login import current_user
 
 
 @pytest.fixture(scope="module")
@@ -11,9 +16,16 @@ def test_client(test_client):
     Extends the test_client fixture to add additional specific data for module testing.
     """
     with test_client.application.app_context():
-        # Add HERE new elements to the database that you want to exist in the test context.
-        # DO NOT FORGET to use db.session.add(<element>) and db.session.commit() to save the data.
+        user_test = User(email='user@example.com', password='test1234')
+        db.session.add(user_test)
+        db.session.commit()
+
+        profile = UserProfile(user_id=user_test.id, name="Name", surname="Surname")
+        db.session.add(profile)
+        db.session.commit()
         pass
+
+        test_client.user_id = user_test.id
 
     yield test_client
 
@@ -192,3 +204,27 @@ class TestDatasetExport(unittest.TestCase):
         if any(file.size < 0 for file in dataset.files()):
             return {"success": False, "error": "Archivo corrupto detectado"}
         return {"success": True, "export_format": export_format}
+
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_publish_dataset_success(mock_filter_by_doi, test_client):
+    """
+    Caso positivo: El dataset se publica correctamente.
+    """
+    # Inicia sesión el usuario
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    # Mock del dataset y ds_meta_data
+    mock_ds_meta_data = MagicMock()
+    mock_dataset = MagicMock()
+    mock_ds_meta_data.data_set = mock_dataset
+    mock_dataset.user_id = test_client.user_id  # Usar el user_id generado dinámicamente
+    mock_ds_meta_data.is_draft_mode = True
+
+    # Configurar el mock del servicio para devolver el dataset
+    mock_filter_by_doi.return_value = mock_ds_meta_data
+
+    response = test_client.post("/dataset/publish/10.1234/test_doi/")
+
+    assert response.status_code == 200
+    assert response.json == {"message": "Dataset published successfully."}
