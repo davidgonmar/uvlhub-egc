@@ -7,8 +7,6 @@ from app.modules.conftest import login, logout
 from app import db
 from app.modules.auth.models import User
 from app.modules.profile.models import UserProfile
-from flask_login import current_user
-
 
 @pytest.fixture(scope="module")
 def test_client(test_client):
@@ -308,3 +306,38 @@ def test_publish_dataset_not_logged_in(mock_filter_by_doi, test_client):
     response = test_client.post("/dataset/publish/10.1234/test_doi/")
 
     assert response.status_code == 302
+
+@patch("app.modules.dataset.services.DSMetaDataService.filter_by_doi")
+def test_edit_dataset_success(mock_filter_by_doi, test_client):
+    """
+    Caso positivo: El dataset se edita correctamente.
+    """
+    # Simula el inicio de sesión
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    mock_dataset = MagicMock()
+    mock_dataset.user_id = test_client.user_id  # Simula que el usuario es el propietario
+
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = True  # Simula que está en modo borrador
+    mock_ds_meta_data.to_dict.return_value = {
+        "title": "Initial Dataset Title",
+        "description": "Initial description",
+    }
+
+    mock_dataset.ds_meta_data = mock_ds_meta_data
+
+    # Configura el mock de `filter_by_doi` para devolver un objeto con dataset
+    mock_filter_by_doi.return_value = MagicMock(data_set=mock_dataset)
+
+    # Datos para la solicitud de edición
+    data = {
+        "title": "Updated title",
+        "description": "Updated description"
+    }
+
+    response = test_client.post("/dataset/edit/10.1234/test_doi/", json=data)
+
+    assert response.json == {"message": "Dataset updated successfully.", "is_draft_mode": True}
+    assert response.status_code == 200
