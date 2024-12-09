@@ -4,6 +4,7 @@ from app import db
 from app.modules.auth.models import User
 from app.modules.conftest import login, logout
 
+
 @pytest.fixture(scope='module')
 def test_client(test_client):
     """
@@ -18,6 +19,7 @@ def test_client(test_client):
 
     yield test_client
 
+
 def test_sample_assertion(test_client):
     """
     Sample test to verify that the test framework and environment are working correctly.
@@ -26,7 +28,8 @@ def test_sample_assertion(test_client):
     """
     greeting = "Hello, World!"
     assert greeting == "Hello, World!", "The greeting does not coincide with 'Hello, World!'"
-    
+
+
 @patch("app.modules.hubfile.services.HubfileService.get_or_404")
 @patch("os.path.exists")
 @patch("os.remove")
@@ -50,6 +53,7 @@ def test_delete_file_success(mock_os_remove, mock_os_path_exists, mock_get_or_40
     assert response.json == {"success": True, "message": "File deleted successfully"}
     mock_os_remove.assert_called_once()
 
+
 @patch("app.modules.hubfile.services.HubfileService.get_or_404")
 def test_delete_file_permission_denied(mock_get_or_404, test_client):
     """
@@ -67,6 +71,7 @@ def test_delete_file_permission_denied(mock_get_or_404, test_client):
 
     assert response.status_code == 403
     assert response.json == {"success": False, "error": "You do not have permission to delete this file"}
+
 
 @patch("app.modules.hubfile.services.HubfileService.get_or_404")
 @patch("os.path.exists")
@@ -88,6 +93,7 @@ def test_delete_file_not_found(mock_os_path_exists, mock_get_or_404, test_client
 
     assert response.status_code == 404
     assert response.json == {"success": False, "error": "File not found"}
+
 
 @patch("app.modules.hubfile.services.HubfileService.get_or_404")
 @patch("os.path.exists")
@@ -112,6 +118,7 @@ def test_delete_file_unexpected_error(mock_os_remove, mock_os_path_exists, mock_
 
     assert response.status_code == 500
     assert response.json == {"success": False, "error": "Unexpected error"}
+
 
 def test_delete_file_not_logged_in(test_client):
     """
