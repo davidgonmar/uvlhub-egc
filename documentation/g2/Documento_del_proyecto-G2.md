@@ -11,7 +11,12 @@
 1. [Indicadores del Proyecto](#indicadores-del-proyecto)  
 2. [Integración con Otros Equipos](#integración-con-otros-equipos)  
 3. [Resumen Ejecutivo](#resumen-ejecutivo)  
-4. [Descripción del Sistema](#descripción-del-sistema)  
+4. [Descripción del Sistema](#descripción-del-sistema)
+    - [1. Vistazo general](#1-vistazo-general)
+    - [2. Módulos](#2-módulos)
+    - [3. Estructura del proyecto](#3-estructura-del-proyecto)
+    - [4. Peticiones HTTP](#4-peticiones-http)
+    - [5. Añadidos al proyecto](#5-añadidos-al-proyecto)   
 5. [Visión Global del Proceso de Desarrollo](#visión-global-del-proceso-de-desarrollo)  
     - [Introducción](#1-introducción)  
     - [Fases del proceso de desarrollo](#2-fases-del-proceso-de-desarrollo)  
@@ -91,11 +96,179 @@ Esta integración se dio en un esfuerzo por optimizar el flujo de trabajo entre 
 
 ## Resumen Ejecutivo
 
-Se sintetizará de un vistazo lo hecho en el trabajo y los datos fundamentales. Se usarán palabras para resumir el proyecto presentado. Contendrá, al menos la siguiente información:
+El proyecto ha sido desarrollado como parte del curso universitario EGC por el grupo Jamon-Hub, compuesto por los subgrupos Jamon-Hub-1 y Jamon-Hub-2, tiene como objetivo la mejora del proyecto UVLHub mediante la incorporación de nuevas funcionalidades y el cumplimiento de los principios de integración continua (CI) y despliegue continuo (CD). Se ha realizado un especial énfasis en la gestión del código y su evolución.
+
+Esta aplicación es un fork de la original, a la cual se le han añadido mejoras significativas y funcionalidades innovadoras a la vez que se han mantenido la inmensa mayoría de sus características. Estas mejoras buscan optimizar la experiencia de usuario mejorando la versatilidad, funcionalidad y comodidad del sistema. A continuación, se detalla el alcance del trabajo realizado por cada subgrupo:
+
+El subgrupo Jamon-Hub-1 ha implementado las siguientes funcionalidades:
+
+- **AI Integration:** implementación de un sistema de inteligencia artificial basado en OpenAI mediante una API externa, que permite a los usuarios consultar información sobre modelos UVL.
+- **Advanced Search:** adición de una funcionalidad de búsqueda avanzada para que los usuarios puedan filtrar modelos según criterios específicos.
+- **Download All Datasets:** desarrollo de una opción que permite descargar todos los *datasets* disponibles en todos los formatos mediante un único botón.
+- **Rate Datasets/Models:** implementación de una funcionalidad que permite a los usuarios valorar tanto *datasets* como modelos.
+- **Sign-up Validation:** implementación de un sistema de validación de correo electrónico como parte del proceso de registro de nuevos usuarios.
+- **Multiple Login:** integración de opciones de inicio de sesión utilizando cuentas de ORCID, GitHub o Google.
+- **Fakenodo:** desarrollo de un stub que simula la funcionalidad de la API de Zenodo, permitiendo la prueba y el uso del sistema sin depender de servicios externos reales. Esta tarea ha sido desarrollada en colaboración con Jamon-Hub-2.
+
+El subgrupo Jamon-Hub-2 ha desarrollado las siguientes funcionalidades:
+
+- **Staging Area:** implementación de un área temporal para que los usuarios almacenen datasets antes de subirlos definitivamente a Zenodo.
+- **Search Queries:** desarrollo de herramientas avanzadas que permiten realizar consultas específicas para filtrar y descargar modelos según criterios personalizados.
+- **Improve UI:** optimización del diseño de la interfaz de usuario, mejorando la experiencia visual y funcional. La presentación de los datasets sigue un estilo inspirado en GitHub.
+- **Different Versions of Models:** soporte para la gestión de diferentes versiones de modelos y su descarga en varios formatos.
+- **Remember (Forgot) My Password:** creación de una funcionalidad que permite a los usuarios modificar sus contraseñas en caso de olvido u otra causa.
+- **Register Developer:** adición de una opción para que los usuarios puedan registrarse como desarrolladores y acceder a funcionalidades específicas.
+- **Fakenodo:** desarrollo de un stub que simula la funcionalidad de la API de Zenodo, permitiendo la prueba y el uso del sistema sin depender de servicios externos reales. Esta tarea ha sido desarrollada en colaboración con Jamon-Hub-1.
+
+Cada una de estas funcionalidades ha sido diseñada y desarrollada siguiendo las mejores prácticas de desarrollo ágil y de evolución y gestión de la configuración, para asegurar la mayor calidad posible del resultado final. En esta misma línea, se ha aportado un cuidado especial a la coordinación entre los dos equipos para garantizar una cooperación efectiva y evitar conflictos de alto impacto.
+
+Entre las técnicas llevadas a cabo para lograr dichas metas, destacan la definición y aplicación de políticas de formato de *issues*, ramas, commits y *pull requests*, y el empleo de *workflows* de automatización de procesos. Todo esto se puede leer en detalle en los actas fundacionales de cada grupo.
+
+El resultado es un proyecto robusto que, con humildad pero confianza, espera haber superado al original, ofreciendo una experiencia más rica y adaptada a las posibles necesidades de los usuarios.
 
 ## Descripción del Sistema
 
-Se explicará el sistema desarrollado desde un punto de vista funcional y arquitectónico. Se hará una descripción tanto funcional como técnica de sus componentes y su relación con el resto de subsistemas. Habrá una sección que enumere explícitamente cuáles son los cambios que se han desarrollado para el proyecto.
+UVLHub es un repositorio de modelos de características en formato UVL siguiendo principios de ciencia abierta. Vamos a ver a continuación una descripción del sistema desde el punto de vista funcional y arquitectónico. Se analizarán sus componentes y su relación con el resto de subsistemas.
+
+> **Aviso**: Esta información ha sido parcialmente obtenida de [la documentación oficial del proyecto original clonado](https://docs.uvlhub.io/). Consúltese para más información.
+
+### 1. Vistazo general
+
+![Overview of UVLHub architecture](https://imgur.com/lSoYBlK.png)
+
+#### Aplicación web
+UVLHub está desarrollada como una aplicación web mediante el framework Flask. Su principal punto de acceso es un navegador web. Adicionalmente, UVLHub integra cuatro servicios distintos: almacenaje local para modelos UVL y demás información pertinente (2), Zenodo para persistencia de los datos (3), análisis automático de modelos de características (Automated Analysis of Feature Models - AAFM) mediante Flamapy (4), y un servicio RESTful para extender sus funcionalidades a otros dominiones mediante API (5).
+
+#### Almacenaje local
+Los usuarios pueden subir modelos en el formato UVL. Los archivos *per se* son almacenados en local, mientras que la información relacionada, tal como el título, la descripción y los autores, es guardada en una base relacional.
+
+#### Zenodo
+Zenodo es un repositorio de acceso abierto que permite a investigadores, científicos, académicos y cualquier persona interesada en compartir sus investigaciones cargar y almacenar datos de investigación, publicaciones, software y otros resultados científicos. 
+
+A pesar de guardar los archivos en local, también se suben al repositorio general de Zenodo como medio de seguridad. De este modo, si UVLHub no estuviese disponile, siempre se podrán hallar en Zenodo, permitiendo restaurar los datos sin pérdidas.
+
+#### AAFM mediante Flamapy
+Los usuarios pueden analizar sintácticamente sus modelos de UVLHub. Este análisis llevado a cabo mediante la herramienta Flamapy puede determinar, por ejemplo, la validez del modelo, el recuento de características o la cantidad de productos diferentes que se pueden derivar del modelo.
+
+#### API REST
+UVLHub ofrece una API REST gratis accesible para cualquier usuario registrado como desarrollador, para poder integrar en dominios externos modelos validados de la aplicación.
+
+### 2. Módulos
+
+![Modules of UVLHub](https://imgur.com/ksuWJOj.png)
+*La imagen de arriba representa la estructura y relación de los módulos del proyecto UVLHub original, previo a los añadidos de este proyecto.*
+
+<br>
+Las funcionalidades de UVLHub están desglosadas en módulos. Cada módulo incluye las características fundamentales de un concepto funcional, de modo que cada uno sea cohesivo, esté desacoplado de los demás, sea modular y sea reutilizable. Las funcionalidades serán fruto de la relación entre módulos.
+
+Dentro de un módulo podemos encontrar los formularios (*forms*), los modelos de datos, los repositorios, las rutas de controladores, los *seeders* de datos, los servicios, las plantillas (*templates*) de las páginas de frontend, y las pruebas (*tests*).
+
+Actualmente esta aplicación UVLHub cuenta con 14 módulos. A continuación se listan todos en orden alfabético, aportando una descripción para cada uno:
+
+- **Auth:** para la autenticación.
+- **Chatbot:** para la implementación de un sistema de inteligencia artificial basado en OpenAI mediante una API externa, que permite a los usuarios consultar información sobre modelos UVL.
+- **Dataset:** para gestionar conjuntos de modelos UVL, llamados *datasets*.
+- **Explore:** para poder explorar las diferentes modelos y *datasets*.
+- **Fakenodo:** stub que simula la funcionalidad de la API de Zenodo, permitiendo la prueba y el uso del sistema sin depender de servicios externos reales.
+- **Feature Model:** para gestionar modelos UVL.
+- **Flamapy:** para incorporar las funcionalidades de Flamapy para el análisis automático de modelos de características (AAFM).
+- **Hubfile:** para gestionar el conjunto de los *datasets* de los usuarios.
+- **Notepad:** función de hojas de notas añadida como ejemplo simple de funcionalidad.
+- **Profile:** para gestionar el perfil de un usuario.
+- **Public:** para mostrar la página principal de la aplicación.
+- **Team:** para mostrar el equipo de desarrolladores encargados de la aplicación.
+- **Webhook:** para ejecutar el despliegue del webhook de la aplicación.
+- **Zenodo:** para acceder a la API de Zenodo y realizar acciones tales como publicar modelos de UVL.
+
+### 3. Estructura del proyecto
+
+![Structure of UVLHub](https://imgur.com/UARumxi.png)
+*La imagen de arriba representa la los componentes del código fuente del proyecto UVLHub original, previo a los añadidos de este proyecto.*
+
+<br>
+La estructura del código fuente del proyecto se puede agrupar de forma lógica en los siguientes componentes:
+
+#### Configuración del repositorio
+En este componente tendríamos la carpeta `.github`, el archivo `.gitignore`, la carpeta `documentation` y el archivo `README`.md.
+
+- **.github:** dentro se encuentra la carpeta `workflows` la cual define los GitHub Actions *workflows*. Estos archivos YAML dfinen acciones automatizadas que son ejecutados tras ciertos sucesos, tales como *pushes* o *pull requests*.
+- **.gitignore:** una lista de archivos y directorios que Git debe ignorar de su sistema de control de versiones.
+- **documentation:** contiene el acta fundacional, el diario del equipo y el documento del proyecto de ambos subgrupos del proyecto.
+- **README.md:** resumen introductorio sobre la aplicación, de cara a desarrolladores o usuarios que accedan a través del código fuente.
+
+#### Archivos de la aplicación
+En este componente tendríamos el archivo `requirements.txt` y las carpetas `scripts`, `app`, `core` y `migrations`.
+
+- **requirements.txt:** lista de dependencias de Python necesarias para el proyecto, instalada mediante `pip`.
+- **scripts:** contiene *scripts* varios para automatizar tareas, tales como instalación de dependencias o despliegue.
+- **app:** contiene el código principal de la aplicación, destacando principalmente los módulos, los cuales contienen las funcionalidades principales de la aplicación.
+- **core:** contiene componentes esenciales usados a lo largo de la aplicación, tales como códigos de utilidad y configuraciones globales.
+- **migrations:** contiene los ficheros de migraciones del esquema de la base de datos.
+
+#### Entorno de trabajo
+En este componente tendríamos la carpeta `docker`, la carpeta `vagrant` y los archivo `.env.*`.
+
+- **docker:** contiene los componentes necesarios para lanzar la aplicación en Docker, desde archivos de configuración a las imágenes de Docker, por *scripts* para certificados SSL o configuraciones del servidor web NGINX.
+- **vagrant:** contiene los componentes necesarios para lanzar la aplicación en Vagrant, es decir el Vagrantfile y los playbooks .yml para que Ansible automatize y gestione la configuración del sistema para Vagrant.
+- **.env.*:** incluyen variables de entorno para la aplicación. Los archivos `.env.<deployment_environment>.example` son ejemplos de variables de entorno para ciertos entornos de despliegue.
+
+#### Rosemary CLI
+En este componente tendríamos la carpeta `rosemary` y el archivo `setup.py`.
+
+- **rosemary:** contiene el código para el paquete `Rosemary CLI`, el cual está aún en desarrollo. Rosemary es una interfaz de la línea de comandos (*Command Line Interface* - CLI) que tiene el propósito de facilitar la gestión de proyectos y tareas de desarrollo.
+- **setup.py:** un `setup.py` es un *script* para distribución de paquetes Python; define propiedades como el nombre, la versión y las dependencias. En este caso se usa para el paquete `Rosemary CLI`.
+
+#### Archivos de configuración
+En este componente tendríamos únicamente el archivo .`flake8`.
+
+- **.flake8:** contiene configuraciones para Flake8, la cual es una herramienta de análisis estático de código para Python.
+
+### 4. Peticiones HTTP
+
+![HTTP request UVLHub](https://imgur.com/HCEdGz7.png)
+
+UVLHub siguen una patrón Modelo-Vista-Controlador (MVC) mediante Flask para gestionar las peticiones HTTP. El flujo de información es el siguiente:
+
+- Las peticiones llegan desde internet, donde UVLHub es accesible.
+- El servidor Flask recibe las peticiones y las redirige a las rutas.
+- Las rutas pueden llamar a los servicios para realizar la lógica de negocio.
+- Los servicios interactúan con los repositorios para acceder a los datos de la base de datos según los modelos.
+- Los formularios y las plantillas de frontend se usan para manejar los *inputs* de los usuarios y generarles la respuesta necesaria.
+
+### 5. Añadidos al proyecto
+
+En esta sección se enumerarán los cambios desarrollados para el proyecto desde la perspectiva funcional y arquitectónica. Se analizarán los cambios hechos por cada subgrupo para sus work items (WI) y otros cambios adicionales generales.
+
+#### Cambios por el grupo Jamon-Hub-1 para sus WI:
+
+ - **Sign-up validation:** para este WI, se ha incorporado en el módulo `auth` la creación de códigos One-Time Password (OTP) y el uso de un servicio externo de emails para que le lleguen a los usuarios que están realizando el proceso de registro y se pueda validar la veracidad de su registro.
+ - **Multiple login:** para este WI, se ha extendido el módulo `auth` para permitir el inicio de sesión a UVLHub con cuentas de ORCID, GitHub y Google. De este modo, se ha integrado la compatibilidad con las APIs de dichas organizaciones enfocadas exclusivamente al inicio de sesión.
+
+ - **Rate datasets/models:** para este WI, se han añadido opciones para valorar modelos y *datasets* mediante estrellas. Se han implementado los cambios tanto en el módulo `models`, como en `datasets`y en `explore`, para poder visualizar las valoraciones.
+ - **Download all datasets:** para este WI, se pulió la opción de descargar todos los *datasets*, del módulo `datasets`.
+
+ - **AI integration:** para este WI, se ha añadido un módulo completamente nuevo, `chabot`, el cual implementa el chatbot, realizando la conexión con la API de OpenAI.
+ - **Advanced search:** para este WI, se extendió el sistema de búsqueda extendida añadiendo filtros adicionales predefinidos. Los cambios se aplicaron principalmente al módulo `explore`.
+
+#### Cambios por el grupo Jamon-Hub-2, para sus WI:
+
+ - **Remember my password:** para este WI, se ha integrado la funcionalidad para que el sistema reestablezca la contraseña de los usuarios en caso de olvido u otra necesidad. Se ha añdido la creación de códigos One-Time Password (OTP) y se ha usado la funcionalidad de enviar correos electrónicos implementada para sign-up validation. Los cambios se han aplicado a lo largo de todo el módulo `auth`.
+ - **Register developer:** para este WI, se ha añadido la opción para que los usuarios se registren como desarrolladores. En el módulo `auth` se ha implementado el registro como usuario, mientras que en los módulos `datasets`y en `profile`se han añadido detalles para reflejar el rol de desarrollador.
+
+ - **Improve UI:** para este WI, se ha realizado un rediseño y optimización de la interfaz gráfica de usuario para mejorar la experiencia del usuario, acercándose al principio de predictabilidad del usuario. El cambio en cuestión se ha implementado en la visualización de los datasets, modificando sus plantillas de frontend, en el módulo `datasets`.
+ - **Different versions of models**: para este WI, se ha dado soporte para la conversión directa de los modelos UVL en *datasets* a diferentes formatos. También se han actualizado los *datasets* en el seeder para que también sea aplicables a ellos. Los cambios se han realizado en los módulo `datasets` y `hubfile`.
+
+ - **Staging Area:**  para este WI se ha implementado de un espacio temporal que permite a los usuarios almacenar datasets antes de ser subidos a Zenodo. Se han aplicado cambios en las rutas de `datasets` pero también en frontend, para poder discernir los *datasets* en el nuevo estado. También se han añadido cambios al módulo `hubfile` para poder eliminar dichos *datasets*.
+ - **Search Queries:** para este WI, se ha mejorado el sistema de búsqueda para permitir a los usuarios realizar consultas de filtrado específicas y descargar modelos según criterios personalizados. Se ha mejorado las rutas de `dataset` para un mejor filtrado y se ha actualizado el módulo `explore`para incluir las funcionalidades en la búsqueda.
+
+#### Cambios generales:
+
+- **fakenodo:** para este WI, ambos grupos han trabajado en desarrollar un stub que simula la funcionalidad de la API de Zenodo. Se ha creado un módulo enteramente nuevo llamado `fakenodo`, en el que se ha implementado Fakenodo, de forma prácticamente análoga al módulo `zenodo`. También se han reemplazado las llamadas y menciones del módulo `datasets` al módulo `zenodo` por unas al módulo `fakenodo`.
+
+- **workflows:** el *workflow* del *lint* ha sido eliminado, los de *commits* y *tests* han sido mejorado para comprobar nuevos aspectos, y se ha creado uno nuevo para el análisis de la calidad del código mediante Codacy.
+- **.env:** se han necesitado nuevas variables de entorno por lo que los desarrolladores han actualizado su archivo `.env`.
+- **vagrant:** se han aplicado algunas mejoras para prevenir cambios innecesarios en contraseñas y simplificar la configuración, y también cambiar la variable de entorno para hacerla compatible con Flask Run.
+- **documentation:** se ha creado una nueva carpeta que contiene el acta fundacional, el diario del equipo y el documento del proyecto de ambos subgrupos del proyecto.
 
 ## Visión Global del Proceso de Desarrollo
 
