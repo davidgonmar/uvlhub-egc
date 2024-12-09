@@ -8,15 +8,15 @@
 
     <div class="row">
         <div class="col-12 mb-3">
-            <div class="alert alert-warning" role="alert" id="test_zenodo_connection_error" style="display: none">
+            <div class="alert alert-warning" role="alert" id="test_fakenodo_connection_error" style="display: none">
                 <div class="alert-message">
 
                     <h4 class="alert-heading"><i class="align-middle" data-feather="alert-triangle"></i> Limited
-                        connection to the Zenodo API</h4>
+                        connection to the Fakenodo API</h4>
                     <p class="p-0 m-0">
-                        There seems to be some kind of problem with the Zenodo API and synchronization of your dataset
+                        There seems to be some kind of problem with the Fakenodo API and synchronization of your dataset
                         files may not be possible. We will save your files locally to eventually synchronize them with
-                        Zenodo. Sorry for the inconvenience, Zenodo is an external service and we can't do
+                        Fakenodo. Sorry for the inconvenience, Fakenodo is an external service and we can't do
                         anything about it.
                     </p>
                 </div>
@@ -266,6 +266,31 @@
                                 h4Element.textContent = response.filename;
                                 listItem.appendChild(h4Element);
 
+                                // Information about the formats that the UVL was transformed into.
+                                let transformationText = document.createElement('span');
+                                transformationText.innerHTML = "<b>Transformed to:</b>"; 
+                                listItem.appendChild(transformationText);
+
+                                let formats = ["Glencoe", "DIMACS", "SPLOT"];
+
+                                let formatContainer = document.createElement('div');
+                                formatContainer.style.display = 'flex';
+                                formatContainer.style.flexWrap = 'wrap'; 
+                                formatContainer.style.marginTop = '10px';
+                                listItem.appendChild(formatContainer);
+
+                                formats.forEach(format => {
+                                let formatContainer = document.createElement('span');
+                                formatContainer.textContent = format;
+                                formatContainer.style.border = '1px solid #3A7CA5';
+                                formatContainer.style.borderRadius = '5px';
+                                formatContainer.style.padding = '2px 5px';
+                                formatContainer.style.marginLeft = '5px';
+                                formatContainer.style.display = 'inline-block';
+                                formatContainer.style.color = '#3A7CA5';
+                                listItem.appendChild(formatContainer);
+                                });
+
                                 // generate incremental id for form
                                 let formUniqueId = generateIncrementalId();
 
@@ -274,6 +299,8 @@
                                     FORM BUTTON
                                     ##########################################
                                 */
+
+
                                 let formButton = document.createElement('button');
                                 formButton.innerHTML = 'Show info';
                                 formButton.classList.add('info-button', 'btn', 'btn-outline-secondary', "btn-sm");
@@ -337,8 +364,18 @@
                                     APPEND BUTTONS
                                     ##########################################
                                 */
-                                listItem.appendChild(formButton);
-                                listItem.appendChild(removeButton);
+    
+                                let buttonContainer = document.createElement('div');
+                                buttonContainer.style.marginTop = "20px"; 
+                                buttonContainer.style.display = "flex";
+                                buttonContainer.style.justifyContent = "space-between";
+                                removeButton.style.margin = "0"; 
+                                formButton.style.margin = "0"; 
+
+
+                                buttonContainer.appendChild(formButton);
+                                buttonContainer.appendChild(removeButton);
+                                listItem.appendChild(buttonContainer);
 
                                 /*
                                     ##########################################
@@ -463,7 +500,7 @@
                 <label class="form-check">
                     <input id="agreeCheckbox" class="form-check-input" type="checkbox" value="">
                     <span class="form-check-label" style="font-size: 15px">
-                                I agree to have my feature models automatically uploaded to Zenodo and made available to the public according to the <a
+                                I agree to have my feature models automatically uploaded to Fakenodo and made available to the public according to the <a
                             href="https://en.wikipedia.org/wiki/Open_science" target="_blank">Open Science</a> manifesto
                             </span>
                 </label>
@@ -488,13 +525,13 @@
                     <div class="alert-message">
 
                         <h4 class="alert-heading"><i class="align-middle" data-feather="alert-triangle"></i> Limited
-                            connection to the Zenodo API</h4>
+                            connection to the Fakenodo API</h4>
                         <p class="p-0 m-0">
-                            There seems to be some kind of problem with the Zenodo API and synchronization of your
+                            There seems to be some kind of problem with the Fakenodo API and synchronization of your
                             dataset
                             files may not be possible. We will save your files locally to eventually synchronize
                             them with
-                            Zenodo. Sorry for the inconvenience, Zenodo is an external service and we can't do
+                            Fakenodo. Sorry for the inconvenience, Fakenodo is an external service and we can't do
                             anything about it.
                         </p>
                     </div>
@@ -527,6 +564,6 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ url_for('zenodo.scripts') }}"></script>
+    <script src="{{ url_for('fakenodo.scripts') }}"></script>
     <script src="{{ url_for('dataset.scripts') }}"></script>
 {% endblock %}

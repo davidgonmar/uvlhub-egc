@@ -40,6 +40,11 @@
                                     <a href="{{ url_for('dataset.download_dataset', dataset_id=dataset.id) }}">
                                         <i data-feather="download"></i>
                                     </a>
+                                    {% if dataset.ds_meta_data.is_draft_mode %}
+                                    <a href="{{ url_for('dataset.edit_dataset', doi=dataset.ds_meta_data.dataset_doi) }}">
+                                        <i data-feather="edit"></i>
+                                    </a>
+                                {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -58,7 +63,7 @@
                 </div>
                 <div class="card-body">
                     <p class="card-text">
-                        You have not created any dataset synchronized with Zenodo, are you up for it?
+                        You have not created any dataset synchronized with Fakenodo, are you up for it?
                     </p>
                     <a href="{{ url_for('dataset.create_dataset') }}" class="btn btn-primary">
                         Upload dataset</a>
