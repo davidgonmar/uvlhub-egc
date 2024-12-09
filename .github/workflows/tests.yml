@@ -12,6 +12,7 @@ on:
 
 jobs:
   pytest:
+    environment: env
     runs-on: ubuntu-latest
 
     services:
