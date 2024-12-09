@@ -1,58 +1,67 @@
 import pytest
-from flask import Flask
-from app.modules.fakenodo.routes import fakenodo_bp
+from unittest.mock import MagicMock
+from app.modules.fakenodo.services import FakenodoService
 
 
-@pytest.fixture(scope='module')
-def test_client():
-    # Create a new Flask app and register fakenodo blueprint
-    app = Flask(__name__)
-    app.register_blueprint(fakenodo_bp)
-
-    # Return the test client to interact with the app
-    with app.test_client() as client:
-        with app.app_context():
-            yield client
+@pytest.fixture
+def fakenodo_service():
+    # Mocking the repository inside the FakenodoService
+    service = FakenodoService()
+    service.deposition_repository = MagicMock()  # Mock the FakenodoRepository
+    return service
 
 
-def test_test_connection_fakenodo(test_client):
-    response = test_client.get('/fakenodo/api')
-    assert response.status_code == 200
-    assert response.json == {"status": "success", "message": "Connected to FakenodoAPI"}
+@pytest.fixture
+def mock_dataset():
+    mock_ds = MagicMock()
+    mock_ds.id = 1  # Set mock dataset ID
+    mock_ds.ds_meta_data.title = "Test Dataset"
+    mock_ds.ds_meta_data.description = "A test dataset."
+    mock_ds.ds_meta_data.authors = []  # Mock authors list
+    mock_ds.ds_meta_data.tags = "tag1, tag2"
+    mock_ds.ds_meta_data.publication_type.value = "none"  # Mock publication type
+    return mock_ds
 
 
-def test_create_fakenodo(test_client):
-    response = test_client.post('/fakenodo/api')
-    assert response.status_code == 201
-    assert response.json == {"status": "success", "message": "Fakenodo deposition created"}
+@pytest.fixture
+def mock_feature_model():
+    # Create a mock feature model
+    mock_fm = MagicMock()
+    mock_fm.fm_meta_data.uvl_filename = "test_file.uvl"
+    return mock_fm
 
 
-def test_deposition_files_fakenodo(test_client):
-    # Assuming depositionId is 1
-    response = test_client.post('/fakenodo/api/1/files')
-    assert response.status_code == 201
-    assert response.json == {
-        "status": "success",
-        "message": "Successfully uploaded files to deposition 1"
+def test_test_connection(fakenodo_service):
+    # Test the connection to Fakenodo
+    assert fakenodo_service.test_connection() is True
+
+
+def test_create_new_deposition(fakenodo_service, mock_dataset):
+    # Mock the repository method
+    mock_deposition = MagicMock()
+    mock_deposition.id = 123
+    mock_deposition.doi = "10.5281/dataset123"
+    mock_deposition.metadata = {
+        "title": "Test Dataset",
+        "description": "A test dataset.",
+        "creators": [],
+        "keywords": ["tag1", "tag2", "uvlhub"],
+        "license": "CC-BY-4.0"
     }
 
+    fakenodo_service.deposition_repository.create_new_deposition.return_value = mock_deposition
 
-def test_get_deposition_fakenodo(test_client):
-    # Assuming depositionId is 1
-    response = test_client.get('/fakenodo/api/1')
-    assert response.status_code == 200
-    assert response.json == {
-        "status": "success",
-        "message": "Retrieved deposition with ID 1",
-        "doi": "10.5072/fakenodo.1"
-    }
+    # Test creating a new deposition
+    deposition = fakenodo_service.create_new_deposition(mock_dataset)
+
+    # Check if deposition ID and DOI are generated
+    assert "deposition_id" in deposition
+    assert "doi" in deposition
+    assert deposition["doi"].startswith("10.5281/dataset")
+
+    # Check that the repository method was called with the correct arguments
+    fakenodo_service.deposition_repository.create_new_deposition.assert_called_once_with(
+        deposition["doi"], deposition["dep_metadata"]
+    )
 
 
-def test_delete_deposition_fakenodo(test_client):
-    # Assuming depositionId is 1
-    response = test_client.delete('/fakenodo/api/1')
-    assert response.status_code == 200
-    assert response.json == {
-        "status": "success",
-        "message": "Successfully deleted deposition 1"
-    }

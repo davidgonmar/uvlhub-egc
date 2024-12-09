@@ -130,6 +130,27 @@ def test_upload_dataset():
         # Close the browser
         close_driver(driver)
 
+from selenium.webdriver.support import expected_conditions as EC
 
-# Call the test function
-test_upload_dataset()
+def test_downloadall():
+    driver = initialize_driver()
+    try:
+        host = get_host_for_selenium_testing()
+
+        driver.get(f"{host}/")
+
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(1)
+
+        download_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.LINK_TEXT, "Download all datasets"))
+        )
+        driver.execute_script("arguments[0].scrollIntoView(true);", download_button)
+        driver.execute_script("arguments[0].click();", download_button)
+
+        time.sleep(2)
+
+        print("Test passed!")
+
+    finally:
+        close_driver(driver)

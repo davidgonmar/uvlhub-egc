@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 import os
 import uuid
 from flask import current_app, jsonify, make_response, request, send_from_directory
-from flask_login import current_user
+from flask_login import current_user, login_required
 from app.modules.hubfile import hubfile_bp
 from app.modules.hubfile.models import HubfileDownloadRecord, HubfileViewRecord
 from app.modules.hubfile.services import HubfileDownloadRecordService, HubfileService
@@ -215,4 +215,43 @@ def view_file(file_id):
         else:
             return jsonify({'success': False, 'error': 'File not found'}), 404
     except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@hubfile_bp.route("/file/delete", methods=["POST"])
+@login_required
+def delete_file():
+    # Get data from the request
+    data = request.get_json()
+    file_id = data.get("file_id")
+
+    # Get the file from the database using the file_id
+    file = HubfileService().get_or_404(file_id)
+
+    # Ensure the current user owns the file or has permission to delete it
+    if current_user.is_authenticated and file.feature_model.data_set.user_id != current_user.id:
+        return jsonify({'success': False, 'error': 'You do not have permission to delete this file'}), 403
+
+    # Construct the file path
+    directory_path = f"uploads/user_{file.feature_model.data_set.user_id}/dataset_{file.feature_model.data_set_id}/"
+    parent_directory_path = os.path.dirname(current_app.root_path)
+    file_path = os.path.join(parent_directory_path, directory_path, file.name)
+
+    try:
+        # Check if the file exists
+        if os.path.exists(file_path):
+            # Remove the file
+            os.remove(file_path)
+
+            # Remove associated records from the database
+            HubfileDownloadRecord.query.filter_by(file_id=file_id).delete()
+            HubfileViewRecord.query.filter_by(file_id=file_id).delete()
+            db.session.commit()
+
+            return jsonify({'success': True, 'message': 'File deleted successfully'}), 200
+        else:
+            return jsonify({'success': False, 'error': 'File not found'}), 404
+
+    except Exception as e:
+        # Handle unexpected errors
         return jsonify({'success': False, 'error': str(e)}), 500
