@@ -6,10 +6,10 @@ class TestChatbotoutofcontext():
   def setup_method(self, method):
     self.driver = webdriver.Chrome()
     self.vars = {}
-  
+
   def teardown_method(self, method):
     self.driver.quit()
-  
+
   def test_chatbotoutofcontext(self):
     self.driver.get("http://127.0.0.1:5000/")
     self.driver.set_window_size(1920, 1048)
