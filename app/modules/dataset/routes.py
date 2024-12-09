@@ -531,3 +531,33 @@ def rate():
         "average_rating": round(average_rating, 2),
         "user_rating": user_rating.rating if user_rating else 0
     }), 200
+
+
+@dataset_bp.route("/dataset/publish/<path:doi>/", methods=["POST"])
+@login_required
+def publish_dataset(doi):
+    # Buscar el dataset por DOI
+    ds_meta_data = dsmetadata_service.filter_by_doi(doi)
+
+    if not ds_meta_data:
+        abort(404)
+
+    dataset = ds_meta_data.data_set
+
+    # Verificar que el usuario sea el propietario
+    if dataset.user_id != current_user.id:
+        return jsonify({"message": "You do not have permission to publish this dataset."}), 403
+
+    # Verificar si ya está publicado
+    if not dataset.ds_meta_data.is_draft_mode:
+        return jsonify({"message": "This dataset is already published."}), 400
+
+    try:
+        # Publicar el dataset
+        dataset.ds_meta_data.is_draft_mode = False
+        db.session.commit()
+        return jsonify({"message": "Dataset published successfully."}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"An error occurred: {str(e)}"}), 500
