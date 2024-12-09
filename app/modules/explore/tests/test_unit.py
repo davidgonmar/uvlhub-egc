@@ -53,7 +53,6 @@ def test_filter_functionality_happy_path_title(mock_filter):
     assert response[0].to_dict()["title"] == "Dataset 1"
     assert response[1].to_dict()["title"] == "Dataset 2"
     mock_filter.assert_called_once_with(query="Dataset")
-
     
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sad_path_title(mock_filter):
