@@ -69,18 +69,3 @@ def check_uvl(file_id):
 @flamapy_bp.route('/flamapy/valid/<int:file_id>', methods=['GET'])
 def valid(file_id):
     return jsonify({"success": True, "file_id": file_id})
-
-@flamapy_bp.route('/flamapy/to_cnf/<int:file_id>', methods=['GET'])
-def to_cnf(file_id):
-    temp_file = tempfile.NamedTemporaryFile(suffix='.cnf', delete=False)
-    try:
-        hubfile = HubfileService().get_by_id(file_id)
-        fm = UVLReader(hubfile.get_path()).transform()
-        sat = FmToPysat(fm).transform()
-        DimacsWriter(temp_file.name, sat).transform()
-
-        # Return the file in the response
-        return send_file(temp_file.name, as_attachment=True, download_name=f'{hubfile.name}_cnf.txt')
-    finally:
-        # Clean up the temporary file
-        os.remove(temp_file.name)
