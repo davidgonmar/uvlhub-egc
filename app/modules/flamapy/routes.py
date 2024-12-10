@@ -70,22 +70,6 @@ def check_uvl(file_id):
 def valid(file_id):
     return jsonify({"success": True, "file_id": file_id})
 
-
-@flamapy_bp.route('/flamapy/to_splot/<int:file_id>', methods=['GET'])
-def to_splot(file_id):
-    temp_file = tempfile.NamedTemporaryFile(suffix='.splx', delete=False)
-    try:
-        hubfile = HubfileService().get_by_id(file_id)
-        fm = UVLReader(hubfile.get_path()).transform()
-        SPLOTWriter(temp_file.name, fm).transform()
-
-        # Return the file in the response
-        return send_file(temp_file.name, as_attachment=True, download_name=f'{hubfile.name}_splot.txt')
-    finally:
-        # Clean up the temporary file
-        os.remove(temp_file.name)
-
-
 @flamapy_bp.route('/flamapy/to_cnf/<int:file_id>', methods=['GET'])
 def to_cnf(file_id):
     temp_file = tempfile.NamedTemporaryFile(suffix='.cnf', delete=False)
