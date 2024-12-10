@@ -29,14 +29,14 @@ class FMRatingRepository(BaseRepository):
         return self.model.query.filter_by(feature_model_id=feature_model_id).with_entities(func.avg(self.model.rating)).scalar()
 
     def create_or_update(self, feature_model_id: int, user_id: int, rating: int) -> FMRating:
-        rating = self.get(feature_model_id, user_id)
-        if rating:
-            rating.rating = rating
-            rating.save()
+        existing_rating = self.get(feature_model_id, user_id)
+        if existing_rating:
+            existing_rating.rating = rating
+            existing_rating.save()
         else:
-            rating = self.create(
+            existing_rating = self.create(
                 user_id=user_id,
                 feature_model_id=feature_model_id,
                 rating=rating,
             )
-        return rating
+        return existing_rating
