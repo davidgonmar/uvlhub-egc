@@ -23,7 +23,7 @@ class DatasetUser(HttpUser):
     tasks = [DatasetBehavior]
     min_wait = 5000
     max_wait = 9000
-    host = get_host_for_locust_testing()   
+    host = get_host_for_locust_testing()
 
 class ExploreUser(HttpUser):
     host = "http://127.0.0.1:5000"
