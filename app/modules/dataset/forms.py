@@ -71,7 +71,6 @@ class DataSetForm(FlaskForm):
             )
         ]
     )
-
     dataset_doi = StringField("Dataset DOI")
     tags = StringField("Tags (separated by commas)")
     authors = FieldList(FormField(AuthorForm))

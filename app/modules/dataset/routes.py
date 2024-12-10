@@ -1,6 +1,7 @@
 import logging
 import os
 # import json
+import re
 import shutil
 import tempfile
 import uuid
@@ -90,7 +91,9 @@ def create_dataset():
                 deposition_doi = fakenodo_response_json.get("doi")  # Get the DOI from the response
 
                 # Update dataset metadata with the deposition ID and DOI from Fakenodo
-                dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id)
+                dataset_service.update_dsmetadata(dataset.ds_meta_data_id,
+                                                  deposition_id=deposition_id,
+                                                  dataset_doi=deposition_doi)
 
                 # Return success message with DOI
                 return jsonify({
@@ -191,9 +194,15 @@ def list_dataset():
 def upload():
     file = request.files["file"]
     temp_folder = current_user.temp_folder()
+    publication_doi = request.form.get("publication_doi")
 
     if not file or not file.filename.endswith(".uvl"):
         return jsonify({"message": "No valid file"}), 400
+
+    if publication_doi:
+        # Regex to check the DOI format "10.xxxx"
+        if not re.match(r"^10\.\d{4}$", publication_doi):
+            return jsonify({"message": "Invalid DOI format. Please enter a valid DOI like 10.xxxx"}), 400
 
     # create temp folder
     if not os.path.exists(temp_folder):
