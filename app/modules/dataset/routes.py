@@ -10,6 +10,7 @@ from zipfile import ZipFile
 from app.modules.dataset.transformation_aux import transformation, delete_transformation
 from app import db
 
+from app.modules.featuremodel.services import FMRatingService
 from flask import (
     redirect,
     render_template,
@@ -53,6 +54,7 @@ fakenodo_service = FakenodoService()
 doi_mapping_service = DOIMappingService()
 ds_view_record_service = DSViewRecordService()
 ds_rating_service = DSRatingService()
+fm_rating_service = FMRatingService()
 
 
 @dataset_bp.route("/dataset/upload", methods=["GET", "POST"])
@@ -318,7 +320,6 @@ def download_dataset(dataset_id):
 
     return resp
 
-
 @dataset_bp.route("/doi/<path:doi>/", methods=["GET"])
 def subdomain_index(doi):
 
@@ -346,11 +347,25 @@ def subdomain_index(doi):
         user_rating_obj = ds_rating_service.get(dataset.id, current_user.id)
         user_rating = user_rating_obj.rating if user_rating_obj else 0
 
+    fm_rating_data = {}
+    for feature_model in dataset.feature_models:
+        for _ in feature_model.files:
+            file_average_rating = fm_rating_service.get_average_by_feature_model(feature_model.id) or 0.0
+            file_user_rating = None
+            if current_user.is_authenticated:
+                file_user_rating_obj = fm_rating_service.get(feature_model.id, current_user.id)
+                file_user_rating = file_user_rating_obj.rating if file_user_rating_obj else 0
+            fm_rating_data[feature_model.id] = {
+                'average_rating': round(file_average_rating, 2),
+                'user_rating': file_user_rating or 0
+            }
+
     resp = make_response(render_template(
         "dataset/view_dataset.html",
         dataset=dataset,
         average_rating=round(average_rating, 2),
-        user_rating=user_rating or 0
+        user_rating=user_rating or 0,
+        fm_rating_data=fm_rating_data
     ))
     resp.set_cookie("view_cookie", user_cookie)
 
@@ -533,14 +548,8 @@ def rate():
 
     ds_rating_service.create_or_update(dataset_id, current_user.id, rating)
 
-    average_rating = ds_rating_service.get_average_by_dataset(dataset_id) or 0.0
-
-    user_rating = ds_rating_service.get(dataset_id, current_user.id)
-
     return jsonify({
         "message": "Rating saved successfully",
-        "average_rating": round(average_rating, 2),
-        "user_rating": user_rating.rating if user_rating else 0
     }), 200
 
 
