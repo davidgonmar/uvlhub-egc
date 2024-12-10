@@ -1,6 +1,7 @@
 import logging
 import os
 # import json
+import re
 import shutil
 import tempfile
 import uuid
@@ -59,9 +60,9 @@ ds_rating_service = DSRatingService()
 def create_dataset():
     form = DataSetForm()
     if request.method == "POST":
-
         dataset = None
 
+        # Validate form submission
         if not form.validate_on_submit():
             return jsonify({"message": form.errors}), 400
 
@@ -71,26 +72,26 @@ def create_dataset():
             logger.info(f"Created dataset: {dataset}")
             dataset_service.move_feature_models(dataset)
         except Exception as exc:
-            logger.exception(f"Exception while create dataset data in local {exc}")
-            return jsonify({"Exception while create dataset data in local: ": str(exc)}), 400
+            logger.exception(f"Exception while creating dataset data locally: {exc}")
+            return jsonify({"message": f"Exception while creating dataset: {str(exc)}"}), 400
 
-        # send dataset as deposition to Zenodo
-        # data = {}
         try:
+            # Get the publication DOI (if provided) or fall back to dataset DOI
+            publication_doi = form.publication_doi.data if form.publication_doi.data else None
+
             # Create a new deposition in Fakenodo (or Zenodo) using the dataset
-            fakenodo_response_json = fakenodo_service.create_new_deposition(dataset)
+            fakenodo_response_json = fakenodo_service.create_new_deposition(dataset, publication_doi=publication_doi)
 
             # Log the response for debugging purposes
             logger.info(f"Fakenodo response: {fakenodo_response_json}")
 
             # Check if the response contains the necessary deposition information (deposition_id and doi)
             if 'deposition_id' in fakenodo_response_json and 'doi' in fakenodo_response_json:
-                deposition_id = fakenodo_response_json.get("deposition_id")  # Update to the correct key name
-                deposition_doi = fakenodo_response_json.get("doi")
+                deposition_id = fakenodo_response_json.get("deposition_id")  # Get the deposition ID
+                deposition_doi = fakenodo_response_json.get("doi")  # Get the DOI from the response
 
-                # Update dataset metadata with the deposition ID and DOI
-                dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id,
-                                                  dataset_doi=deposition_doi)
+                # Update dataset metadata with the deposition ID and DOI from Fakenodo
+                dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id, dataset_doi=deposition_doi)
 
                 # Return success message with DOI
                 return jsonify({
@@ -99,7 +100,7 @@ def create_dataset():
                     "deposition_doi": deposition_doi
                 }), 200
             else:
-                # If no deposition ID or DOI is returned, handle the failure case
+                # Handle failure case if no DOI or deposition ID is returned
                 logger.error("Failed to create deposition, missing deposition_id or DOI.")
                 return jsonify({"status": "error", "message": "Deposition creation failed, missing required information."}), 500
 
@@ -107,6 +108,7 @@ def create_dataset():
             # Log and handle errors during the process
             logger.exception(f"Error while creating or processing the deposition: {e}")
             return jsonify({"status": "error", "message": str(e)}), 500
+
 
         # Delete temp folder
         file_path = current_user.temp_folder()
@@ -117,6 +119,7 @@ def create_dataset():
         return jsonify({"message": msg}), 200
 
     return render_template("dataset/upload_dataset.html", form=form)
+
 
 
 @dataset_bp.route("/dataset/edit/<path:doi>/", methods=["GET", "POST"])
