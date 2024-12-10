@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 
 from flask_login import current_user
 from app.modules.dataset.models import DataSet
@@ -16,10 +17,6 @@ class FakenodoService(BaseService):
         self.deposition_repository = FakenodoRepository()
         # Initialize depositions as a dictionary to store the deposition data
 
-    def _generate_doi(self, deposition_id):
-        """Generate a fake DOI based on the deposition ID."""
-        return f"10.5281/dataset{deposition_id}"
-
     def test_connection(self) -> bool:
         """
         Test the connection with Fakenodo (simulated success).
@@ -27,14 +24,22 @@ class FakenodoService(BaseService):
         # In a real-world scenario, you would check if the API is up.
         return True
 
-    def create_new_deposition(self, dataset: DataSet) -> dict:
+    def _generate_doi(self, deposition_id):
+        """Generate a fake DOI based on the deposition ID."""
+        return f"10.5281/dataset{deposition_id}"
+
+
+    def create_new_deposition(self, dataset: DataSet, publication_doi: str = None) -> dict:
         """
         Simulate creating a new deposition in Fakenodo.
         """
         deposition_id = dataset.id  # Use dataset's existing ID as deposition ID
 
-        # Generate DOI based on the deposition ID
-        fake_doi = self._generate_doi(deposition_id)
+        # If publication DOI is provided and valid, use it; otherwise, generate a DOI
+        if publication_doi:
+            fake_doi = f"{publication_doi}/dataset{deposition_id}"
+        else:
+            fake_doi = self._generate_doi(deposition_id)
 
         # Prepare deposition metadata
         dep_metadata = {
