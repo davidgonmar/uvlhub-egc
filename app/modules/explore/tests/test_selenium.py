@@ -16,4 +16,3 @@ class TestSeleniumverdadero():
         self.driver.find_element(By.ID, "query").click()
         self.driver.find_element(By.ID, "query").send_keys("Cats")
         self.driver.find_element(By.ID, "search-button").click()
-  
