@@ -9,7 +9,7 @@ class FakenodoTaskSet(TaskSet):
 
     @task(2)
     def create_deposition(self):
-        data = {"dataset_id": 1}  
+        data = {"dataset_id": 1}
         self.client.post("/fakenodo/api/depositions", json=data)
 
     @task(2)
