@@ -1,6 +1,5 @@
 import logging
 import os
-import re
 
 from flask_login import current_user
 from app.modules.dataset.models import DataSet
@@ -27,7 +26,6 @@ class FakenodoService(BaseService):
     def _generate_doi(self, deposition_id):
         """Generate a fake DOI based on the deposition ID."""
         return f"10.5281/dataset{deposition_id}"
-
 
     def create_new_deposition(self, dataset: DataSet, publication_doi: str = None) -> dict:
         """

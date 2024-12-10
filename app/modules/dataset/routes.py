@@ -1,7 +1,6 @@
 import logging
 import os
 # import json
-import re
 import shutil
 import tempfile
 import uuid
@@ -91,7 +90,7 @@ def create_dataset():
                 deposition_doi = fakenodo_response_json.get("doi")  # Get the DOI from the response
 
                 # Update dataset metadata with the deposition ID and DOI from Fakenodo
-                dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id, dataset_doi=deposition_doi)
+                dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id)
 
                 # Return success message with DOI
                 return jsonify({
