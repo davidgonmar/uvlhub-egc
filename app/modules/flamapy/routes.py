@@ -71,21 +71,6 @@ def valid(file_id):
     return jsonify({"success": True, "file_id": file_id})
 
 
-@flamapy_bp.route('/flamapy/to_glencoe/<int:file_id>', methods=['GET'])
-def to_glencoe(file_id):
-    temp_file = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
-    try:
-        hubfile = HubfileService().get_or_404(file_id)
-        fm = UVLReader(hubfile.get_path()).transform()
-        GlencoeWriter(temp_file.name, fm).transform()
-
-        # Return the file in the response
-        return send_file(temp_file.name, as_attachment=True, download_name=f'{hubfile.name}_glencoe.txt')
-    finally:
-        # Clean up the temporary file
-        os.remove(temp_file.name)
-
-
 @flamapy_bp.route('/flamapy/to_splot/<int:file_id>', methods=['GET'])
 def to_splot(file_id):
     temp_file = tempfile.NamedTemporaryFile(suffix='.splx', delete=False)
