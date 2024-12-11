@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from core.selenium.common import initialize_driver, close_driver
 
+
 class TestTestpublicationtypefilterUI:
     def setup_method(self, method):
         self.driver = initialize_driver()
@@ -26,7 +27,7 @@ class TestTestpublicationtypefilterUI:
             EC.element_to_be_clickable((By.XPATH, "//option[. = 'Data Management Plan']")))
         option_dmp.click()
         self.driver.find_element(By.ID, "search-button").click()
-        publication_type.click() 
+        publication_type.click()
         option_book = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, "//option[. = 'Book']")))
         option_book.click()
