@@ -167,6 +167,16 @@ var currentId = 0;
                         }
                     }
 
+                    let checked_doi = true;
+                    if (formData.publication_doi) {
+                        let publicationDoi = formData.publication_doi[0].trim();
+                        if (publicationDoi !== '' && !/^10\.\d{4}$/.test(publicationDoi)) {
+                            hide_loading();
+                            write_upload_error("Invalid DOI format. Please enter a valid DOI like 10.xxxx");
+                            checked_doi = false;
+                        }
+                    }
+
                     let checked_orcid = true;
                     if (Array.isArray(formData.author_orcid)) {
                         for (let orcid of formData.author_orcid) {
