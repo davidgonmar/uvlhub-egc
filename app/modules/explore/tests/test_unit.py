@@ -124,7 +124,7 @@ def test_filter_functionality_happy_path_tag(mock_filter):
     # Assertions
     assert len(response) == 1
     mock_filter.assert_called_once_with(query="tag1")
-                       
+
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sad_path_tag(mock_filter):
     # Create dataset mocks
