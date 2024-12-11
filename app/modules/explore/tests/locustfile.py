@@ -1,5 +1,29 @@
-from locust import HttpUser, task, between
+from locust import HttpUser, TaskSet, task, between
+from core.environment.host import get_host_for_locust_testing
 import random
+
+class DatasetBehavior(TaskSet):
+    def on_start(self):
+        self.dataset()
+
+    @task
+    def dataset(self):
+        response = self.client.post(
+                '/explore',
+                json={
+                    "query": "wildlife",
+                    **{}
+                }
+        )
+        if response.status_code != 200:
+            print(f"Search failed: {response.status_code}")
+
+
+class DatasetUser(HttpUser):
+    tasks = [DatasetBehavior]
+    min_wait = 5000
+    max_wait = 9000
+    host = get_host_for_locust_testing()
 
 class ExploreUser(HttpUser):
     host = "http://127.0.0.1:5000"
@@ -73,3 +97,4 @@ class ExploreUser(HttpUser):
 
     def on_stop(self):
         self.client.get("/logout")
+
