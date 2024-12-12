@@ -533,7 +533,7 @@ def test_edit_dataset_not_found(mock_filter_by_doi, test_client):
 
     assert response.status_code == 404
 
-# ===================================================== UNIT TESTS FOR DATASET RATINGS ====================================================
+# ===================================================== UNIT TESTS FOR DATASET RATING SERVICE ====================================================
 
 @pytest.fixture
 def ds_rating_service():
@@ -568,3 +568,103 @@ def test_create_or_update(ds_rating_service: DSRatingService):
         mock_create_or_update.return_value = ret
         rating = ds_rating_service.create_or_update(0, 0, 5)
         assert rating == ret
+
+# ===================================================== TESTS FOR DATASET RATING ENDPOINTS ====================================================
+
+@patch("app.modules.dataset.services.DSRatingService.create_or_update")
+def test_rate_dataset_success(mock_create_or_update, test_client):
+    """
+    Caso positivo: El usuario califica un dataset con éxito.
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    data = {
+        "dataset_id": 1,
+        "rating": 5
+    }
+
+    response = test_client.post("/dataset/rate", json=data)
+
+    assert response.status_code == 200
+
+    mock_create_or_update.assert_called_once_with(1, test_client.user_id, 5)
+    assert response.json == {"message": "Rating saved successfully"}
+
+@patch("app.modules.dataset.services.DSRatingService.create_or_update")
+def test_rate_dataset_invalid_request_both(mock_create_or_update, test_client):
+    """
+    Caso negativo: La solicitud es inválida.
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    data = {
+        "dataset_id": None,
+        "rating": None
+    }
+
+    response = test_client.post("/dataset/rate", json=data)
+
+    assert response.status_code == 400
+    assert response.json == {"message": "Invalid request"}
+
+    mock_create_or_update.assert_not_called()
+
+@patch("app.modules.dataset.services.DSRatingService.create_or_update")
+def test_rate_dataset_invalid_request_rating(mock_create_or_update, test_client):
+    """
+    Caso negativo: La solicitud es inválida.
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    data = {
+        "dataset_id": 1,
+        "rating": None
+    }
+
+    response = test_client.post("/dataset/rate", json=data)
+
+    assert response.status_code == 400
+    assert response.json == {"message": "Invalid request"}
+
+    mock_create_or_update.assert_not_called()
+
+@patch("app.modules.dataset.services.DSRatingService.create_or_update")
+def test_rate_dataset_invalid_request_dataset(mock_create_or_update, test_client):
+    """
+    Caso negativo: La solicitud es inválida.
+    """
+    login_response = login(test_client, "user@example.com", "test1234")
+    assert login_response.status_code == 200, "Login was successful."
+
+    data = {
+        "dataset_id": None,
+        "rating": 5
+    }
+
+    response = test_client.post("/dataset/rate", json=data)
+
+    assert response.status_code == 400
+    assert response.json == {"message": "Invalid request"}
+
+    mock_create_or_update.assert_not_called()
+
+@patch("app.modules.dataset.services.DSRatingService.create_or_update")
+def test_rate_dataset_permission_denied(mock_create_or_update, test_client):
+    """
+    Caso negativo: El usuario no está autenticado.
+    """
+    logout_response = logout(test_client)
+    assert logout_response.status_code == 200
+
+    data = {
+        "dataset_id": 1,
+        "rating": 5
+    }
+
+    response = test_client.post("/dataset/rate", json=data)
+
+    assert response.status_code == 302
+    mock_create_or_update.assert_not_called()
