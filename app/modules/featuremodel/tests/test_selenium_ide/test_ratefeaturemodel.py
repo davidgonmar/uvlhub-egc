@@ -8,10 +8,10 @@ class TestRatefeaturemodel():
   def setup_method(self, method):
     self.driver = initialize_driver()
     self.vars = {}
-  
+
   def teardown_method(self, method):
     close_driver(self.driver)
-  
+
   def test_ratefeaturemodel(self):
     self.driver.get("http://localhost:5000/")
     self.driver.set_window_size(1854, 1048)
