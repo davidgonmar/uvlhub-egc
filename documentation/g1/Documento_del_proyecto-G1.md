@@ -1,62 +1,87 @@
-# Documento del Proyecto
+# jamon-hub
 
-- **Grupo**: G3
-- **Nombre del grupo**: jamon-hub-2
-- **Tutor**: Jesús Moreno León
-- **Curso Escolar**: 2024/2025  
-- **Asignatura**: Evolución y Gestión de la Configuración
+**Grupo:** 1   
+**Curso Escolar:** 2024/2025    
+**Asignatura:** Evolución y gestión de la configuración    
+
+### Miembros del equipo
+| **Miembro**                   | **Implicación** |
+|-------------------------------|-----------------|
+| Castillo Cebolla Rafael       | [10]            |
+| Flores de Francisco, Daniel   | [10]            |
+| González Martínez, David      | [10]            |
+| Heras Pérez, Raúl             | [10]            |
+| Mellado Díaz, Luis            | [10]            |
+| Trenado González, Sergio      | [10]            |
+
+
+### Enlaces de interés:
+- **Repositorio de código:** https://github.com/davidgonmar/uvlhub-egc
+- **Sistema desplegado:** https://uvlhub-egc.onrender.com/
+
+
+
+------------------
+------------------
+<br><br>
+
+
+
+# Documento del proyecto
+
+El presente documento tiene como objetivo sintetizar los aspectos clave del proyecto elegido para su desarrollo, en relación con los temas abordados durante las clases. En él, se identifican claramente los miembros del equipo, los grupos a los que pertenecen, el curso académico, y el nombre del proyecto, siguiendo la política de nomenclatura establecida. 
+
+
+
+---
+
+
 
 ## Índice
 
-1. [Indicadores del Proyecto](#indicadores-del-proyecto)  
-2. [Integración con Otros Equipos](#integración-con-otros-equipos)  
-3. [Resumen Ejecutivo](#resumen-ejecutivo)  
-4. [Descripción del Sistema](#descripción-del-sistema)
+1. [Indicadores del proyecto](#1-indicadores-del-proyecto)  
+2. [Integración con otros equiupos](#2-integración-con-otros-equipos)  
+3. [Resumen ejecutivo](#3-resumen-ejecutivo)   
+4. [Descripción del sistema](#4-descripción-del-sistema) 
     - [1. Vistazo general](#1-vistazo-general)
     - [2. Módulos](#2-módulos)
     - [3. Estructura del proyecto](#3-estructura-del-proyecto)
     - [4. Peticiones HTTP](#4-peticiones-http)
-    - [5. Añadidos al proyecto](#5-añadidos-al-proyecto)   
-5. [Visión Global del Proceso de Desarrollo](#visión-global-del-proceso-de-desarrollo)  
-    - [Introducción](#1-introducción)  
-    - [Fases del proceso de desarrollo](#2-fases-del-proceso-de-desarrollo)  
-        - [Fase de planificación](#fase-de-planificación)  
-        - [Fase de diseño](#fase-de-diseño)  
-        - [Fase de desarrollo](#fase-de-desarrollo)  
-        - [Fase de pruebas](#fase-de-pruebas)  
-        - [Fase de despliegue](#fase-de-despliegue)  
-        - [Fase de mantenimiento](#fase-de-mantenimiento)
-    - [Ejercicio de Cambio Propuesto](#3-ejercicio-de-cambio-propuesto)  
-7. [Entorno de Desarrollo](#entorno-de-desarrollo)  
-    - [Entornos de desarrollo utilizados](#entorno-de-desarrollo-utilizado)  
-    - [Métodos de instalación](#métodos-de-instalación)  
-        - [Instalación manual](#1-instalación-manual)  
-        - [Instalación con Docker](#2-instalación-con-docker)  
-        - [Instalación con Vagrant](#3-instalación-con-vagrant)
-8. [Ejercicio de Propuesta de Cambio](#ejercicio-de-propuesta-de-cambio)  
-   - [Planificación](#1-planificación)  
-   - [Desarrollo](#2-desarrollo)  
-   - [Pruebas](#3-pruebas)  
-   - [Creación de la Pull Request](#4-creación-de-la-pull-request)  
-   - [Despliegue](#5-despliegue)  
-   - [Mantenimiento](#6-mantenimiento)
-9. [Conclusiones y Trabajo Futuro](#conclusiones-y-trabajo-futuro)  
+    - [5. Añadidos al proyecto](#5-añadidos-al-proyecto) 
+5. [Visión global del proceso de desarrollo](#5-visión-global-del-proceso-de-desarrollo)
+    - [1. Introducción](#1-introducción)
+    - [2. Fases del proceso de desarrollo](#2-fases-del-proceso-de-desarrollo)
+    - [3. Ejercicio de cambio propuesto](#3-ejercicio-de-cambio-propuesto)
+6. [Entorno de desarrollo](#6-entorno-de-desarrollo)
+    - [1. Instalación manual](#1-instalación-manual)
+    - [2. Instalación con Docker](#2-instalación-con-docker)
+    - [3. Instalación con Vagrant](#3-instalación-con-vagrant)
+7. [Ejercicio de propuesta de cambio](#7-ejercicio-de-propuesta-de-cambio)
+    - [1. Planificación](#1-planificación)
+    - [2. Desarrollo](#2-desarrollo)
+    - [3. Pruebas](#3-pruebas)
+    - [4. Creación de la Pull Request](#4-creación-de-la-pull-request)
+    - [5. Despliegue](#5-despliegue)
+    - [6. Mantenimiento](#6-mantenimiento)
+8. [Conclusiones y trabajo futuro](#8-conclusiones-y-trabajo-futuro)
+
+
 
 ---
 
-El presente documento tiene como objetivo sintetizar los aspectos clave del proyecto elegido para su desarrollo, en relación con los temas abordados durante las clases. En él, se identifican claramente los miembros del equipo, los grupos a los que pertenecen, el curso académico, y el nombre del proyecto, siguiendo la política de nomenclatura establecida. 
 
-## Indicadores del Proyecto
 
-| Miembro del equipo                             | Horas | Commits | LoC  | Test | Issues | Work Item         |
-|------------------------------------------------|-------|---------|------|------|--------|-------------------|
-| [Barrera Garrancho, María del Carmen](https://github.com/Playeira01) | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
-| [García Martínez, Carlos](https://github.com/Cargarmar18)            | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
-| [García Sebastián, Javier](https://github.com/JaviGarcia1)           | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
-| [Meana Iturri, Claudia](https://github.com/clameaitu)               | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
-| [Pérez Gutiérrez, Lucía](https://github.com/LuciaPG)                | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
-| [Vento Conesa, Adriana](https://github.com/adrvencon)               | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
-| **TOTAL**                                       | tHH   | tXX     | tYY  | tZZ  | tII    | Descripción breve |
+## 1. Indicadores del proyecto
+
+| Miembro del equipo                                                        | Horas | Commits | LoC         | Test | Issues | Work Item         |
+|---------------------------------------------------------------------------|-------|---------|-------------|------|--------|-------------------|
+| [Castillo Cebolla, Rafael](https://github.com/rafcasceb)                  | 54    | 29      | +2008  -327 | 10   | 5      | Sign-up validation: to complete the sign-up process, a code is sent via email for verification. |
+| [González Martínez, David](https://github.com/davidgonmar)                | HH    | XX      | YY          | ZZ   | II     | Descripción breve |
+| [Flores de Francisco, Daniel](https://github.com/DanielFloresDeFrancisco) | HH    | XX      | YY          | ZZ   | II     | Descripción breve |
+| [Heras Pérez, Raúl](https://github.com/raulherasperez)                    | HH    | XX      | YY          | ZZ   | II     | Descripción breve |
+| [Mellado Díaz, Luis](https://github.com/LuisMelladoDiaz)                  | HH    | XX      | YY          | ZZ   | II     | Descripción breve |
+| [Trenado González, Sergio](https://github.com/Sergiotg03)                 | HH    | XX      | YY          | ZZ   | II     | Descripción breve |
+| **TOTAL**                                                                 | tHH   | tXX     | tYY         | tZZ  | tII    | --- |
 
 A continuación se detallan las fuentes para obtener las métricas clave del proyecto:
 
@@ -78,27 +103,40 @@ A continuación se detallan las fuentes para obtener las métricas clave del pro
   - Los work items del proyecto se asocian con las **Issues** en GitHub. Aunque cada miembro del equipo ha dedicado más tiempo a ciertos WI que a otros, todos han participado activamente en diversas tareas relacionadas con diferentes WI. Este enfoque busca promover un ambiente colaborativo, favoreciendo la revisión continua y el trabajo en equipo para alcanzar los objetivos del proyecto de manera eficiente.
     - Enlace: [Issues en GitHub](https://github.com/davidgonmar/uvlhub-egc/issues)
 
-## Integración con Otros Equipos
+
+
+---
+
+
+
+## 2. Integración con otros equipos
 
 Equipos con los que se ha integrado y los motivos por los que lo ha hecho y lugar en el que se ha dado la integración:
 
-- **Jamon-Hub-1**: La integración con este equipo se dio para coordinar los solapamientos de funcionalidad en los **Work Items** (WIs) identificados. Los WIs de ambos equipos tenían puntos de intersección que requerían una estrecha colaboración para garantizar una implementación coherente y evitar conflictos en la funcionalidad del proyecto. La integración se dio principalmente en los módulos de autenticación, búsqueda y descarga de datasets, así como en la mejora de la interfaz de usuario. Los puntos clave de solapamiento fueron los siguientes:
+- **Jamon-Hub-2**: la integración con este equipo se dio para coordinar los solapamientos de funcionalidad en los **Work Items** (WIs) identificados. Los WIs de ambos equipos tenían puntos de intersección que requerían una estrecha colaboración para garantizar una implementación coherente y evitar conflictos en la funcionalidad del proyecto. La integración se dio principalmente en los módulos de autenticación, búsqueda y descarga de datasets, así como en la mejora de la interfaz de usuario. Los puntos clave de solapamiento fueron los siguientes:
   
-  - **Advanced Search**  y **Search Queries**: Ambos WIs se enfocaban en la búsqueda y filtrado de modelos, lo que generaba conflictos en la implementación de los criterios de búsqueda.
+  - **Advanced Search**  y **Search Queries**: ambos WIs se enfocaban en la búsqueda y filtrado de modelos, lo que generaba conflictos en la implementación de los criterios de búsqueda.
   
-  - **Sign-up Validation**, **Multiple Login**, **Remember My Password**, y **Register Developer**: Estos WIs, relacionados con la autenticación, impactaban en los módulos `auth` y `profile`. La coordinación entre los equipos fue esencial para evitar duplicaciones y asegurar la coherencia en la funcionalidad de autenticación y envío de emails.
+  - **Sign-up Validation**, **Multiple Login**, **Remember My Password**, y **Register Developer**: estos WIs, relacionados con la autenticación, impactaban en los módulos `auth` y `profile`. La coordinación entre los equipos fue esencial para evitar duplicaciones y asegurar la coherencia en la funcionalidad de autenticación y envío de emails.
 
-  - **Different Versions of Models**, **Search Queries** y **Download All Datasets**: Estos tres WIs estaban interconectados en términos de la descarga y manejo de datasets. *Different Versions of Models* establecía el proceso de conversión a diferentes formatos, *Search Queries* permitía seleccionar modelos específicos, y *Download All Datasets* facilitaba la descarga de todos los formatos. La implementación coordinada de estos WIs fue crucial para asegurar que se reutilizaran las funcionalidades desarrolladas en cada uno.
-
-  - **Fakenodo**: La implementación de *Fakenodo* fue un trabajo colaborativo entre los dos grupos. El grupo 2 se encargó de desarrollar la funcionalidad principal, mientras que el grupo 1 se centró en las pruebas, ajustes finales y la corrección de errores. Esta colaboración permitió entregar una solución funcional.
+  - **Different Versions of Models**, **Search Queries** y **Download All Datasets**: estos tres WIs estaban interconectados en términos de la descarga y manejo de datasets. *Different Versions of Models* establecía el proceso de conversión a diferentes formatos, *Search Queries* permitía seleccionar modelos específicos, y *Download All Datasets* facilitaba la descarga de todos los formatos. La implementación coordinada de estos WIs fue crucial para asegurar que se reutilizaran las funcionalidades desarrolladas en cada uno.
+  
+  - **Fakenodo**: la implementación de *Fakenodo*, un *stub* de Zenodo fue un trabajo colaborativo entre los dos grupos. El grupo 2 se encargó de desarrollar la funcionalidad principal, mientras que el grupo 1 se centró en las pruebas, ajustes finales y la corrección de errores. Esta colaboración permitió entregar una solución funcional.
 
 Esta integración se dio en un esfuerzo por optimizar el flujo de trabajo entre los equipos, mejorar la cohesión del proyecto y garantizar la calidad del producto final.
 
-## Resumen Ejecutivo
+
+
+---
+
+
+
+## 3. Resumen ejecutivo
 
 El proyecto ha sido desarrollado como parte del curso universitario EGC por el grupo Jamon-Hub, compuesto por los subgrupos Jamon-Hub-1 y Jamon-Hub-2, tiene como objetivo la mejora del proyecto UVLHub mediante la incorporación de nuevas funcionalidades y el cumplimiento de los principios de integración continua (CI) y despliegue continuo (CD). Se ha realizado un especial énfasis en la gestión del código y su evolución.
 
 Esta aplicación es un fork de la original, a la cual se le han añadido mejoras significativas y funcionalidades innovadoras a la vez que se han mantenido la inmensa mayoría de sus características. Estas mejoras buscan optimizar la experiencia de usuario mejorando la versatilidad, funcionalidad y comodidad del sistema. A continuación, se detalla el alcance del trabajo realizado por cada subgrupo:
+
 
 El subgrupo Jamon-Hub-1 ha implementado las siguientes funcionalidades:
 
@@ -110,6 +148,7 @@ El subgrupo Jamon-Hub-1 ha implementado las siguientes funcionalidades:
 - **Multiple Login:** integración de opciones de inicio de sesión utilizando cuentas de ORCID, GitHub o Google.
 - **Fakenodo:** desarrollo de un stub que simula la funcionalidad de la API de Zenodo, permitiendo la prueba y el uso del sistema sin depender de servicios externos reales. Esta tarea ha sido desarrollada en colaboración con Jamon-Hub-2.
 
+
 El subgrupo Jamon-Hub-2 ha desarrollado las siguientes funcionalidades:
 
 - **Staging Area:** implementación de un área temporal para que los usuarios almacenen datasets antes de subirlos definitivamente a Zenodo.
@@ -120,19 +159,28 @@ El subgrupo Jamon-Hub-2 ha desarrollado las siguientes funcionalidades:
 - **Register Developer:** adición de una opción para que los usuarios puedan registrarse como desarrolladores y acceder a funcionalidades específicas.
 - **Fakenodo:** desarrollo de un stub que simula la funcionalidad de la API de Zenodo, permitiendo la prueba y el uso del sistema sin depender de servicios externos reales. Esta tarea ha sido desarrollada en colaboración con Jamon-Hub-1.
 
+
 Cada una de estas funcionalidades ha sido diseñada y desarrollada siguiendo las mejores prácticas de desarrollo ágil y de evolución y gestión de la configuración, para asegurar la mayor calidad posible del resultado final. En esta misma línea, se ha aportado un cuidado especial a la coordinación entre los dos equipos para garantizar una cooperación efectiva y evitar conflictos de alto impacto.
 
 Entre las técnicas llevadas a cabo para lograr dichas metas, destacan la definición y aplicación de políticas de formato de *issues*, ramas, commits y *pull requests*, y el empleo de *workflows* de automatización de procesos. Todo esto se puede leer en detalle en los actas fundacionales de cada grupo.
 
 El resultado es un proyecto robusto que, con humildad pero confianza, espera haber superado al original, ofreciendo una experiencia más rica y adaptada a las posibles necesidades de los usuarios.
 
-## Descripción del Sistema
+
+
+---
+
+
+
+## 4. Descripción del sistema
 
 UVLHub es un repositorio de modelos de características en formato UVL siguiendo principios de ciencia abierta. Vamos a ver a continuación una descripción del sistema desde el punto de vista funcional y arquitectónico. Se analizarán sus componentes y su relación con el resto de subsistemas.
 
 > **Aviso**: Esta información ha sido parcialmente obtenida de [la documentación oficial del proyecto original clonado](https://docs.uvlhub.io/). Consúltese para más información.
 
+
 ### 1. Vistazo general
+
 
 ![Overview of UVLHub architecture](https://imgur.com/lSoYBlK.png)
 
@@ -152,6 +200,7 @@ Los usuarios pueden analizar sintácticamente sus modelos de UVLHub. Este análi
 
 #### API REST
 UVLHub ofrece una API REST gratis accesible para cualquier usuario registrado como desarrollador, para poder integrar en dominios externos modelos validados de la aplicación.
+
 
 ### 2. Módulos
 
@@ -179,6 +228,7 @@ Actualmente esta aplicación UVLHub cuenta con 14 módulos. A continuación se l
 - **Team:** para mostrar el equipo de desarrolladores encargados de la aplicación.
 - **Webhook:** para ejecutar el despliegue del webhook de la aplicación.
 - **Zenodo:** para acceder a la API de Zenodo y realizar acciones tales como publicar modelos de UVL.
+
 
 ### 3. Estructura del proyecto
 
@@ -223,6 +273,7 @@ En este componente tendríamos únicamente el archivo .`flake8`.
 
 - **.flake8:** contiene configuraciones para Flake8, la cual es una herramienta de análisis estático de código para Python.
 
+
 ### 4. Peticiones HTTP
 
 ![HTTP request UVLHub](https://imgur.com/HCEdGz7.png)
@@ -234,6 +285,7 @@ UVLHub siguen una patrón Modelo-Vista-Controlador (MVC) mediante Flask para ges
 - Las rutas pueden llamar a los servicios para realizar la lógica de negocio.
 - Los servicios interactúan con los repositorios para acceder a los datos de la base de datos según los modelos.
 - Los formularios y las plantillas de frontend se usan para manejar los *inputs* de los usuarios y generarles la respuesta necesaria.
+
 
 ### 5. Añadidos al proyecto
 
@@ -250,6 +302,7 @@ En esta sección se enumerarán los cambios desarrollados para el proyecto desde
  - **AI integration:** para este WI, se ha añadido un módulo completamente nuevo, `chabot`, el cual implementa el chatbot, realizando la conexión con la API de OpenAI.
  - **Advanced search:** para este WI, se extendió el sistema de búsqueda extendida añadiendo filtros adicionales predefinidos. Los cambios se aplicaron principalmente al módulo `explore`.
 
+
 #### Cambios por el grupo Jamon-Hub-2, para sus WI:
 
  - **Remember my password:** para este WI, se ha integrado la funcionalidad para que el sistema reestablezca la contraseña de los usuarios en caso de olvido u otra necesidad. Se ha añdido la creación de códigos One-Time Password (OTP) y se ha usado la funcionalidad de enviar correos electrónicos implementada para sign-up validation. Los cambios se han aplicado a lo largo de todo el módulo `auth`.
@@ -261,6 +314,7 @@ En esta sección se enumerarán los cambios desarrollados para el proyecto desde
  - **Staging Area:**  para este WI se ha implementado de un espacio temporal que permite a los usuarios almacenar datasets antes de ser subidos a Zenodo. Se han aplicado cambios en las rutas de `datasets` pero también en frontend, para poder discernir los *datasets* en el nuevo estado. También se han añadido cambios al módulo `hubfile` para poder eliminar dichos *datasets*.
  - **Search Queries:** para este WI, se ha mejorado el sistema de búsqueda para permitir a los usuarios realizar consultas de filtrado específicas y descargar modelos según criterios personalizados. Se ha mejorado las rutas de `dataset` para un mejor filtrado y se ha actualizado el módulo `explore`para incluir las funcionalidades en la búsqueda.
 
+
 #### Cambios generales:
 
 - **fakenodo:** para este WI, ambos grupos han trabajado en desarrollar un stub que simula la funcionalidad de la API de Zenodo. Se ha creado un módulo enteramente nuevo llamado `fakenodo`, en el que se ha implementado Fakenodo, de forma prácticamente análoga al módulo `zenodo`. También se han reemplazado las llamadas y menciones del módulo `datasets` al módulo `zenodo` por unas al módulo `fakenodo`.
@@ -270,7 +324,13 @@ En esta sección se enumerarán los cambios desarrollados para el proyecto desde
 - **vagrant:** se han aplicado algunas mejoras para prevenir cambios innecesarios en contraseñas y simplificar la configuración, y también cambiar la variable de entorno para hacerla compatible con Flask Run.
 - **documentation:** se ha creado una nueva carpeta que contiene el acta fundacional, el diario del equipo y el documento del proyecto de ambos subgrupos del proyecto.
 
-## Visión Global del Proceso de Desarrollo
+
+
+---
+
+
+
+## 5. Visión Global del Proceso de Desarrollo
 
 En el desarrollo de software, es esencial seguir un proceso claro y bien definido que permita la evolución controlada del producto, garantizando la calidad y la satisfacción del cliente. Este proceso abarca desde la fase de planificación hasta la puesta en producción de los cambios, pasando por el desarrollo, pruebas y gestión de la configuración. A lo largo del ciclo de vida del proyecto, se utilizan diversas herramientas para facilitar la gestión de código, la integración continua, la automatización de pruebas y la comunicación entre los equipos de trabajo.
 
@@ -302,7 +362,7 @@ En la fase de diseño, el equipo trabaja de manera colaborativa para crear los p
 
 #### Fase de desarrollo
 
-En esta fase, cada miembro del equipo trabaja de manera individual sobre las tareas asignadas. La actualización del estado de cada tarea se realiza a través de GitHub Projects. Se fomenta el uso de commits atómicos y el uso de *pull requests* (PR) para actualizar la rama principal, siguiendo las pautas establecidas en el acta fundacional. Antes de comenzar la fase, se crean las *ramas* acorde con lo definido en el acta fundacional. 
+En esta fase, cada miembro del equipo trabaja de manera individual sobre las tareas asignadas. Se crean las _issues_ convenientes y sus ramas de desarrollo, de acorde a lo definido en el acta fundacional. La actualización del estado de cada tarea se realiza a través de GitHub Projects. Se fomenta el uso de commits atómicos y el uso de *pull requests* (PR) para actualizar la rama principal, siguiendo las pautas establecidas en el acta fundacional.
 
 - **Herramientas utilizadas:** GitHub (para commits, *pull requests* y seguimiento del progreso a través de GitHub Projects).
 
@@ -357,13 +417,10 @@ Este cambio tiene como objetivo mejorar la interacción del usuario con la aplic
   - Modificar el frontend para que pueda recibir y mostrar la imagen del gato junto con el dataset.
   - Verificar que la integración funcione correctamente mediante pruebas.
 
-- **Acciones a realizar:**
-  - Se crea la issue correspondiente por cada tarea definida en la planificación y acorde a lo definido en el acta fundacional.
-
 **2. Desarrollo**
 
 - **Acciones a realizar:**
-  - Se crea la rama correspondiente acorde a lo definido en el acta fundacional.
+  - Se creará una *issue* para cada tarea y una rama asociada a cada *issue* en la que se desarrollarán las tareas.
   - Se creará una nueva función en el backend que haga la solicitud a la API de gatos.
   - El frontend se actualizará para mostrar la imagen de gato junto con el dataset.
 
@@ -386,7 +443,13 @@ El cambio se desplegará automáticamente a través de Render, utilizando el pro
 
 Una vez en producción, se hará un seguimiento para asegurar que la integración con la API de gatos funciona correctamente. Si hay incidencias, se registrarán como *issues* en GitHub y se gestionarán en los siguientes sprints.
 
-## Entorno de Desarrollo
+
+
+---
+
+
+
+## 6. Entorno de Desarrollo
 
 En esta sección se detallan los entornos de desarrollo utilizados, las versiones de las herramientas empleadas, y los pasos necesarios para instalar tanto el sistema principal como los subsistemas relacionados para garantizar que el sistema funcione correctamente. Se ofrecen tres métodos de instalación: **Manual**, **Docker** y **Vagrant**. 
 
@@ -404,7 +467,6 @@ Las versiones de las herramientas y dependencias clave utilizadas en el proyecto
 Solo podemos garantizar la completa compatibilidad del proyecto en sistemas **Linux**. Sin embargo, los usuarios de otros sistemas operativos (como Windows o macOS) son libres de intentar los métodos de instalación detallados a continuación, aunque no podemos asegurar que funcione sin problemas.
 A continuación, se detallan los tres métodos de instalación disponibles:
 
----
 
 ### 1. **Instalación Manual**
 
@@ -515,7 +577,6 @@ A continuación, se detallan los tres métodos de instalación disponibles:
 
 Siguiendo estos pasos, deberías tener el sistema completamente configurado y funcionando en tu entorno local.
 
----
 
 ### 2. **Instalación con Docker**
 
@@ -564,7 +625,6 @@ Siguiendo estos pasos, deberías tener el sistema completamente configurado y fu
 
 Siguiendo estos pasos, podrás ejecutar la aplicación en un entorno Docker y realizar las operaciones necesarias en el entorno de desarrollo.
 
----
 
 ### 3. **Instalación con Vagrant**
 
@@ -633,7 +693,13 @@ Siguiendo estos pasos, podrás ejecutar la aplicación en un entorno Docker y re
 
 Siguiendo estos pasos, deberías poder configurar, ejecutar y gestionar tu máquina virtual con Vagrant de manera eficiente.
 
-## Ejercicio de Propuesta de Cambio
+
+
+---
+
+
+
+## 7. Ejercicio de Propuesta de Cambio
 
 ### 1. Planificación
 
@@ -654,13 +720,17 @@ El cambio propuesto consiste en agregar un mensaje de bienvenida estático a la 
 
 ### 2. Desarrollo
 
-Antes de comenzar el desarrollo, crearíamos una rama específica para esta tarea. Como solo tenemos una tarea (la segunda es opcional, y en un desarrollo real, se completaría junto con la primera) en este caso solo necesitaríamos una. Siguiendo las convenciones del acta fundacional, la llamaremos: `g2/task_42/welcome_message` durante la duración de la explicación.
+#### 2.1. Creación de rama
 
-```sql
-git checkout -b g2/task_42/welcome_message
+Antes de comenzar el desarrollo, crearíamos una rama específica para esta tarea. Como solo tenemos una tarea (la segunda es opcional, y en un desarrollo real, se completaría junto con la primera) en este caso solo necesitaríamos una. Siguiendo las convenciones del acta fundacional, la llamaremos: `g1/task_42/welcome_message` durante la duración de la explicación:
+
+```bash
+git checkout -b g1/task_42/welcome_message main
 ```
 
-#### 2.1. Modificar el archivo HTML (`base_template.html`)
+
+
+#### 2.2. Modificar el archivo HTML (`base_template.html`)
 
 Lo primero que necesitamos hacer es modificar el archivo `base_template.html` (que se encuentra en la carpeta `app/templates`) para incluir el mensaje de bienvenida.
 
@@ -709,12 +779,12 @@ Si todo se muestra correctamente, el cambio ha sido implementado correctamente.
 Una vez que se haya realizado todos los cambios y verificado que todo está funcionando, es el momento de hacer commit de los archivos modificados y hacer push al repositorio.
 
 1. En la terminal, dentro del directorio del proyecto, se ejecutarían los siguientes comandos:
-    ```sql
+    ```bash
     git add . 
     git commit -m "feat: add welcome message
                   Agregado un mensaje de bienvenida estático en la página principal. 
                   #42"
-    git push origin g2/task_42/welcome_message
+    git push origin g1/task_42/welcome_message
     ```
 
 #### 4.2. Crear la Pull Request (PR)
@@ -734,6 +804,11 @@ Los cambios se reflejarán automáticamente en el entorno de producción despué
 Este cambio es muy simple, por lo que el mantenimiento consiste en asegurarse de que el mensaje de bienvenida siga funcionando correctamente. Si más adelante se decide modificar el mensaje, el estilo o cualquier aspecto relacionado, se puede editar directamente el archivo `base_html.html`. Todo esto tendría que gestionarse a través de una incidencia. El proceso es similar a este, pero con otras plantillas de issues y ramas.
 
 
-## Conclusiones y Trabajo Futuro
+
+---
+
+
+
+## 8. Conclusiones y trabajo futuro
 
 Se enunciarán algunas conclusiones y se presentará un apartado sobre las mejoras que se proponen para el futuro (curso siguiente) y que no han sido desarrolladas en el sistema que se entrega.

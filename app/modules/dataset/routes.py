@@ -2,6 +2,7 @@ import logging
 import os
 
 # import json
+import re
 import shutil
 import tempfile
 import uuid
@@ -11,6 +12,7 @@ from app.modules.dataset.transformation_aux import transformation, delete_transf
 from app import db
 from app.modules.dataset.models import DataSet
 
+from app.modules.featuremodel.services import FMRatingService
 from flask import (
     redirect,
     render_template,
@@ -52,6 +54,7 @@ fakenodo_service = FakenodoService()
 doi_mapping_service = DOIMappingService()
 ds_view_record_service = DSViewRecordService()
 ds_rating_service = DSRatingService()
+fm_rating_service = FMRatingService()
 
 
 @dataset_bp.route("/dataset/upload", methods=["GET", "POST"])
@@ -59,9 +62,9 @@ ds_rating_service = DSRatingService()
 def create_dataset():
     form = DataSetForm()
     if request.method == "POST":
-
         dataset = None
 
+        # Validate form submission
         if not form.validate_on_submit():
             return jsonify({"message": form.errors}), 400
 
@@ -73,22 +76,29 @@ def create_dataset():
             logger.info(f"Created dataset: {dataset}")
             dataset_service.move_feature_models(dataset)
         except Exception as exc:
+<<<<<<< HEAD
             logger.exception(f"Exception while create dataset data in local {exc}")
             return (
                 jsonify({"Exception while create dataset data in local: ": str(exc)}),
                 400,
             )
+=======
+            logger.exception(f"Exception while creating dataset data locally: {exc}")
+            return jsonify({"message": f"Exception while creating dataset: {str(exc)}"}), 400
+>>>>>>> 21c114660326b5b6f64a672a18d612e9b105a8ba
 
-        # send dataset as deposition to Zenodo
-        # data = {}
         try:
+            # Get the publication DOI (if provided) or fall back to dataset DOI
+            publication_doi = form.publication_doi.data if form.publication_doi.data else None
+
             # Create a new deposition in Fakenodo (or Zenodo) using the dataset
-            fakenodo_response_json = fakenodo_service.create_new_deposition(dataset)
+            fakenodo_response_json = fakenodo_service.create_new_deposition(dataset, publication_doi=publication_doi)
 
             # Log the response for debugging purposes
             logger.info(f"Fakenodo response: {fakenodo_response_json}")
 
             # Check if the response contains the necessary deposition information (deposition_id and doi)
+<<<<<<< HEAD
             if (
                 "deposition_id" in fakenodo_response_json
                 and "doi" in fakenodo_response_json
@@ -104,6 +114,16 @@ def create_dataset():
                     deposition_id=deposition_id,
                     dataset_doi=deposition_doi,
                 )
+=======
+            if 'deposition_id' in fakenodo_response_json and 'doi' in fakenodo_response_json:
+                deposition_id = fakenodo_response_json.get("deposition_id")  # Get the deposition ID
+                deposition_doi = fakenodo_response_json.get("doi")  # Get the DOI from the response
+
+                # Update dataset metadata with the deposition ID and DOI from Fakenodo
+                dataset_service.update_dsmetadata(dataset.ds_meta_data_id,
+                                                  deposition_id=deposition_id,
+                                                  dataset_doi=deposition_doi)
+>>>>>>> 21c114660326b5b6f64a672a18d612e9b105a8ba
 
                 # Return success message with DOI
                 return (
@@ -117,6 +137,7 @@ def create_dataset():
                     200,
                 )
             else:
+<<<<<<< HEAD
                 # If no deposition ID or DOI is returned, handle the failure case
                 logger.error(
                     "Failed to create deposition, missing deposition_id or DOI."
@@ -130,11 +151,17 @@ def create_dataset():
                     ),
                     500,
                 )
+=======
+                # Handle failure case if no DOI or deposition ID is returned
+                logger.error("Failed to create deposition, missing deposition_id or DOI.")
+                return jsonify({"status": "error", "message": "Deposition creation failed, missing required information."}), 500
+>>>>>>> 21c114660326b5b6f64a672a18d612e9b105a8ba
 
         except Exception as e:
             # Log and handle errors during the process
             logger.exception(f"Error while creating or processing the deposition: {e}")
             return jsonify({"status": "error", "message": str(e)}), 500
+
 
         # Delete temp folder
         file_path = current_user.temp_folder()
@@ -145,6 +172,7 @@ def create_dataset():
         return jsonify({"message": msg}), 200
 
     return render_template("dataset/upload_dataset.html", form=form)
+
 
 
 @dataset_bp.route("/dataset/edit/<path:doi>/", methods=["GET", "POST"])
@@ -234,9 +262,15 @@ def list_dataset():
 def upload():
     file = request.files["file"]
     temp_folder = current_user.temp_folder()
+    publication_doi = request.form.get("publication_doi")
 
     if not file or not file.filename.endswith(".uvl"):
         return jsonify({"message": "No valid file"}), 400
+
+    if publication_doi:
+        # Regex to check the DOI format "10.xxxx"
+        if not re.match(r"^10\.\d{4}$", publication_doi):
+            return jsonify({"message": "Invalid DOI format. Please enter a valid DOI like 10.xxxx"}), 400
 
     # create temp folder
     if not os.path.exists(temp_folder):
@@ -352,7 +386,6 @@ def download_dataset(dataset_id):
 
     return resp
 
-
 @dataset_bp.route("/doi/<path:doi>/", methods=["GET"])
 def subdomain_index(doi):
 
@@ -380,6 +413,7 @@ def subdomain_index(doi):
         user_rating_obj = ds_rating_service.get(dataset.id, current_user.id)
         user_rating = user_rating_obj.rating if user_rating_obj else 0
 
+<<<<<<< HEAD
     resp = make_response(
         render_template(
             "dataset/view_dataset.html",
@@ -388,6 +422,28 @@ def subdomain_index(doi):
             user_rating=user_rating or 0,
         )
     )
+=======
+    fm_rating_data = {}
+    for feature_model in dataset.feature_models:
+        for _ in feature_model.files:
+            file_average_rating = fm_rating_service.get_average_by_feature_model(feature_model.id) or 0.0
+            file_user_rating = None
+            if current_user.is_authenticated:
+                file_user_rating_obj = fm_rating_service.get(feature_model.id, current_user.id)
+                file_user_rating = file_user_rating_obj.rating if file_user_rating_obj else 0
+            fm_rating_data[feature_model.id] = {
+                'average_rating': round(file_average_rating, 2),
+                'user_rating': file_user_rating or 0
+            }
+
+    resp = make_response(render_template(
+        "dataset/view_dataset.html",
+        dataset=dataset,
+        average_rating=round(average_rating, 2),
+        user_rating=user_rating or 0,
+        fm_rating_data=fm_rating_data
+    ))
+>>>>>>> 21c114660326b5b6f64a672a18d612e9b105a8ba
     resp.set_cookie("view_cookie", user_cookie)
 
     return resp
@@ -576,6 +632,7 @@ def rate():
 
     ds_rating_service.create_or_update(dataset_id, current_user.id, rating)
 
+<<<<<<< HEAD
     average_rating = ds_rating_service.get_average_by_dataset(dataset_id) or 0.0
 
     user_rating = ds_rating_service.get(dataset_id, current_user.id)
@@ -636,3 +693,38 @@ def update_dataset():
             jsonify({"success": False, "message": f"An error occurred: {str(e)}"}),
             500,
         )
+=======
+    return jsonify({
+        "message": "Rating saved successfully",
+    }), 200
+
+
+@dataset_bp.route("/dataset/publish/<path:doi>/", methods=["POST"])
+@login_required
+def publish_dataset(doi):
+    # Buscar el dataset por DOI
+    ds_meta_data = dsmetadata_service.filter_by_doi(doi)
+
+    if not ds_meta_data:
+        abort(404)
+
+    dataset = ds_meta_data.data_set
+
+    # Verificar que el usuario sea el propietario
+    if dataset.user_id != current_user.id:
+        return jsonify({"message": "You do not have permission to publish this dataset."}), 403
+
+    # Verificar si ya está publicado
+    if not dataset.ds_meta_data.is_draft_mode:
+        return jsonify({"message": "This dataset is already published."}), 400
+
+    try:
+        # Publicar el dataset
+        dataset.ds_meta_data.is_draft_mode = False
+        db.session.commit()
+        return jsonify({"message": "Dataset published successfully."}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"An error occurred: {str(e)}"}), 500
+>>>>>>> 21c114660326b5b6f64a672a18d612e9b105a8ba

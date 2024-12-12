@@ -76,6 +76,47 @@
                                         <div id="check_{{ file.id }}">
                                         </div>
                                     </div>
+                                    {% if current_user.is_anonymous %}
+                                    <div class="col-12" style="margin-top: 10px !important;">
+                                        <div class="col-md-4 col-12">
+                                            <span class="text-secondary">Rate Model</span>
+                                        </div>
+                                        <div class="col-md-8 col-12">
+                                            <div class="model-rating-anonymous" 
+                                                data-model-id="{{ feature_model.id }}" 
+                                                data-model-average="{{ fm_rating_data[feature_model.id]['average_rating'] }}" 
+                                                data-model-user-rating="{{ fm_rating_data[feature_model.id]['user_rating'] }}">
+                                                <span class="fa fa-star" data-value="1"></span>
+                                                <span class="fa fa-star" data-value="2"></span>
+                                                <span class="fa fa-star" data-value="3"></span>
+                                                <span class="fa fa-star" data-value="4"></span>
+                                                <span class="fa fa-star" data-value="5"></span>
+                                            </div>
+                                            <p id="average-model-rating" class="text-muted mt-2">
+                                                Average Rating: 0 / 5
+                                            </p>
+                                            <div id="login-prompt" style="color: red;">
+                                                <p>You must log in to rate this model.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="col-12" style="margin-top: 10px !important;">
+                                        <div class="col-md-4 col-12">
+                                            <span class="text-secondary">Rate Model</span>
+                                        </div>
+                                        <div class="col-md-8 col-12">
+                                            <div class="model-rating-container" 
+                                                data-model-id="{{ feature_model.id }}" 
+                                                data-model-average="{{ fm_rating_data[feature_model.id]['average_rating'] }}" 
+                                                data-model-user-rating="{{ fm_rating_data[feature_model.id]['user_rating'] }}">
+                                            </div>
+                                            <p id="average-model-rating" class="text-muted mt-2">
+                                                Average Rating: 0 / 5
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {% endif %}
                                 </div>
 
 
@@ -469,6 +510,86 @@
     });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const modelRatingContainers = document.querySelectorAll('.model-rating-container');
+
+    modelRatingContainers.forEach(container => {
+        const modelId = container.getAttribute('data-model-id');
+        const averageModelRating = parseFloat(container.getAttribute('data-model-average'));
+        const modelUserRating = parseInt(container.getAttribute('data-model-user-rating'));
+
+        const modelAverageRatingElement = container.closest('.row').querySelector('.text-muted.mt-2');
+        if (modelAverageRatingElement) {
+            modelAverageRatingElement.textContent = `Average Rating: ${averageModelRating} / 5`;
+        }
+
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement('i');
+            star.classList.add('fa', 'fa-star');
+            if (i <= modelUserRating) {
+                star.classList.add('active');
+            }
+            star.setAttribute('data-model-rating', i);
+            container.appendChild(star);
+        }
+
+        const stars = container.querySelectorAll('.fa-star');
+        stars.forEach(star => {
+            star.addEventListener('mouseover', () => {
+                resetStars(stars);
+                highlightStars(stars, star.dataset.modelRating);
+            });
+
+            star.addEventListener('click', () => {
+                const selectedRating = parseInt(star.dataset.modelRating);
+                submitRatingModel(modelId, selectedRating, stars);
+            });
+        });
+
+        container.addEventListener('mouseleave', () => {
+            resetStars(stars);
+            highlightStars(stars, modelUserRating);
+        });
+    });
+
+    function resetStars(stars) {
+        stars.forEach(star => star.classList.remove('active'));
+    }
+
+    function highlightStars(stars, rating) {
+        for (let i = 0; i < rating; i++) {
+            stars[i].classList.add('active');
+        }
+    }
+
+    function submitRatingModel(modelId, rating, stars) {
+        fetch('/featuremodel/rate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model_id: modelId, rating: rating }),
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to save rating');
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message || 'Rating saved successfully!');
+            resetStars(stars);
+            highlightStars(stars, rating);
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error saving rating:', error);
+            alert('Failed to save rating');
+        });
+    }
+});
+
+
+</script>
+
+
 <style>
     .rating-container {
         display: flex;
@@ -518,6 +639,33 @@
         margin-top: -10px;
         margin-bottom: -25px;
     }
+
+    .model-rating-container {
+        display: flex;
+        gap: 5px;
+    }
+
+    .model-rating-container .fa-star {
+        font-size: 1.5rem;
+        color: #ccc;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .model-rating-container .fa-star.active {
+        color: gold;
+    }
+
+    .model-rating-anonymous {
+        display: flex;
+        gap: 5px;
+    }
+
+    .model-rating-anonymous .fa-star {
+        font-size: 1.5rem;
+        color: #ccc;
+        transition: color 0.3s;
+    }
 </style>
 
 <script>
@@ -530,6 +678,25 @@
             const userRating = parseInt(container.getAttribute('data-user-rating'));
 
             document.getElementById('average-rating').textContent = `Average Rating: ${averageRating} / 5`;
+
+        });
+    });
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ratingContainers = document.querySelectorAll('.model-rating-anonymous');
+
+        ratingContainers.forEach(container => {
+            const modelId = container.getAttribute('data-model-id');
+            const averageModelRating = parseFloat(container.getAttribute('data-model-average'));
+            const modelUserRating = parseInt(container.getAttribute('data-model-user-rating'));
+
+            const modelAverageRatingElement = container.closest('.row').querySelector('.text-muted.mt-2');
+            if (modelAverageRatingElement) {
+                modelAverageRatingElement.textContent = `Average Rating: ${averageModelRating} / 5`;
+            }
 
         });
     });
