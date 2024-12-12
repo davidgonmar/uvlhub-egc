@@ -7,7 +7,7 @@ class TestRatedataset():
   def setup_method(self, method):
     self.driver = initialize_driver()
     self.vars = {}
-  
+
   def teardown_method(self, method):
     close_driver(self.driver)
   
