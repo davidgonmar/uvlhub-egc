@@ -36,7 +36,7 @@ jobs:
         safety check --full-report --output report.json || true
 
     - name: Upload Dependency Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dependency-report
         path: |
