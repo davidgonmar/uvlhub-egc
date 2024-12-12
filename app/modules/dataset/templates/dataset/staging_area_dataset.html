@@ -110,6 +110,8 @@
                     {% endfor %}
                 </ul>
 
+
+
                 <!-- Dropzone Form -->
 
                 <div id="dropzone-container" style="
@@ -314,6 +316,25 @@
                 .catch(error => console.error('Error loading file:', error));
 
         }
+
+        let fileContents = {};
+
+        function viewContent(fileId) {
+            fetch(`/file/view/${fileId}`)
+                .then(response => response.json())
+                .then(data => {
+                    fileContents[fileId] = data.content || ''; // Guardar el contenido del archivo
+                    updateFileVisibility(fileId);  // Actualizar la visibilidad del archivo basado en su contenido
+
+                    // Configurar el botón de descarga
+                    document.getElementById('downloadButton').href = `/file/download/${fileId}`;
+                })
+                .catch(error => console.error('Error loading file:', error));
+        }
+
+
+
+
     </script>
 
     {% endblock %}
