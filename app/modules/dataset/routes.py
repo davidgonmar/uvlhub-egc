@@ -1,5 +1,6 @@
 import logging
 import os
+
 # import json
 import shutil
 import tempfile
@@ -8,6 +9,7 @@ from datetime import datetime, timezone
 from zipfile import ZipFile
 from app.modules.dataset.transformation_aux import transformation, delete_transformation
 from app import db
+from app.modules.dataset.models import DataSet
 
 from flask import (
     redirect,
@@ -18,14 +20,12 @@ from flask import (
     make_response,
     abort,
     url_for,
-    session
+    session,
 )
 from flask_login import login_required, current_user
 
 from app.modules.dataset.forms import DataSetForm
-from app.modules.dataset.models import (
-    DSDownloadRecord
-)
+from app.modules.dataset.models import DSDownloadRecord
 from app.modules.dataset import dataset_bp
 from app.modules.dataset.services import (
     AuthorService,
@@ -34,7 +34,7 @@ from app.modules.dataset.services import (
     DSViewRecordService,
     DataSetService,
     DSRatingService,
-    DOIMappingService
+    DOIMappingService,
 )
 
 from app.modules.zenodo.services import ZenodoService
@@ -67,12 +67,17 @@ def create_dataset():
 
         try:
             logger.info("Creating dataset...")
-            dataset = dataset_service.create_from_form(form=form, current_user=current_user)
+            dataset = dataset_service.create_from_form(
+                form=form, current_user=current_user
+            )
             logger.info(f"Created dataset: {dataset}")
             dataset_service.move_feature_models(dataset)
         except Exception as exc:
             logger.exception(f"Exception while create dataset data in local {exc}")
-            return jsonify({"Exception while create dataset data in local: ": str(exc)}), 400
+            return (
+                jsonify({"Exception while create dataset data in local: ": str(exc)}),
+                400,
+            )
 
         # send dataset as deposition to Zenodo
         # data = {}
@@ -84,24 +89,47 @@ def create_dataset():
             logger.info(f"Fakenodo response: {fakenodo_response_json}")
 
             # Check if the response contains the necessary deposition information (deposition_id and doi)
-            if 'deposition_id' in fakenodo_response_json and 'doi' in fakenodo_response_json:
-                deposition_id = fakenodo_response_json.get("deposition_id")  # Update to the correct key name
+            if (
+                "deposition_id" in fakenodo_response_json
+                and "doi" in fakenodo_response_json
+            ):
+                deposition_id = fakenodo_response_json.get(
+                    "deposition_id"
+                )  # Update to the correct key name
                 deposition_doi = fakenodo_response_json.get("doi")
 
                 # Update dataset metadata with the deposition ID and DOI
-                dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id,
-                                                  dataset_doi=deposition_doi)
+                dataset_service.update_dsmetadata(
+                    dataset.ds_meta_data_id,
+                    deposition_id=deposition_id,
+                    dataset_doi=deposition_doi,
+                )
 
                 # Return success message with DOI
-                return jsonify({
-                    "status": "success",
-                    "message": "Dataset successfully uploaded and DOI generated.",
-                    "deposition_doi": deposition_doi
-                }), 200
+                return (
+                    jsonify(
+                        {
+                            "status": "success",
+                            "message": "Dataset successfully uploaded and DOI generated.",
+                            "deposition_doi": deposition_doi,
+                        }
+                    ),
+                    200,
+                )
             else:
                 # If no deposition ID or DOI is returned, handle the failure case
-                logger.error("Failed to create deposition, missing deposition_id or DOI.")
-                return jsonify({"status": "error", "message": "Deposition creation failed, missing required information."}), 500
+                logger.error(
+                    "Failed to create deposition, missing deposition_id or DOI."
+                )
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Deposition creation failed, missing required information.",
+                        }
+                    ),
+                    500,
+                )
 
         except Exception as e:
             # Log and handle errors during the process
@@ -134,11 +162,19 @@ def edit_dataset(doi):
 
     # Verificar que el usuario sea el propietario
     if dataset.user_id != current_user.id:
-        return jsonify({"message": "You do not have permission to edit this dataset."}), 403
+        return (
+            jsonify({"message": "You do not have permission to edit this dataset."}),
+            403,
+        )
 
     # Solo permitir edición si está en modo borrador
     if not dataset.ds_meta_data.is_draft_mode and request.method == "POST":
-        return jsonify({"message": "This dataset is already published and cannot be edited."}), 400
+        return (
+            jsonify(
+                {"message": "This dataset is already published and cannot be edited."}
+            ),
+            400,
+        )
 
     if request.method == "POST":
         data = request.get_json()
@@ -156,15 +192,24 @@ def edit_dataset(doi):
             # Actualizar los metadatos
             dataset.ds_meta_data.title = title
             dataset.ds_meta_data.description = description
-            dataset.ds_meta_data.tags = ",".join(tags) if tags else dataset.ds_meta_data.tags
+            dataset.ds_meta_data.tags = (
+                ",".join(tags) if tags else dataset.ds_meta_data.tags
+            )
 
             # Publicar el dataset si corresponde
             if publish:
                 dataset.ds_meta_data.is_draft_mode = False
 
             db.session.commit()
-            return jsonify({"message": "Dataset updated successfully.", "is_draft_mode": dataset.ds_meta_data
-                            .is_draft_mode}), 200
+            return (
+                jsonify(
+                    {
+                        "message": "Dataset updated successfully.",
+                        "is_draft_mode": dataset.ds_meta_data.is_draft_mode,
+                    }
+                ),
+                200,
+            )
 
         except Exception as e:
             db.session.rollback()
@@ -293,7 +338,7 @@ def download_dataset(dataset_id):
     existing_record = DSDownloadRecord.query.filter_by(
         user_id=current_user.id if current_user.is_authenticated else None,
         dataset_id=dataset_id,
-        download_cookie=user_cookie
+        download_cookie=user_cookie,
     ).first()
 
     if not existing_record:
@@ -315,7 +360,7 @@ def subdomain_index(doi):
     new_doi = doi_mapping_service.get_new_doi(doi)
     if new_doi:
         # Redirect to the same path with the new DOI
-        return redirect(url_for('dataset.subdomain_index', doi=new_doi), code=302)
+        return redirect(url_for("dataset.subdomain_index", doi=new_doi), code=302)
 
     # Try to search the dataset by the provided DOI (which should already be the new one)
     ds_meta_data = dsmetadata_service.filter_by_doi(doi)
@@ -335,12 +380,14 @@ def subdomain_index(doi):
         user_rating_obj = ds_rating_service.get(dataset.id, current_user.id)
         user_rating = user_rating_obj.rating if user_rating_obj else 0
 
-    resp = make_response(render_template(
-        "dataset/view_dataset.html",
-        dataset=dataset,
-        average_rating=round(average_rating, 2),
-        user_rating=user_rating or 0
-    ))
+    resp = make_response(
+        render_template(
+            "dataset/view_dataset.html",
+            dataset=dataset,
+            average_rating=round(average_rating, 2),
+            user_rating=user_rating or 0,
+        )
+    )
     resp.set_cookie("view_cookie", user_cookie)
 
     return resp
@@ -378,7 +425,10 @@ def download_all_datasets():
                     for file in files:
                         full_path = os.path.join(subdir, file)
                         relative_path = os.path.relpath(full_path, file_path)
-                        zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+                        zipf.write(
+                            full_path,
+                            arcname=os.path.join(str(dataset.id), relative_path),
+                        )
 
     user_cookie = request.cookies.get("download_cookie")
     if not user_cookie:
@@ -396,8 +446,7 @@ def download_all_datasets():
 
     for dataset in datasets:
         existing_record = DSDownloadRecord.query.filter_by(
-            dataset_id=dataset.id,
-            download_cookie=user_cookie
+            dataset_id=dataset.id, download_cookie=user_cookie
         ).first()
 
         if not existing_record:
@@ -415,7 +464,7 @@ def download_all_datasets():
 
 @dataset_bp.route("/dataset/download_relevant_datasets", methods=["GET"])
 def download_all_relevant_datasets():
-    criteria = session.get('explore_criteria')
+    criteria = session.get("explore_criteria")
     datasets = ExploreService().filter(**criteria)
 
     if not datasets or not isinstance(datasets, list):
@@ -460,7 +509,10 @@ def download_all_relevant_datasets():
                     if file.endswith(".uvl"):
                         full_path = os.path.join(dataset_path, file)
                         relative_path = os.path.relpath(full_path, dataset_path)
-                        zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+                        zipf.write(
+                            full_path,
+                            arcname=os.path.join(str(dataset.id), relative_path),
+                        )
 
             # Handle other file types in subdirectories
             allowed_folders = ["type_cnf", "type_json", "type_splx"]
@@ -475,7 +527,10 @@ def download_all_relevant_datasets():
                     if any(file.endswith(f".{ext}") for ext in allowed_extensions):
                         full_path = os.path.join(specific_path, file)
                         relative_path = os.path.relpath(full_path, dataset_path)
-                        zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+                        zipf.write(
+                            full_path,
+                            arcname=os.path.join(str(dataset.id), relative_path),
+                        )
 
     user_cookie = request.cookies.get("download_cookie")
     if not user_cookie:
@@ -493,8 +548,7 @@ def download_all_relevant_datasets():
 
     for dataset in datasets:
         existing_record = DSDownloadRecord.query.filter_by(
-            dataset_id=dataset.id,
-            download_cookie=user_cookie
+            dataset_id=dataset.id, download_cookie=user_cookie
         ).first()
 
         if not existing_record:
@@ -526,8 +580,59 @@ def rate():
 
     user_rating = ds_rating_service.get(dataset_id, current_user.id)
 
-    return jsonify({
-        "message": "Rating saved successfully",
-        "average_rating": round(average_rating, 2),
-        "user_rating": user_rating.rating if user_rating else 0
-    }), 200
+    return (
+        jsonify(
+            {
+                "message": "Rating saved successfully",
+                "average_rating": round(average_rating, 2),
+                "user_rating": user_rating.rating if user_rating else 0,
+            }
+        ),
+        200,
+    )
+
+
+@dataset_bp.route("/dataset/update", methods=["POST"])
+@login_required
+def update_dataset():
+    try:
+        data = request.json
+        dataset_id = data.get("id")  # ID del dataset enviado desde el frontend.
+        title = data.get("title")
+        description = data.get("description")
+        tags = data.get("tags")  # Asegúrate de usar los valores nuevos recibidos.
+        is_publish = data.get("is_publish", False)
+
+        # Buscar el dataset en la base de datos.
+        dataset = DataSet.query.get(dataset_id)
+        if not dataset:
+            return jsonify({"success": False, "message": "Dataset not found"}), 404
+
+        # Actualizar los valores en `ds_meta_data`.
+        dataset.ds_meta_data.title = title
+        dataset.ds_meta_data.description = description
+        dataset.ds_meta_data.tags = tags  # Actualizar los tags aquí como string.
+
+        # Actualizar el modo de borrador/publicación.
+        if is_publish:
+            dataset.ds_meta_data.is_draft_mode = False  # Cambiar a modo publicado.
+        else:
+            dataset.ds_meta_data.is_draft_mode = True  # Mantener en modo borrador.
+
+        # Confirmar cambios
+        db.session.commit()
+
+        message = (
+            "Dataset published successfully!"
+            if is_publish
+            else "Changes saved successfully!"
+        )
+        return jsonify({"success": True, "message": message})
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")  # Log detallado para depuración
+        return (
+            jsonify({"success": False, "message": f"An error occurred: {str(e)}"}),
+            500,
+        )

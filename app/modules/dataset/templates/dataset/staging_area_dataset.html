@@ -272,6 +272,31 @@
         }
 
 
+        function updateDataset(isPublish) {
+            const datasetId = "{{ dataset.id }}"; // Asumimos que la ID del dataset se pasa desde el servidor.
+            const formData = {
+                id: datasetId,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                tags: document.getElementById('tags').value,
+                is_publish: isPublish
+            };
+            console.log("Sending data to backend:", formData);
+
+            fetch('/dataset/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.success && isPublish) {
+                        window.location.reload(); // Recargar si se publicó.
+                    }
+                })
+                .catch(error => console.error('Error updating dataset:', error));
+        }
 
 
 
