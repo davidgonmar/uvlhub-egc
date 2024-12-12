@@ -26,7 +26,7 @@ class TestRatedataset():
     self.driver.find_element(By.ID, "password").send_keys("1234")
     self.driver.find_element(By.ID, "submit").click()
     self.driver.find_element(By.LINK_TEXT, "View dataset").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".active:nth-child(3)").click()
+    self.driver.find_element(By.CSS_SELECTOR, "[data-dataset-id] > :first-child").click()
     time.sleep(0.5) # needed to wait for alert to appear
     assert self.driver.switch_to.alert.text == "Rating saved successfully"
     self.driver.switch_to.alert.accept()
