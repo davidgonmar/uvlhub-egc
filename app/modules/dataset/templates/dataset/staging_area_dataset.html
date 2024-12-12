@@ -332,6 +332,18 @@
                 .catch(error => console.error('Error loading file:', error));
         }
 
+        function updateFileVisibility(fileId) {
+            const fileContent = fileContents[fileId];
+            const fileElement = document.getElementById(`file-${fileId}`);
+
+            // Ocultar los archivos que no tienen contenido
+            if (!fileContent) {
+                fileElement.style.display = 'none';
+            } else {
+                fileElement.style.display = '';  // Mostrar archivos con contenido
+            }
+        }
+
 
 
 
