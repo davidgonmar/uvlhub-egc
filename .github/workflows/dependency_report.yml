@@ -28,31 +28,31 @@ jobs:
     - name: Generate Dependency Graph with Matplotlib
       run: |
         python - <<EOF
-import os
-import networkx as nx
-import matplotlib.pyplot as plt
-from pkg_resources import working_set
+        import os
+        import networkx as nx
+        import matplotlib.pyplot as plt
+        from pkg_resources import working_set
 
-# Obtener lista de dependencias
-G = nx.DiGraph()
-for dist in working_set:
-    for req in dist.requires():
-        G.add_edge(dist.project_name, req.project_name)
+        # Obtener lista de dependencias
+        G = nx.DiGraph()
+        for dist in working_set:
+            for req in dist.requires():
+                G.add_edge(dist.project_name, req.project_name)
 
-# Dibujar el grafo
-plt.figure(figsize=(12, 8))
-nx.draw_networkx(
-    G,
-    with_labels=True,
-    node_size=2000,
-    font_size=10,
-    font_weight='bold',
-    node_color="skyblue",
-    edge_color="gray"
-)
-plt.title("Dependency Graph")
-plt.savefig("dependency-graph.png")
-EOF
+        # Dibujar el grafo
+        plt.figure(figsize=(12, 8))
+        nx.draw_networkx(
+            G,
+            with_labels=True,
+            node_size=2000,
+            font_size=10,
+            font_weight='bold',
+            node_color="skyblue",
+            edge_color="gray"
+        )
+        plt.title("Dependency Graph")
+        plt.savefig("dependency-graph.png")
+        EOF
 
     - name: Upload Dependency Graph
       uses: actions/upload-artifact@v3
@@ -81,35 +81,35 @@ EOF
     - name: Generate Usage Report
       run: |
         python - <<EOF
-import os
-import astroid
-from collections import defaultdict
+        import os
+        import astroid
+        from collections import defaultdict
 
-# Analizar dependencias en el código
-usage = defaultdict(list)
-for root, _, files in os.walk("."):
-    for file in files:
-        if file.endswith(".py"):
-            file_path = os.path.join(root, file)
-            with open(file_path, "r") as f:
-                content = f.read()
-            try:
-                tree = astroid.parse(content)
-                imports = [node.names[0][0] for node in tree.nodes_of_class(astroid.nodes.Import)]
-                from_imports = [node.modname for node in tree.nodes_of_class(astroid.nodes.ImportFrom)]
-                for dep in imports + from_imports:
-                    usage[dep].append(file_path)
-            except Exception:
-                pass
+        # Analizar dependencias en el código
+        usage = defaultdict(list)
+        for root, _, files in os.walk("."):
+            for file in files:
+                if file.endswith(".py"):
+                    file_path = os.path.join(root, file)
+                    with open(file_path, "r") as f:
+                        content = f.read()
+                    try:
+                        tree = astroid.parse(content)
+                        imports = [node.names[0][0] for node in tree.nodes_of_class(astroid.nodes.Import)]
+                        from_imports = [node.modname for node in tree.nodes_of_class(astroid.nodes.ImportFrom)]
+                        for dep in imports + from_imports:
+                            usage[dep].append(file_path)
+                    except Exception:
+                        pass
 
-# Generar reporte
-with open("dependency-usage-report.txt", "w") as report:
-    for dep, files in usage.items():
-        report.write(f"{dep}:\n")
-        for file in files:
-            report.write(f"  - {file}\n")
-        report.write("\n")
-EOF
+        # Generar reporte
+        with open("dependency-usage-report.txt", "w") as report:
+            for dep, files in usage.items():
+                report.write(f"{dep}:\n")
+                for file in files:
+                    report.write(f"  - {file}\n")
+                report.write("\n")
+        EOF
 
     - name: Upload Usage Report
       uses: actions/upload-artifact@v3
