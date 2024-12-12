@@ -1,10 +1,14 @@
 name: Dependency Graph and Usage Report
 
 on:
-  push:
+  pull_request:
     branches:
-      - "**" # Se ejecuta en cualquier rama
-  workflow_dispatch: # Permite ejecutarlo manualmente
+      - main
+      - build
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   dependency-graph:
@@ -32,14 +36,10 @@ jobs:
         import networkx as nx
         import matplotlib.pyplot as plt
         from pkg_resources import working_set
-
-        # Obtener lista de dependencias
         G = nx.DiGraph()
         for dist in working_set:
             for req in dist.requires():
                 G.add_edge(dist.project_name, req.project_name)
-
-        # Dibujar el grafo
         plt.figure(figsize=(12, 8))
         nx.draw_networkx(
             G,
@@ -85,7 +85,6 @@ jobs:
         import astroid
         from collections import defaultdict
 
-        # Analizar dependencias en el código
         usage = defaultdict(list)
         for root, _, files in os.walk("."):
             for file in files:
@@ -102,7 +101,6 @@ jobs:
                     except Exception:
                         pass
 
-        # Generar reporte
         with open("dependency-usage-report.txt", "w") as report:
             for dep, files in usage.items():
                 report.write(f"{dep}:\n")
