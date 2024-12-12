@@ -344,7 +344,15 @@
             }
         }
 
-
+        // Al cargar la página, verificar los archivos visibles
+        document.addEventListener("DOMContentLoaded", function () {
+            {% for feature_model in dataset.feature_models %}
+            {% for file in feature_model.files %}
+            // Simular la comprobación de contenido para cada archivo
+            viewContent('{{ file.id }}');
+            {% endfor %}
+            {% endfor %}
+        });
 
 
     </script>
