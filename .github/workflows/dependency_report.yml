@@ -23,7 +23,7 @@ jobs:
     - name: Install Graphing Tools
       run: |
         python -m pip install --upgrade pip
-        pip install pipdeptree matplotlib networkx
+        pip install setuptools matplotlib networkx
 
     - name: Generate Dependency Graph with Matplotlib
       run: |
@@ -31,25 +31,28 @@ jobs:
         import os
         import networkx as nx
         import matplotlib.pyplot as plt
-        from pipdeptree import get_installed_distributions, build_dist_index, construct_tree
+        from pkg_resources import working_set
 
-        # Generar grafo
-        distributions = get_installed_distributions()
-        dist_index = build_dist_index(distributions)
-        tree = construct_tree(dist_index)
-
+        # Obtener lista de dependencias
         G = nx.DiGraph()
-        for key, deps in tree.items():
-            for dep in deps:
-                G.add_edge(key.key, dep.key)
+        for dist in working_set:
+            for req in dist.requires():
+                G.add_edge(dist.project_name, req.project_name)
 
         # Dibujar el grafo
         plt.figure(figsize=(12, 8))
-        nx.draw_networkx(G, with_labels=True, node_size=2000, font_size=10, font_weight='bold', node_color="skyblue", edge_color="gray")
+        nx.draw_networkx(
+            G,
+            with_labels=True,
+            node_size=2000,
+            font_size=10,
+            font_weight='bold',
+            node_color="skyblue",
+            edge_color="gray"
+        )
         plt.title("Dependency Graph")
         plt.savefig("dependency-graph.png")
         EOF
-
 
     - name: Upload Dependency Graph
       uses: actions/upload-artifact@v3
@@ -102,9 +105,11 @@ jobs:
         # Generar reporte
         with open("dependency-usage-report.txt", "w") as report:
             for dep, files in usage.items():
-                report.write(f"{dep}:\n")
+                report.write(f"{dep}:
+")
                 for file in files:
-                    report.write(f"  - {file}\n")
+                    report.write(f"  - {file}
+")
                 report.write("\n")
         EOF
 
