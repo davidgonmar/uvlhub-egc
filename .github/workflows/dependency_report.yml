@@ -25,11 +25,31 @@ jobs:
         python -m pip install --upgrade pip
         pip install pipdeptree matplotlib networkx
 
-    - name: Generate Dependency Graph
+    - name: Generate Dependency Graph with Matplotlib
       run: |
-        pip install -r requirements.txt
-        pipdeptree --graph-output dot > dependencies.dot
-        dot -Tpng dependencies.dot -o dependency-graph.png || true
+        python - <<EOF
+        import os
+        import networkx as nx
+        import matplotlib.pyplot as plt
+        from pipdeptree import get_installed_distributions, build_dist_index, construct_tree
+
+        # Generar grafo
+        distributions = get_installed_distributions()
+        dist_index = build_dist_index(distributions)
+        tree = construct_tree(dist_index)
+
+        G = nx.DiGraph()
+        for key, deps in tree.items():
+            for dep in deps:
+                G.add_edge(key.key, dep.key)
+
+        # Dibujar el grafo
+        plt.figure(figsize=(12, 8))
+        nx.draw_networkx(G, with_labels=True, node_size=2000, font_size=10, font_weight='bold', node_color="skyblue", edge_color="gray")
+        plt.title("Dependency Graph")
+        plt.savefig("dependency-graph.png")
+        EOF
+
 
     - name: Upload Dependency Graph
       uses: actions/upload-artifact@v3
