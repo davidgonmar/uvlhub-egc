@@ -1,52 +1,52 @@
-from locust import HttpUser, TaskSet, task
-from core.environment.host import get_host_for_locust_testing
+from locust import HttpUser, TaskSet, task, between
 
 
-class FakenodoBehavior(TaskSet):
-    def on_start(self):
-        self.deposit_files_fakenodo()
-        self.get_deposition_fakenodo()
-        self.delete_deposition_fakenodo()
+class FakenodoTaskSet(TaskSet):
 
-    @task
-    def deposit_files_fakenodo(self):
-        expected_message = "Successfully uploaded files to deposition 1"
+    @task(1)
+    def test_connection(self):
+        self.client.get("/fakenodo/api/test_connection")
 
-        # Assuming depositionId is 1
-        with self.client.post('/fakenodo/api/1/files', catch_response=True) as response:
-            if response.status_code == 201 and expected_message in response.text:
-                print("Successfully uploaded files to deposition 1")
-            else:
-                print(f"Error uploading files: {response.status_code}")
-                response.failure(f"Got status code {response.status_code}")
+    @task(2)
+    def create_deposition(self):
+        data = {"dataset_id": 1}
+        self.client.post("/fakenodo/api/depositions", json=data)
 
-    @task
-    def get_deposition_fakenodo(self):
-        expected_message = "Retrieved deposition with ID 1"
+    @task(2)
+    def upload_file(self):
+        data = {
+            "dataset_id": 1,
+            "feature_model_id": 1
+        }
+        deposition_id = 1
+        self.client.post(f"/fakenodo/api/{deposition_id}/files", data=data)
 
-        # Assuming depositionId is 1
-        with self.client.get('/fakenodo/api/1', catch_response=True) as response:
-            if response.status_code == 200 and expected_message in response.text:
-                print("Successfully retrieved deposition 1")
-            else:
-                print(f"Error getting deposition: {response.status_code}")
-                response.failure(f"Got status code {response.status_code}")
+    @task(1)
+    def publish_deposition(self):
+        deposition_id = 1
+        self.client.put(f"/fakenodo/api/{deposition_id}/publish")
 
-    @task
-    def delete_deposition_fakenodo(self):
-        expected_message = "Successfully deleted deposition 1"
+    @task(1)
+    def get_deposition(self):
+        deposition_id = 1
+        self.client.get(f"/fakenodo/api/{deposition_id}")
 
-        # Assuming depositionId is 1
-        with self.client.delete('/fakenodo/api/1', catch_response=True) as response:
-            if response.status_code == 200 and expected_message in response.text:
-                print("Successfully deleted deposition 1")
-            else:
-                print(f"Error deleting deposition: {response.status_code}")
-                response.failure(f"Got status code {response.status_code}")
+    @task(1)
+    def get_doi(self):
+        deposition_id = 1
+        self.client.get(f"/fakenodo/api/{deposition_id}/doi")
+
+    @task(1)
+    def get_all_depositions(self):
+        self.client.get("/fakenodo/api/depositions")
+
+    @task(1)
+    def delete_deposition(self):
+        deposition_id = 1
+        self.client.delete(f"/fakenodo/api/{deposition_id}")
 
 
-class DatasetUser(HttpUser):
-    tasks = [FakenodoBehavior]
-    min_wait = 5000
-    max_wait = 9000
-    host = get_host_for_locust_testing()
+class FakenodoUser(HttpUser):
+    host = "http://127.0.0.1:5000"
+    tasks = [FakenodoTaskSet]
+    wait_time = between(1, 5)
