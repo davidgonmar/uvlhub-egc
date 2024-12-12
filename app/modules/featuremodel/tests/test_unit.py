@@ -1,8 +1,6 @@
 import pytest
 from unittest.mock import MagicMock, patch
 from app.modules.featuremodel.services import FMRatingService
-import pytest
-from unittest.mock import patch, MagicMock
 from app.modules.conftest import login, logout
 from app import db
 from app.modules.auth.models import User
