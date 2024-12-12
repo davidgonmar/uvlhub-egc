@@ -660,3 +660,49 @@ def publish_dataset(doi):
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500
+
+
+@dataset_bp.route("/dataset/update", methods=["POST"])
+@login_required
+def update_dataset():
+    try:
+        data = request.json
+        dataset_id = data.get("id")  # ID del dataset enviado desde el frontend.
+        title = data.get("title")
+        description = data.get("description")
+        tags = data.get("tags")  # Asegúrate de usar los valores nuevos recibidos.
+        is_publish = data.get("is_publish", False)
+
+        # Buscar el dataset en la base de datos.
+        dataset = DataSet.query.get(dataset_id)
+        if not dataset:
+            return jsonify({"success": False, "message": "Dataset not found"}), 404
+
+        # Actualizar los valores en `ds_meta_data`.
+        dataset.ds_meta_data.title = title
+        dataset.ds_meta_data.description = description
+        dataset.ds_meta_data.tags = tags  # Actualizar los tags aquí como string.
+
+        # Actualizar el modo de borrador/publicación.
+        if is_publish:
+            dataset.ds_meta_data.is_draft_mode = False  # Cambiar a modo publicado.
+        else:
+            dataset.ds_meta_data.is_draft_mode = True  # Mantener en modo borrador.
+
+        # Confirmar cambios
+        db.session.commit()
+
+        message = (
+            "Dataset published successfully!"
+            if is_publish
+            else "Changes saved successfully!"
+        )
+        return jsonify({"success": True, "message": message})
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")  # Log detallado para depuración
+        return (
+            jsonify({"success": False, "message": f"An error occurred: {str(e)}"}),
+            500,
+        )
