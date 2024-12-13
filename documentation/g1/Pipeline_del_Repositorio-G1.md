@@ -27,19 +27,18 @@ Este documento describe el pipeline del repositorio para la integración y el de
 ## Índice
 
 1. [Estructura del Pipeline](#estructura-del-pipeline)
-   - [1. Tras Pull Request (PR)](#1-tras-pull-request-pr)
-   - [2. Después del Merge](#2-después-del-merge)
-   - [3. Workflows Independientes](#3-workflows-independientes)
-   
+   - [Tras Pull Request (PR)](#1-tras-pull-request-pr)
+   - [Después del Merge](#2-después-del-merge)
+   - [Workflows Independientes](#3-workflows-independientes)
 2. [Diagrama del Pipeline](#diagrama-del-pipeline)
-
-3. [Hook Local para Validación de Mensajes de Commit](#hook-local-para-validación-de-mensajes-de-commit)
-   - [Configuración del Hook](#configuración-del-hook)
-
+3. [Hook Locales](#hooks-locales-para-validación)
+   - [Hook Local para Validación de Mensajes de Commit](#hook-local-para-validación-de-mensajes-de-commit)
+   - [Hook Local para Validación de Código con Flake8](#hook-local-para-validación-de-código-con-flake8)
 4. [Beneficios del Pipeline](#beneficios-del-pipeline)
 
-
 ---
+
+El presente documento describe el pipeline del repositorio para la integración y el despliegue continuo (CI/CD) del proyecto.
 
 ## Estructura del Pipeline
 
@@ -47,13 +46,9 @@ El pipeline principal está estructurado en 2 fases principales:
 
 1. **Tras Pull Request (PR)**:
    - Validación inicial para asegurar que el código cumple con los estándares antes de proceder con el merge.
-
 2. **Tras hacer Merge**:
    - Solo se activa tras un merge exitoso a la rama principal (`main`). Los merge a esta rama solo tienen lugar si un compañero del equipo ha revisado y aceptado la pull request correspondiente.
-  
 También existen dos workflows independientes que se ejecutan manualmente o una vez cada periodo de tiempo.
-
-
 
 ### **1. Tras Pull Request (PR)**
 
@@ -79,8 +74,6 @@ Otro añadido al proyecto es el bot **CodiumAI PR-Agent**, este bot se encarga d
 
 > Aclaración: si sobre una PR activa se realiza un nuevo commit los trabajos se lanzarán nuevamente.
 
-
-
 ### **2. Después del Merge**
 
 Si todos los workflows de la fase anterior se ejecutan con éxito y un compañero acepta su pull request se realiza un merge hacia `main`, el pipeline continúa con las siguientes tareas:
@@ -97,33 +90,36 @@ Si todos los workflows de la fase anterior se ejecutan con éxito y un compañer
 
 ### **3. Workflows Independientes**
 
-1. **Historical contributor report**:
+1. **Historical Contributor Report**:
    - Genera un histórico con todas los contribuciones del repositorio por cada participante.
    - Se ejecuta manualmente y genera un issue a nombre del dueño del repositorio con el informe.
    - Workflow: `historical_report.yml`
      
-2. **Construcción y Publicación de la Imagen Docker**:
+2. **Monthly Contributor Report**:
    - Genera un histórico con todas los contribuciones del repositorio por cada participante del último mes.
    - Se ejecuta automáticamente cada mes y genera un issue a nombre del dueño del repositorio con el informe.
    - Es posible ejecutarlo manualmente.
    - Workflow: `monthly_report.yml`
 
----
-
 ## Diagrama del Pipeline
 
 ![Pipeline_Jamon drawio](https://github.com/user-attachments/assets/23b17c1a-8039-4f85-b1a6-762d2c8cd5ca)
 
----
+## Hooks Locales para Validación
 
-## Hook Local para Validación de Mensajes de Commit
+Además de las verificaciones en el pipeline CI/CD, el repositorio incluye varios **hooks locales** configurados en el directorio `.git/hooks`. Estos hooks ayudan a garantizar que tanto los mensajes de commit como el código fuente cumplan con los estándares definidos por el equipo antes de que sean enviados al repositorio remoto.
 
-Además de las verificaciones en el pipeline CI/CD, el repositorio incluye un **hook local** configurado en `.git/hooks/commit-msg`. Este hook local valida que los mensajes de commit sigan la plantilla establecida antes de permitir que el commit sea agregado.
+### Hook Local para Validación de Mensajes de Commit
 
-### Configuración del Hook
+Este hook, ubicado en `.git/hooks/commit-msg`, valida que los mensajes de commit sigan la plantilla establecida antes de permitir que el commit sea agregado.
 
-El archivo `.git/hooks/commit-msg` contiene un script que se asegura de que el mensaje de commit debe seguir el estándar definido por el equipo, el formato *Conventional Commits* (`feat`, `fix`, `chore`, etc.).
-Para que este hook funcione, los desarrolladores deben copiar el archivo correspondiente al directorio `.git/hooks` en su máquina local.
+### Hook Local para Validación de Código con Flake8
+
+Otro hook importante incluido en el repositorio revisa el código fuente antes de que se complete un commit. Este hook se encarga de verificar que el código cumpla con los estándares de estilo definidos por *flake8*. Al validar localmente, el hook evita que errores comunes lleguen al pipeline, donde herramientas como Codacy realizarían validaciones similares.  
+
+#### Configuración de los Hooks
+
+Para que estos hooks funcionen correctamente, los desarrolladores deben copiar el archivo correspondiente al directorio `.git/hooks` en su máquina local. Esto se puede automatizar utilizando herramientas de configuración del entorno o scripts iniciales del proyecto.
 
 ---
 
