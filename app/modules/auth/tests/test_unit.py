@@ -655,7 +655,7 @@ def test_configure_oauth():
     app = Flask(__name__)
     oauth_service = AuthenticationService()
     oauth, orcid = oauth_service.configure_oauth(app)
-    
+
     assert oauth is not None
     assert orcid is not None
     assert orcid.client_id == oauth_service.client_id
@@ -666,9 +666,9 @@ def test_configure_oauth():
 def test_get_orcid_full_profile_success():
     orcid_id = '0000-0001-2345-6789'
     token = {'access_token': 'mock_access_token'}
-    
+
     orcid_service = AuthenticationService()
-    
+
     # Mock
     mock_response = MagicMock()
     mock_response.ok = True
@@ -686,10 +686,10 @@ def test_get_orcid_full_profile_success():
         },
         'person': {'emails': {'email': [{'email': 'test@example.com'}]}}
     }
-    
+
     with patch.object(orcid_service.orcid_client, 'get', return_value=mock_response):
         full_profile = orcid_service.get_orcid_full_profile(orcid_id, token)
-        
+
     assert full_profile['activities-summary']['employments']['affiliation-group'][0]['summaries'][0]['employment-summary']['organization']['name'] == 'Test University'
     assert full_profile['person']['emails']['email'][0]['email'] == 'test@example.com'
 
@@ -889,7 +889,7 @@ def test_user_creation_from_github_with_duplicate_github_id(clean_database):
 def test_github_login_redirect(test_client):
     if os.environ.get("GITHUB_ACTIONS"):  # Solo para GitHub Actions
         pytest.skip("Skipping test due to external dependencies")
-        
+
     response = test_client.get(url_for('auth.github_login'))
 
     assert response.status_code == 302
