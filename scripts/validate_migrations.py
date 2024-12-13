@@ -10,38 +10,42 @@ def validate_migrations():
     no_revise_files = []
 
     for file in files:
-        path = os.path.join(base_dir, file)
-        with open(path, "r") as f:
-            content = f.read()
+        try:
+            path = os.path.join(base_dir, file)
+            with open(path, "r") as f:
+                content = f.read()
 
-        # Extraer revision
-        revision = re.search(r"revision\s*=\s*'([\w\d]+)'", content)
-        if not revision:
-            raise ValueError(f"Archivo {file} no contiene 'revision'")
+            # Extraer revision
+            revision = re.search(r"revision\s*=\s*'([\w\d]+)'", content)
+            if not revision:
+                raise ValueError(f"Archivo {file} no contiene 'revision'")
 
-        revision_id = revision.group(1)
+            revision_id = revision.group(1)
 
-        # Extraer down_revision, permitiendo tuplas o None
-        revises = re.search(r"down_revision\s*=\s*'([\w\d, ]*)'", content)
-        if revises:
-            down_revision_str = revises.group(1).strip()
-            print(f"Procesando archivo: {file} - down_revision_str: {down_revision_str}")  # Depuración
+            # Extraer down_revision, permitiendo tuplas o None
+            revises = re.search(r"down_revision\s*=\s*'([\w\d, ]*)'", content)
+            if revises:
+                down_revision_str = revises.group(1).strip()
+                print(f"Procesando archivo: {file} - down_revision_str: {down_revision_str}")  # Depuración
 
-            # Si down_revision está vacío, se considera como None
-            if not down_revision_str:
-                down_revision = None
+                # Si down_revision está vacío, se considera como None
+                if not down_revision_str:
+                    down_revision = None
+                else:
+                    # Si hay contenido, lo tratamos como una tupla, incluso si solo hay un elemento
+                    down_revision = tuple(down_revision_str.replace(" ", "").split(','))
+                    print(f"down_revision (tupla): {down_revision}")  # Depuración
             else:
-                # Si hay contenido, lo tratamos como una tupla, incluso si solo hay un elemento
-                down_revision = tuple(down_revision_str.replace(" ", "").split(','))
-                print(f"down_revision (tupla): {down_revision}")  # Depuración
-        else:
-            down_revision = None
+                down_revision = None
 
-        revision_map[revision_id] = down_revision
+            revision_map[revision_id] = down_revision
 
-        # Solo agregar a no_revise_files si realmente no tiene down_revision
-        if down_revision is None:
-            no_revise_files.append(file)
+            # Solo agregar a no_revise_files si realmente no tiene down_revision
+            if down_revision is None:
+                no_revise_files.append(file)
+
+        except Exception as e:
+            print(f"Error procesando archivo {file}: {e}")
 
     # Mostrar los archivos sin down_revision para depuración
     print(f"Archivos sin down_revision: {no_revise_files}")
