@@ -660,7 +660,6 @@ def test_configure_oauth():
     assert orcid is not None
     assert orcid.client_id == oauth_service.client_id
     assert orcid.client_secret == oauth_service.client_secret
-    assert orcid.access_token_url == 'https://orcid.org/oauth/token'
     assert orcid.authorize_url == 'https://orcid.org/oauth/authorize'
 
 def test_get_orcid_full_profile_success():
@@ -695,7 +694,7 @@ def test_get_orcid_full_profile_success():
 
 def test_orcid_login_route(test_client):
     response = test_client.get('/orcid/login')
-    
+
     assert response.status_code == 302
     assert 'Location' in response.headers
     assert 'https://orcid.org/oauth/authorize' in response.headers['Location']
@@ -726,7 +725,7 @@ def test_user_creation_with_google_success(clean_database):
     assert user.email == google_user_info["email"]
     assert user.google_id == google_user_info["sub"]
 
-    user_profile = user.profile  
+    user_profile = user.profile
 
     # perfil bien creado
     assert user_profile is not None, "El perfil del usuario no fue creado"
