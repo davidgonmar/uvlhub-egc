@@ -704,3 +704,67 @@ def test_orcid_authorize_route_invalid_access(test_client):
     response = test_client.get('/orcid/authorize')
 
     assert response.status_code == 400
+
+# GOOGLE
+
+def test_user_creation_with_google_success(clean_database):
+    google_user_info = {
+        "email": "test@example.com",
+        "sub": "1234",
+        "given_name": "Test",
+        "family_name": "Foo"
+    }
+
+    user = AuthenticationService().get_or_create_user(google_user_info)
+
+    # 1 usuario creado
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    # info de user = info de google
+    assert user.email == google_user_info["email"]
+    assert user.google_id == google_user_info["sub"]
+
+    user_profile = user.profile  
+
+    # perfil bien creado
+    assert user_profile is not None, "El perfil del usuario no fue creado"
+    assert user_profile.name == google_user_info["given_name"]
+    assert user_profile.surname == google_user_info["family_name"]
+
+    # asociación entre user y profile
+    assert user_profile.user_id == user.id
+
+def test_user_exists_with_google_data(clean_database):
+    google_user_info = {
+        "email": "existing_user@example.com",
+        "sub": "1234",
+        "given_name": "Jane",
+        "family_name": "Smith"
+    }
+
+    # crea el user
+    AuthenticationService().get_or_create_user(google_user_info)
+
+    # intenta crear el mismo user
+    user = AuthenticationService().get_or_create_user(google_user_info)
+
+    # al existir, hace un get
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    # la info es la misma
+    assert user.email == google_user_info["email"]
+    assert user.google_id == google_user_info["sub"]
+
+def test_user_creation_with_missing_google_data_error(clean_database):
+    google_user_info = {
+        "given_name": "Alice",
+        "family_name": "Wonderland"
+    }
+
+    try:
+        AuthenticationService().get_or_create_user(google_user_info)
+        assert False, "Se esperaba un error debido a los datos incompletos"
+    except ValueError as e:
+        assert str(e) == "Email and google_id are required from Google user info."
