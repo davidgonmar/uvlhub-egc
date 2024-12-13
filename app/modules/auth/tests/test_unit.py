@@ -774,3 +774,111 @@ def test_google_login_redirect(test_client):
 
     assert response.status_code == 302
     assert "https://accounts.google.com/o/oauth2/auth" in response.location
+
+#GITHUB
+
+def test_user_creation_from_github_success(clean_database):
+    github_user_info = {
+        "github_id": "github_user_123",
+        "github_email": "github_user_123@example.com",
+        "name": "GitHub",
+        "surname": "User"
+    }
+
+    user = AuthenticationService().get_or_create_user_from_github(
+        github_user_info["github_id"],
+        github_user_info["github_email"],
+        github_user_info["name"],
+        github_user_info["surname"]
+    )
+
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    assert user.email == github_user_info["github_email"]
+    assert user.github_id == github_user_info["github_id"]
+
+    user_profile = user.profile
+    assert user_profile is not None
+    assert user_profile.name == github_user_info["name"]
+    assert user_profile.surname == github_user_info["surname"]
+
+def test_user_creation_from_github_with_default_values(clean_database):
+    github_user_info = {
+        "github_id": "github_user_124",
+        "github_email": "github_user_124@example.com"
+    }
+
+    user = AuthenticationService().get_or_create_user_from_github(
+        github_user_info["github_id"],
+        github_user_info["github_email"]
+    )
+
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    assert user.email == github_user_info["github_email"]
+    assert user.github_id == github_user_info["github_id"]
+
+    user_profile = user.profile
+    assert user_profile is not None
+    assert user_profile.name == "Default Name"
+    assert user_profile.surname == "Default Surname"
+
+def test_user_creation_from_github_with_missing_email(clean_database):
+    github_user_info = {
+        "github_id": "github_user_125",
+        "name": "GitHub",
+        "surname": "User"
+    }
+
+    user = AuthenticationService().get_or_create_user_from_github(
+        github_user_info["github_id"],
+        github_email=None,
+        name=github_user_info["name"],
+        surname=github_user_info["surname"]
+    )
+
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    assert user.email == "user_github_user_125@example.com"  # default value based on github_id
+
+def test_user_creation_from_github_with_duplicate_github_id(clean_database):
+    github_user_info1 = {
+        "github_id": "github_user_126",
+        "github_email": "github_user_126@example.com",
+        "name": "First",
+        "surname": "User"
+    }
+
+    github_user_info2 = {
+        "github_id": "github_user_126",
+        "github_email": "another_user@example.com",
+        "name": "Second",
+        "surname": "User"
+    }
+
+    # 1er user
+    AuthenticationService().get_or_create_user_from_github(
+        github_user_info1["github_id"],
+        github_user_info1["github_email"],
+        github_user_info1["name"],
+        github_user_info1["surname"]
+    )
+
+    # 2o user
+    user = AuthenticationService().get_or_create_user_from_github(
+        github_user_info2["github_id"],
+        github_user_info2["github_email"],
+        github_user_info2["name"],
+        github_user_info2["surname"]
+    )
+
+    # solo 1 creado
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    # 1er usuario devuelto
+    assert user.github_id == github_user_info1["github_id"]
+    assert user.email == github_user_info1["github_email"]
