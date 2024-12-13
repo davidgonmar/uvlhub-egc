@@ -13,21 +13,20 @@
 
 ## Índice
 
-1. [Miembros del equipo](#1-miembros-del-equipo)  
-2. [Datos fundamentales del equipo](#2-datos-fundamentales-del-equipo)  
+1. [Datos fundamentales del equipo](#1-datos-fundamentales-del-equipo)  
    - [Datos de contacto](#datos-de-contacto)  
    - [Work Items a realizar](#work-items-wis-a-realizar)  
-3. [Integración con el equipo Jamón-Hub-1](#3-integración-con-el-equipo-jamón-hub-1)  
+2. [Integración con el equipo Jamón-Hub-1](#2-integración-con-el-equipo-jamón-hub-1)  
    - [Motivo de coordinación](#motivo-de-coordinación)  
    - [Work Items a realizar por el grupo 1](#work-items-wis-a-realizar-1)  
    - [Solapamientos de Work Items](#solapamientos-de-work-items-wis)  
-4. [Gestión del equipo](#4-gestión-del-equipo)  
+3. [Gestión del equipo](#3-gestión-del-equipo)  
    - [Coordinadores del equipo](#coordinadores-del-equipo)  
    - [Comunicación del equipo](#comunicación-del-equipo)  
    - [Toma de decisiones](#toma-de-decisiones)  
    - [Asistencia a milestones](#asistencia-a-milestones)  
    - [Sanciones](#sanciones)  
-5. [Gestión del código y la documentación](#5-gestión-del-código-y-la-documentación)  
+4. [Gestión del código y la documentación](#4-gestión-del-código-y-la-documentación)  
    - [Alojamiento del código](#alojamiento-del-código)  
    - [Proceso de integración y despliegue continuo](#proceso-de-integración-y-despliegue-continuo)  
    - [Gestión de tareas](#gestión-de-tareas)  
@@ -37,7 +36,7 @@
    - [Mensajes de commits](#mensajes-de-commits)
    - [Títulos de pull requests](#títulos-de-pull-requests)
    - [Versionado del producto](#versionado-del-producto)
-6. [Gestión de Work Items](#6-gestión-de-work-items-wis)
+5. [Gestión de Work Items](#5-gestión-de-work-items-wis)
    - [Asignación de actividades](#asignación-de-actividades)
    - [Tipos de issues](#tipos-de-issues)
    - [Roles en issues](#roles-en-issues)
@@ -46,11 +45,11 @@
    - [Etiquetas de issues](#etiquetas-de-issues)
    - [Nomenclatura de issues](#nomenclatura-de-issues)
    - [Estandarización de incidencias](#estandarización-de-incidencias)
-7. [Declaración final de compromisos](#7-declaración-final-de-compromisos)
+6. [Declaración final de compromisos](#6-declaración-final-de-compromisos)
 
 ---
 
-## 2. Datos fundamentales del equipo
+## 1. Datos fundamentales del equipo
 
 ### Datos de contacto:
 
@@ -79,7 +78,7 @@
 - **Register developer**: Opción para que los usuarios se registren como desarrolladores.
 ---
 
-## 3. Integración con el equipo Jamón-Hub-1
+## 2. Integración con el equipo Jamón-Hub-1
 
 ### Motivo de coordinación:
 
@@ -113,7 +112,7 @@ Al coordinarse ambos equipos, se identificaron múltiples conflictos y solapamie
 
 ---
 
-## 4. Gestión del equipo
+## 3. Gestión del equipo
 
 ### Coordinadores del equipo:
 
@@ -147,7 +146,7 @@ El grupo ha acordado asistir a los hitos (*milestones*) en el horario del G3.
 
 ---
 
-## 5. Gestión del código y la documentación
+## 4. Gestión del código y la documentación
 
 ### Alojamiento del código:
 
@@ -263,7 +262,7 @@ El proyecto seguirá las directrices de [versionado semántico](https://semver.o
 
 ---
 
-## 6. Gestión de Work Items (WIs)
+## 5. Gestión de Work Items (WIs)
 
 ### Asignación de actividades:
 Al inicio de cada sprint, el equipo descompondrá los Work Items (WIs) en actividades específicas, las cuales serán asignadas entre los miembros del equipo. Se buscará equilibrar la carga de trabajo en términos de tiempo y esfuerzo, aprovechando al máximo las habilidades e intereses individuales.
@@ -385,7 +384,7 @@ Se hará a través de una plantilla de incidencias en GitHub.
 
 ---
 
-## 7. Declaración final de compromisos
+## 6. Declaración final de compromisos
 
 Con la publicación de este acta, los miembros del equipo Jamón-Hub-2 reconocen haber leído y entendido todos los acuerdos y compromisos aquí establecidos, y se comprometen a cumplir con lo pactado para asegurar el éxito del proyecto.
 
