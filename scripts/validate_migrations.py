@@ -29,7 +29,7 @@ def validate_migrations():
 
             # Si no hay 'down_revision' o está vacío, debe ser None
             if down_revision_str:
-                # Convertir en una tupla
+                # Convertir en una tupla si tiene varias revisiones
                 down_revision = tuple(down_revision_str.replace(" ", "").split(','))
                 print(f"down_revision (tupla): {down_revision}")  # Depuración
             else:
@@ -42,6 +42,9 @@ def validate_migrations():
         # Solo agregar a no_revise_files si realmente no tiene down_revision
         if down_revision is None:
             no_revise_files.append(file)
+
+    # Mostrar los archivos sin down_revision para depuración
+    print(f"Archivos sin down_revision: {no_revise_files}")
 
     # Validar que solo un archivo no tiene "down_revision"
     if len(no_revise_files) != 1:
