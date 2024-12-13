@@ -353,6 +353,7 @@ Una _issue_ representará una solicitud de cambio para el sistema. Consideraremo
  - **Incidencias:** creadas por el equipo o por usuarios para reportar un problema con el funcionamiento.
 
 Las actividades de documentación, como la actualización del 'Diario del equipo' no se representará mediante issues.
+A las issues generadas automáticamente por bots no se les aplicarán estas políticas.
 
 
 ### Roles en _issues_
@@ -382,7 +383,7 @@ Si una pull request no se acepta, e trasladará a la columna del estado _Failed 
 ### Etiquetas de _issues_
 Se usarán las siguientes etiquetas para definir un cambio:
  - Tipo de issue: `task` e `incidence`.
- - Tipo de cambio: `documentation`, `feat`, `fix`, `refactor`, `style`, `test`, `database`, `meeting`, `build` y `hotfix`.
+ - Tipo de cambio: `documentation`, `feat`, `fix`, `refactor`, `style`, `test`, `database`, `meeting`, `build`, `deployment` y `hotfix`.
  - Área del sistema: `backend` y `frontend`.
 
 

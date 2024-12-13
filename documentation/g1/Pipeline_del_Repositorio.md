@@ -77,7 +77,7 @@ Cuando se crea o actualiza un Pull Request hacia la rama principal, se ejecutan 
  
 Otro añadido al proyecto es el bot **CodiumAI PR-Agent**, este bot se encarga de realizar una extensa y detallada descripción de las pull requests. En su momento se creó un workflow para que este bot también aceptara las pull, requests aunque fue descartado. Ambos grupos estaban de acuerdo en que todas las PRs debían ser revisadas por al menos un compañero humano.
 
-Aclaración: si sobre una PR activa se realiza un nuevo commit los trabajos se lanzarán nuevamente.
+> Aclaración: si sobre una PR activa se realiza un nuevo commit los trabajos se lanzarán nuevamente.
 
 
 
