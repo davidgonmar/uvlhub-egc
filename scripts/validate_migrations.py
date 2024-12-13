@@ -28,7 +28,7 @@ def validate_migrations():
         if down_revision is None:
             no_revise_files.append(file)
 
-    # Validar que solo un archivo no tiene "revises"
+    # Validar que solo un archivo no tiene "down_revision"
     if len(no_revise_files) != 1:
         raise ValueError(f"Debe haber exactamente un archivo sin down_revision. Encontrados: {no_revise_files}")
 
