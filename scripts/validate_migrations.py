@@ -14,19 +14,24 @@ def validate_migrations():
         with open(path, "r") as f:
             content = f.read()
 
-        # Extraer revision y revises
+        # Extraer revision
         revision = re.search(r"revision\s*=\s*'([\w\d]+)'", content)
-        revises = re.search(r"down_revision\s*=\s*'([\w\d\s,]+)'", content)
-
         if not revision:
             raise ValueError(f"Archivo {file} no contiene 'revision'")
 
         revision_id = revision.group(1)
-        down_revision = revises.group(1) if revises else None
 
-        # Convertir down_revision en una lista, si es necesario
-        if down_revision:
-            down_revision = tuple(down_revision.replace(" ", "").split(','))
+        # Extraer down_revision, permitiendo tuplas o None
+        revises = re.search(r"down_revision\s*=\s*'([\w\d, ]*)'", content)
+        if revises:
+            down_revision_str = revises.group(1).strip()
+            # Si no hay 'down_revision' o está vacío, debe ser None
+            if down_revision_str:
+                down_revision = tuple(down_revision_str.replace(" ", "").split(','))
+            else:
+                down_revision = None
+        else:
+            down_revision = None
 
         revision_map[revision_id] = down_revision
 
@@ -45,7 +50,10 @@ def validate_migrations():
         if current in visited:
             raise ValueError("Se ha detectado un bucle en las referencias de revisiones.")
         visited.add(current)
-        current = revision_map.get(current)  # Usar .get() en lugar de acceso directo
+        # Si down_revision es una tupla, la seguimos iterando
+        current = revision_map.get(current)
+        if isinstance(current, tuple):  # Si la revisión actual es una tupla, tomamos el primero
+            current = current[0]  # Solo tomamos la primera revisión como referencia
 
     # Verificar que todas las revisiones están conectadas
     if len(visited) != len(revision_map):
