@@ -691,3 +691,16 @@ def test_get_orcid_full_profile_success():
         
     assert full_profile['activities-summary']['employments']['affiliation-group'][0]['summaries'][0]['employment-summary']['organization']['name'] == 'Test University'
     assert full_profile['person']['emails']['email'][0]['email'] == 'test@example.com'
+
+def test_orcid_login_route(test_client):
+    response = test_client.get('/orcid/login')
+    
+    assert response.status_code == 302
+    assert 'Location' in response.headers
+    assert 'https://orcid.org/oauth/authorize' in response.headers['Location']
+
+
+def test_orcid_authorize_route_invalid_access(test_client):
+    response = test_client.get('/orcid/authorize')
+
+    assert response.status_code == 400
