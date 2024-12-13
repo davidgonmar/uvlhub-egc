@@ -1,0 +1,29 @@
+name: Historical contributor report
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  historical_contributor_report:
+    name: Historical contributor report
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Run contributor action
+        uses: github/contributors@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: davidgonmar/uvlhub-egc
+          SPONSOR_INFO: "false"
+
+      - name: Create issue
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: Historical contributor report
+          token: ${{ secrets.GITHUB_TOKEN }}
+          content-filepath: ./contributors.md
+          assignees: davidgonmar
