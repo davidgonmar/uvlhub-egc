@@ -21,7 +21,6 @@
 ## jamon-hub-1
 
 
-
 ---
 
 
@@ -35,6 +34,7 @@
    - [ACTA 2024-02](#acta-2024-02)
    - [ACTA 2024-03](#acta-2024-03)
    - [ACTA 2024-04](#acta-2024-04)
+   - [ACTA 2024-05](#acta-2024-05)
 
 
 ---
@@ -53,11 +53,11 @@
 
 
 ## 2. Resumen de total de reuniones
-- **Total de reuniones (TR):** 4
+- **Total de reuniones (TR):** 6
 - **Total de reuniones presenciales (TRP):** 1
-- **Total de reuniones virtuales (TRV):** 4
+- **Total de reuniones virtuales (TRV):** 5
 - **Total de tiempo empleado en reuniones presenciales (TTRP):** 0h 40min
-- **Total de tiempo empleado en reuniones virtuales (TTRV):** 4h 30min
+- **Total de tiempo empleado en reuniones virtuales (TTRV):** 5h 10min
 
 
 ---
@@ -205,3 +205,23 @@ Esta reunión trató sobre la implementación del feedback de la segunda _milest
 - **Acuerdo 2024-04-06:** Haremos pruebas de todos los tipos, si el _work item_ lo permite.
 - **Acuerdo 2024-04-07:** Desglose en tareas de los _work items_ restantes.
 - **Acuerdo 2024-04-08:** Asignación de encargados de cada tarea.
+
+
+<br>
+
+
+### ACTA 2024-05
+**Asistentes:**
+- Castillo Cebolla, Rafael
+- Flores de Francisco, Daniel
+- González Martínez, David
+- Heras Pérez, Raúl
+- Mellado Díaz, Luis
+- Trenado González, Sergio
+
+**Introducción:**
+Esta reunión trató sobre el repaso de los requisitos y el trabajo hecho de cara a la tercera _milestone_ y el final del proyecto. También ejerció a efectos prácticos como reunión de cierre. 
+
+**Acuerdos tomados:**
+
+- **Acuerdo 2025-04-01:** Todos los objetivos se han cumplido. Podemos descansar por fin y volver a casa por Navidad.
