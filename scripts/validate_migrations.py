@@ -63,24 +63,26 @@ def validate_migrations():
 
     # Validar que las revisiones estén conectadas en una cadena continua
     visited = set()
-    current = list(revision_map.keys())[0]  # Iniciar desde el primer archivo
+    pending = list(revision_map.keys())  # Iniciar desde todos los archivos posibles
+    current = no_revise_files[0].replace("_.py", "")  # Iniciar con el archivo sin `down_revision`
 
-    while current:
+    while pending:
         if current in visited:
             raise ValueError("Se ha detectado un bucle en las referencias de revisiones.")
         visited.add(current)
 
         # Obtener el siguiente archivo de la cadena de migraciones
-        next_revision = revision_map.get(current)
+        next_revisions = revision_map.get(current)
 
         # Depuración: mostrar el valor actual y la referencia siguiente
-        print(f"Procesando revisión: {current} -> next_revision: {next_revision}")
+        print(f"Procesando revisión: {current} -> next_revisions: {next_revisions}")
 
-        # Si next_revision es una tupla, tomamos la primera revisión
-        if isinstance(next_revision, tuple):
-            current = next_revision[0]  # Solo tomamos la primera revisión como referencia
+        # Si `next_revisions` es una tupla, añadir todas al conjunto de pendientes
+        if isinstance(next_revisions, tuple):
+            pending.extend(next_revisions)
+            current = pending.pop()  # Procesar una de las pendientes
         else:
-            current = next_revision
+            current = next_revisions
 
     # Verificar que todas las revisiones están conectadas
     if len(visited) != len(revision_map):
