@@ -882,3 +882,9 @@ def test_user_creation_from_github_with_duplicate_github_id(clean_database):
     # 1er usuario devuelto
     assert user.github_id == github_user_info1["github_id"]
     assert user.email == github_user_info1["github_email"]
+
+def test_github_login_redirect(test_client):
+    response = test_client.get(url_for('auth.github_login'))
+
+    assert response.status_code == 302
+    assert "/github" in response.location
