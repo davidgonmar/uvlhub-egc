@@ -27,19 +27,22 @@ def validate_migrations():
             down_revision_str = revises.group(1).strip()
             print(f"Procesando archivo: {file} - down_revision_str: {down_revision_str}")  # Depuración
 
-            # Verificar que down_revision no esté vacío
+            # Verificar si down_revision tiene algún valor
             if down_revision_str:
-                # Convertir la cadena a una tupla (si está en formato tupla)
-                try:
-                    # Intentamos evaluar la cadena como una tupla
-                    down_revision = eval(down_revision_str)
-                    # Verificamos que sea una tupla de revisiones
-                    if isinstance(down_revision, tuple):
-                        print(f"down_revision (tupla): {down_revision}")  # Depuración
-                    else:
+                # Si está en formato tupla, se evalúa, de lo contrario, es una cadena simple
+                if down_revision_str.startswith("(") and down_revision_str.endswith(")"):
+                    try:
+                        down_revision = eval(down_revision_str)  # Evaluamos como tupla
+                        if isinstance(down_revision, tuple):
+                            print(f"down_revision (tupla): {down_revision}")  # Depuración
+                        else:
+                            down_revision = None
+                    except (SyntaxError, ValueError):
                         down_revision = None
-                except (SyntaxError, ValueError):
-                    down_revision = None
+                else:
+                    # Si no está en formato tupla, lo tratamos como una cadena simple
+                    down_revision = (down_revision_str,)
+                    print(f"down_revision (cadena simple): {down_revision}")  # Depuración
             else:
                 down_revision = None
         else:
