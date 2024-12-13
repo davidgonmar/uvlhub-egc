@@ -34,8 +34,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           START_DATE: ${{ env.START_DATE }}
           END_DATE: ${{ env.END_DATE }}
-          ORGANIZATION: davidgonmar
-          REPOSITORY: uvlhub-egc
+          REPOSITORY: davidgonmar/uvlhub-egc
           SPONSOR_INFO: "false"
 
       - name: Create issue
