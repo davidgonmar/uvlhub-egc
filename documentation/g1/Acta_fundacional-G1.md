@@ -4,18 +4,7 @@
 **Curso Escolar:** 2024/2025    
 **Asignatura:** Evolución y gestión de la configuración    
 
-### Miembros del equipo
-| **Miembro**                   | **Implicación** |
-|-------------------------------|-----------------|
-| Castillo Cebolla Rafael       | [10]            |
-| Flores de Francisco, Daniel   | [10]            |
-| González Martínez, David      | [10]            |
-| Heras Pérez, Raúl             | [10]            |
-| Mellado Díaz, Luis            | [10]            |
-| Trenado González, Sergio      | [10]            |
-
-
-### Enlaces de interés:
+#### Enlaces de interés:
 - **Repositorio de código:** https://github.com/davidgonmar/uvlhub-egc
 - **Sistema desplegado:** https://uvlhub-egc.onrender.com/
 

@@ -27,7 +27,9 @@
 
 
 
-# Documento del proyecto
+# DOCUMENTO DEL PROYECTO
+
+## jamon-hub-1
 
 El presente documento tiene como objetivo sintetizar los aspectos clave del proyecto elegido para su desarrollo, en relación con los temas abordados durante las clases. En él, se identifican claramente los miembros del equipo, los grupos a los que pertenecen, el curso académico, y el nombre del proyecto, siguiendo la política de nomenclatura establecida. 
 

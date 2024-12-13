@@ -4,18 +4,7 @@
 **Curso Escolar:** 2024/2025    
 **Asignatura:** Evolución y gestión de la configuración    
 
-### Miembros del equipo
-| **Miembro**                   | **Implicación** |
-|-------------------------------|-----------------|
-| Castillo Cebolla Rafael       | [10]            |
-| Flores de Francisco, Daniel   | [10]            |
-| González Martínez, David      | [10]            |
-| Heras Pérez, Raúl             | [10]            |
-| Mellado Díaz, Luis            | [10]            |
-| Trenado González, Sergio      | [10]            |
-
-
-### Enlaces de interés:
+#### Enlaces de interés:
 - **Repositorio de código:** https://github.com/davidgonmar/uvlhub-egc
 - **Sistema desplegado:** https://uvlhub-egc.onrender.com/
 
@@ -27,13 +16,10 @@
 
 
 
-# Diario del equipo
+# DIARIO DEL EQUIPO
 
 ## jamon-hub-1
 
-**Grupo:** 1     
-**Curso Escolar:** 2024/2025    
-**Asignatura:** Evolución y gestión de la configuración   
 
 
 ---
@@ -44,7 +30,11 @@
 1. [Miembros del grupo](#1-miembros-del-grupo-en-orden-alfabético-según-apellido)
 2. [Resumen de total de reuniones](#2-resumen-de-total-de-reuniones)
 3. [Actas de acuerdos](#3-actas-de-acuerdos)
+   - [ACTA 2024-00](#acta-2024-00)
    - [ACTA 2024-01](#acta-2024-01)
+   - [ACTA 2024-02](#acta-2024-02)
+   - [ACTA 2024-03](#acta-2024-03)
+   - [ACTA 2024-04](#acta-2024-04)
 
 
 ---

@@ -1,4 +1,24 @@
-# Documentación del Pipeline CI/CD
+# jamon-hub
+
+**Grupo:** 1   
+**Curso Escolar:** 2024/2025    
+**Asignatura:** Evolución y gestión de la configuración    
+
+#### Enlaces de interés:
+- **Repositorio de código:** https://github.com/davidgonmar/uvlhub-egc
+- **Sistema desplegado:** https://uvlhub-egc.onrender.com/
+
+
+
+------------------
+------------------
+<br>
+
+
+
+# DOCUMENTACIÓN DEL PIPELINE CI/CD
+
+## jamon-hub-1
 
 Este documento describe el pipeline del repositorio para la integración y el despliegue continuo (CI/CD) del proyecto.
 
@@ -33,7 +53,7 @@ El pipeline principal está estructurado en 2 fases principales:
   
 También existen dos workflows independientes que se ejecutan manualmente o una vez cada periodo de tiempo.
 
----
+
 
 ### **1. Tras Pull Request (PR)**
 
@@ -59,7 +79,7 @@ Otro añadido al proyecto es el bot **CodiumAI PR-Agent**, este bot se encarga d
 
 Aclaración: si sobre una PR activa se realiza un nuevo commit los trabajos se lanzarán nuevamente.
 
----
+
 
 ### **2. Después del Merge**
 
@@ -113,8 +133,3 @@ Para que este hook funcione, los desarrolladores deben copiar el archivo corresp
 - **Eficiencia**: Validaciones paralelas para reducir tiempos de ejecución.
 - **Calidad Garantizada**: Cada paso del pipeline asegura que solo se mergea y despliega código de calidad.
 - **Escalabilidad**: La estructura del pipeline es modular y fácil de extender según las necesidades futuras.
-
----
-
-
-
