@@ -6,7 +6,10 @@
 - **Curso Escolar**: 2024/2025  
 - **Asignatura**: Evolución y Gestión de la Configuración
 
----
+### Enlaces de interés:
+
+- **Repositorio de código**: [https://github.com/davidgonmar/uvlhub-egc](https://github.com/davidgonmar/uvlhub-egc)  
+- **Sistema desplegado**: [https://uvlhub-egc.onrender.com/](https://uvlhub-egc.onrender.com/)
 
 ## Índice
 
@@ -17,6 +20,7 @@
    - [ACTA 2024-02](#acta-2024-02)
    - [ACTA 2024-03](#acta-2024-03)
    - [ACTA 2024-04](#acta-2024-04)
+   - [ACTA 2024-05](#acta-2024-05)
 
 ---
 
@@ -31,19 +35,15 @@
 | Pérez Gutiérrez, Lucía             | lucpergut| lucpergut@alum.us.es      |
 | Vento Conesa, Adriana              | adrvencon| adrvencon@alum.us.es     |
 
-### Enlaces de interés:
-- **Repositorio de código**: [https://github.com/davidgonmar/uvlhub-egc](https://github.com/davidgonmar/uvlhub-egc)  
-- **Sistema desplegado**: [https://uvlhub-egc.onrender.com/](https://uvlhub-egc.onrender.com/)
-
 ---
 
 ## 2. Resumen de total de reuniones empleadas en el equipo
 
-- **Total de reuniones (TR):** 3
+- **Total de reuniones (TR):** 4
 - **Total de reuniones presenciales (TRP):** 1
-- **Total de reuniones virtuales (TRV):** 2
+- **Total de reuniones virtuales (TRV):** 3
 - **Total de tiempo empleado en reuniones presenciales (TTRP):** 1h 30min
-- **Total de tiempo empleado en reuniones virtuales (TTRV):** 2h
+- **Total de tiempo empleado en reuniones virtuales (TTRV):** 3h
 
 ---
 
@@ -146,8 +146,6 @@ En esta reunión, se definieron los Work Items (WIs) que se implementarán duran
 - **Acuerdo 2024-03-04: Asignación de tareas.**  
   Se asignaron tareas específicas a cada miembro del equipo para asegurar que el progreso fuera adecuado. Las tareas fueron distribuidas según la experiencia y la disponibilidad de cada miembro. Se utilizará la herramienta de gestión de tareas acordada para llevar el seguimiento de cada una de ellas.
 
-
-
 ### ACTA 2024-04
 
 **Asistentes:**
@@ -183,3 +181,27 @@ Durante la reunión se establecieron los Work Items (WIs) que se desarrollarán 
 - **Acuerdo 2024-04-04: Asignación de tareas.**  
   Se asignaron tareas concretas a cada miembro del equipo para garantizar un avance óptimo. La distribución de las tareas se basó en la experiencia y disponibilidad de cada persona. Además, se utilizará la herramienta de gestión de tareas previamente acordada para realizar el seguimiento de su progreso.
 
+### ACTA 2024-05
+
+**Asistentes:**
+
+- Barrera Garrancho, María del Carmen
+- García Martínez, Carlos
+- García Sebastián, Javier
+- Meana Iturri, Claudia
+- Pérez Gutiérrez, Lucía
+- Vento Conesa, Adriana
+
+**Introducción:**
+Se llevó a cabo el cierre oficial del proyecto, revisando los aspectos finales y acordando las últimas acciones necesarias para su conclusión exitosa.
+
+**Acuerdos tomados:**
+
+- **Acuerdo 2024-05-01: Finalización del video del proyecto.**
+  Se revisaron y aprobaron los detalles finales del video del proyecto. El equipo acordó el cronograma de producción y entrega, confirmando que estará listo para su presentación final.
+
+- **Acuerdo 2024-05-02: Resolución de incidencias.**
+  Se discutieron las incidencias pendientes, identificando y resolviendo las últimas cuestiones críticas. Las incidencias menores restantes serán gestionadas de manera interna, sin impacto en el cierre formal del proyecto.
+
+- **Acuerdo 2024-05-03: Cierre de tareas.**
+  Se confirmó la finalización de todas las tareas asignadas al equipo. No quedan pendientes por resolver, y se considera que las responsabilidades han sido cumplidas satisfactoriamente.
