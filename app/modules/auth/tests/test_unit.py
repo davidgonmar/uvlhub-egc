@@ -768,3 +768,9 @@ def test_user_creation_with_missing_google_data_error(clean_database):
         assert False, "Se esperaba un error debido a los datos incompletos"
     except ValueError as e:
         assert str(e) == "Email and google_id are required from Google user info."
+
+def test_google_login_redirect(test_client):
+    response = test_client.get(url_for('auth.google_login'))
+
+    assert response.status_code == 302
+    assert "https://accounts.google.com/o/oauth2/auth" in response.location
