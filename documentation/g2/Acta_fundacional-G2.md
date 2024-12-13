@@ -6,7 +6,10 @@
 - **Curso Escolar**: 2024/2025  
 - **Asignatura**: Evolución y Gestión de la Configuración
 
----
+### Enlaces de interés:
+
+- **Repositorio de código**: [https://github.com/davidgonmar/uvlhub-egc](https://github.com/davidgonmar/uvlhub-egc)  
+- **Sistema desplegado**: [https://uvlhub-egc.onrender.com/](https://uvlhub-egc.onrender.com/)
 
 ## Índice
 
@@ -44,23 +47,6 @@
    - [Nomenclatura de issues](#nomenclatura-de-issues)
    - [Estandarización de incidencias](#estandarización-de-incidencias)
 7. [Declaración final de compromisos](#7-declaración-final-de-compromisos)
-
----
-
-## 1. Miembros del equipo
-
-| **Miembro**                               | **Implicación** |
-|-------------------------------------------|-----------------|
-| Vento Conesa, Adriana                     | 10              |
-| Meana Iturri, Claudia                     | 10              |
-| Pérez Gutiérrez, Lucía                    | 10              |
-| García Martínez, Carlos                   | 10              |
-| García Sebastián, Javier                  | 10              |
-| Barrera Garrancho, María del Carmen       | 10              |
-
-### Enlaces de interés:
-- **Repositorio de código**: [https://github.com/davidgonmar/uvlhub-egc](https://github.com/davidgonmar/uvlhub-egc)  
-- **Sistema desplegado**: [https://uvlhub-egc.onrender.com/](https://uvlhub-egc.onrender.com/)
 
 ---
 
@@ -291,6 +277,8 @@ Una _issue_ representará una solicitud de cambio en el sistema. Los tipos de _i
 
 Las actividades de documentación, como la actualización del 'Diario del equipo' no se representará mediante issues.
 
+A las issues generadas automáticamente por bots no se les aplicarán estas políticas.
+
 ### Roles en issues:
 Cada _issue_ será asignada a un único miembro del equipo, quien será responsable de su ejecución. En caso de que se necesite involucrar a más personas, se creará una _issue_ adicional para repartir el trabajo.
 
@@ -317,7 +305,7 @@ Si una pull request no se acepta, e trasladará a la columna del estado _Failed 
 Las siguientes etiquetas se utilizarán para clasificar los cambios en las _issues_:
 
 - Tipos de actividad: `task`, `incidence`.
-- Tipos de cambio: `feat`, `fix`, `refactor`, `style`, `test`, `database`, `build`, `hotfix`.
+- Tipo de cambio: `documentation`, `feat`, `fix`, `refactor`, `style`, `test`, `database`, `meeting`, `build`, `deployment` y `hotfix`.
 - Áreas del sistema: `backend`, `frontend`.
 
 ### Nomenclatura de issues:
