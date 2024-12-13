@@ -27,13 +27,13 @@ def validate_migrations():
             down_revision_str = revises.group(1).strip()
             print(f"Procesando archivo: {file} - down_revision_str: {down_revision_str}")  # Depuración
 
-            # Si no hay 'down_revision' o está vacío, debe ser None
-            if down_revision_str:
-                # Convertir en una tupla si tiene varias revisiones
+            # Si down_revision está vacío, se considera como None
+            if not down_revision_str:
+                down_revision = None
+            else:
+                # Si hay contenido, lo tratamos como una tupla, incluso si solo hay un elemento
                 down_revision = tuple(down_revision_str.replace(" ", "").split(','))
                 print(f"down_revision (tupla): {down_revision}")  # Depuración
-            else:
-                down_revision = None
         else:
             down_revision = None
 
