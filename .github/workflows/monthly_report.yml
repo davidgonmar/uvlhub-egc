@@ -36,7 +36,7 @@ jobs:
           END_DATE: ${{ env.END_DATE }}
           ORGANIZATION: davidgonmar
           REPOSITORY: uvlhub-egc
-          SPONSOR_INFO: "true"
+          SPONSOR_INFO: "false"
 
       - name: Create issue
         uses: peter-evans/create-issue-from-file@v5
