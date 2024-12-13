@@ -324,8 +324,7 @@ def authorize_orcid():
 
     orcid_id = user_info['sub']
     full_profile = current_app.orcid_service.get_orcid_full_profile(orcid_id, token)
-
-    # Acceder a la afiliación
+ 
     affiliation_group = full_profile.get('activities-summary', {}).get('employments', {}).get('affiliation-group', [])
     if affiliation_group:
         employment_summary = affiliation_group[0].get('summaries', [{}])[0].get('employment-summary', {})
@@ -334,31 +333,26 @@ def authorize_orcid():
     else:
         affiliation = ''
 
-    # Obtener información disponible del perfil público de ORCID
     given_name = user_info.get('given_name', '')
     family_name = user_info.get('family_name', '')
     surname = family_name if family_name else ""
 
-    # Obtener el correo electrónico del perfil completo
     email = ''
     email_data = full_profile.get('person', {}).get('emails', {}).get('email', [])
     if email_data:
         email = email_data[0].get('email', '')
 
-    # Verificar si el ORCID iD ya está registrado
     user_record = User.query.filter_by(orcid_id=orcid_id).first()
 
     if user_record:
-        # Si el registro existe, obtener el perfil del usuario asociado
-        profile = UserProfile.query.filter_by(id=user_record.id).first()
+        profile = UserProfile.query.filter_by(orcid=orcid_id).first()
         if profile:
             user = User.query.get(profile.user_id)
             login_user(user)
             return redirect('/')
     else:
-        # Crear usuario y perfil
         user = User()
-        user.set_password(orcid_id)  # Usar el ORCID como contraseña
+        user.set_password(orcid_id)
         user.email = email
         user.orcid_id = orcid_id
         db.session.add(user)
