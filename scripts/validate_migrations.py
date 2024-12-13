@@ -16,13 +16,17 @@ def validate_migrations():
 
         # Extraer revision y revises
         revision = re.search(r"revision\s*=\s*'([\w\d]+)'", content)
-        revises = re.search(r"down_revision\s*=\s*'([\w\d]*)'", content)
+        revises = re.search(r"down_revision\s*=\s*'([\w\d\s,]+)'", content)
 
         if not revision:
             raise ValueError(f"Archivo {file} no contiene 'revision'")
 
         revision_id = revision.group(1)
         down_revision = revises.group(1) if revises else None
+
+        # Convertir down_revision en una lista, si es necesario
+        if down_revision:
+            down_revision = tuple(down_revision.replace(" ", "").split(','))
 
         revision_map[revision_id] = down_revision
 
