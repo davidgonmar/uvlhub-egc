@@ -52,7 +52,7 @@ def validate_migrations():
 
         # Solo agregar a no_revise_files si realmente no tiene down_revision
         if down_revision is None:
-            no_revise_files.append(file)
+            no_revise_files.append(revision_id)
 
     # Mostrar los archivos sin down_revision para depuración
     print(f"Archivos sin down_revision: {no_revise_files}")
@@ -61,42 +61,32 @@ def validate_migrations():
     if len(no_revise_files) != 1:
         raise ValueError(f"Debe haber exactamente un archivo sin down_revision. Encontrados: {no_revise_files}")
 
-    # Validar que las revisiones estén conectadas en una cadena continua
-    visited = set()
-    current = no_revise_files[0].replace("_.py", "")  # Iniciar con el archivo sin `down_revision`
+    # Rastrear revisiones alcanzables desde la raíz
+    root_revision = no_revise_files[0]
+    reachable = set()
+    stack = [root_revision]
 
-    while current:
-        if current in visited:
+    while stack:
+        current = stack.pop()
+        if current in reachable:
             raise ValueError("Se ha detectado un bucle en las referencias de revisiones.")
-        visited.add(current)
+        reachable.add(current)
 
-        # Obtener el siguiente archivo de la cadena de migraciones
-        next_revisions = revision_map.get(current)
+        # Agregar las revisiones conectadas hacia abajo
+        for rev, down_revs in revision_map.items():
+            if down_revs and current in down_revs:
+                stack.append(rev)
 
-        # Depuración: mostrar el valor actual y la referencia siguiente
-        print(f"Procesando revisión: {current} -> next_revisions: {next_revisions}")
+        # Depuración: mostrar la revisión actual y las siguientes alcanzables
+        print(f"Procesando revisión: {current} -> next_revisions: {revision_map.get(current)}")
 
-        # Si `next_revisions` es `None`, terminamos esta rama
-        if not next_revisions:
-            break
+    # Validar que todas las revisiones sean alcanzables
+    all_revisions = set(revision_map.keys())
+    if reachable != all_revisions:
+        unreachable = all_revisions - reachable
+        raise ValueError(f"Las siguientes revisiones no son alcanzables desde la raíz: {unreachable}")
 
-        # Si `next_revisions` es una tupla, procesar cada elemento
-        if isinstance(next_revisions, tuple):
-            for revision in next_revisions:
-                if revision not in visited:
-                    current = revision
-                    break
-            else:
-                # Si todas las revisiones ya fueron visitadas, terminamos
-                break
-        else:
-            current = next_revisions
-
-    # Verificar que todas las revisiones están conectadas
-    if len(visited) != len(revision_map):
-        raise ValueError("Las revisiones no forman una cadena continua.")
-
-    print("Validación completada con éxito.")
+    print("Validación completada con éxito. Todas las revisiones forman una cadena o grafo continuo.")
 
 
 if __name__ == "__main__":
