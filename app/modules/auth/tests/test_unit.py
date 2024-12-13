@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 import pytest
-from flask import url_for
+from flask import url_for, Flask
 
 from app.modules.auth.services import AuthenticationService
 from app.modules.auth.repositories import UserRepository, SignUpVerificationTokenRepository
@@ -645,3 +645,49 @@ def test_reset_password_form_render_initial(test_client):
     assert b'<form' in response.data
     assert b'name="password"' in response.data
     assert b'name="confirm_password"' in response.data
+
+# MULTIPLE LOGIN TESTS
+
+# ORCID
+
+def test_configure_oauth():
+    app = Flask(__name__)
+    oauth_service = AuthenticationService()
+    oauth, orcid = oauth_service.configure_oauth(app)
+    
+    assert oauth is not None
+    assert orcid is not None
+    assert orcid.client_id == oauth_service.client_id
+    assert orcid.client_secret == oauth_service.client_secret
+    assert orcid.access_token_url == 'https://orcid.org/oauth/token'
+    assert orcid.authorize_url == 'https://orcid.org/oauth/authorize'
+
+def test_get_orcid_full_profile_success():
+    orcid_id = '0000-0001-2345-6789'
+    token = {'access_token': 'mock_access_token'}
+    
+    orcid_service = AuthenticationService()
+    
+    # Mock
+    mock_response = MagicMock()
+    mock_response.ok = True
+    mock_response.json.return_value = {
+        'activities-summary': {
+            'employments': {
+                'affiliation-group': [{
+                    'summaries': [{
+                        'employment-summary': {
+                            'organization': {'name': 'Test University'}
+                        }
+                    }]
+                }]
+            }
+        },
+        'person': {'emails': {'email': [{'email': 'test@example.com'}]}}
+    }
+    
+    with patch.object(orcid_service.orcid_client, 'get', return_value=mock_response):
+        full_profile = orcid_service.get_orcid_full_profile(orcid_id, token)
+        
+    assert full_profile['activities-summary']['employments']['affiliation-group'][0]['summaries'][0]['employment-summary']['organization']['name'] == 'Test University'
+    assert full_profile['person']['emails']['email'][0]['email'] == 'test@example.com'
