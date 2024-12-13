@@ -18,13 +18,14 @@ def validate_migrations():
         revision = re.search(r"revision\s*=\s*'([\w\d]+)'", content)
         revises = re.search(r"down_revision\s*=\s*'([\w\d]*)'", content)
 
-        if not revision or not revises:
-            raise ValueError(f"Archivo {file} no contiene revision o down_revision")
+        if not revision:
+            raise ValueError(f"Archivo {file} no contiene 'revision'")
 
         revision_id = revision.group(1)
-        down_revision = revises.group(1) or None
+        down_revision = revises.group(1) if revises else None
 
         revision_map[revision_id] = down_revision
+
         if down_revision is None:
             no_revise_files.append(file)
 
@@ -32,7 +33,7 @@ def validate_migrations():
     if len(no_revise_files) != 1:
         raise ValueError(f"Debe haber exactamente un archivo sin down_revision. Encontrados: {no_revise_files}")
 
-    # Verificar que no haya bucles en la cadena de revisiones
+    # Validar que las revisiones estén conectadas en una cadena continua
     visited = set()
     current = list(revision_map.keys())[0]  # Iniciar desde el primer archivo
 
@@ -40,9 +41,9 @@ def validate_migrations():
         if current in visited:
             raise ValueError("Se ha detectado un bucle en las referencias de revisiones.")
         visited.add(current)
-        current = revision_map[current]
+        current = revision_map.get(current)  # Usar .get() en lugar de acceso directo
 
-    # Validar que todas las revisiones están conectadas
+    # Verificar que todas las revisiones están conectadas
     if len(visited) != len(revision_map):
         raise ValueError("Las revisiones no forman una cadena continua.")
 
