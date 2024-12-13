@@ -1,5 +1,6 @@
 import os
 import re
+import ast
 
 
 def validate_migrations():
@@ -8,85 +9,63 @@ def validate_migrations():
 
     revision_map = {}
     no_revise_files = []
+    all_down_revisions = set()
 
+    # Cargar las revisiones y construir el mapa de migraciones
     for file in files:
         path = os.path.join(base_dir, file)
         with open(path, "r") as f:
             content = f.read()
 
-        # Extraer revision
+        # Buscar el 'revision' en el archivo
         revision = re.search(r"revision\s*=\s*'([\w\d]+)'", content)
         if not revision:
             raise ValueError(f"Archivo {file} no contiene 'revision'")
 
         revision_id = revision.group(1)
 
-        # Extraer down_revision, permitiendo tuplas o None
+        # Buscar el 'down_revision' en el archivo
         revises = re.search(r"down_revision\s*=\s*(\([^\)]*\)|'[\w\d, ]+')", content)
         if revises:
             down_revision_str = revises.group(1).strip()
-            print(f"Procesando archivo: {file} - down_revision_str: {down_revision_str}")  # Depuración
 
-            # Verificar si down_revision tiene algún valor
-            if down_revision_str:
-                # Si está en formato tupla, se evalúa, de lo contrario, es una cadena simple
-                if down_revision_str.startswith("(") and down_revision_str.endswith(")"):
-                    try:
-                        down_revision = eval(down_revision_str)  # Evaluamos como tupla
-                        if isinstance(down_revision, tuple):
-                            print(f"down_revision (tupla): {down_revision}")  # Depuración
-                        else:
-                            down_revision = None
-                    except (SyntaxError, ValueError):
-                        down_revision = None
-                else:
-                    # Si no está en formato tupla, lo tratamos como una cadena simple
-                    down_revision = (down_revision_str.strip("'"),)  # Eliminar comillas extra
-                    print(f"down_revision (cadena simple): {down_revision}")  # Depuración
+            if down_revision_str.startswith("(") and down_revision_str.endswith(")"):
+                try:
+                    down_revision = ast.literal_eval(down_revision_str)
+                    if isinstance(down_revision, tuple):
+                        down_revision = list(down_revision)
+                    else:
+                        down_revision = []
+                except (SyntaxError, ValueError):
+                    down_revision = []
             else:
-                down_revision = None
+                down_revision = [down_revision_str.strip("'")]
         else:
-            down_revision = None
+            down_revision = []
 
         revision_map[revision_id] = down_revision
 
-        # Solo agregar a no_revise_files si realmente no tiene down_revision
-        if down_revision is None:
+        if not down_revision:
             no_revise_files.append(revision_id)
+        else:
+            all_down_revisions.update(down_revision)
 
-    # Mostrar los archivos sin down_revision para depuración
-    print(f"Archivos sin down_revision: {no_revise_files}")
-
-    # Validar que solo un archivo no tiene "down_revision"
+    # Verificar que haya exactamente un archivo sin 'down_revision'
     if len(no_revise_files) != 1:
-        raise ValueError(f"Debe haber exactamente un archivo sin down_revision. Encontrados: {no_revise_files}")
+        raise ValueError("Debe haber exactamente un archivo HEAD (sin down_revision). " +
+                         f"Encontrados: {len(no_revise_files)}")
 
-    # Rastrear revisiones alcanzables desde la raíz
-    root_revision = no_revise_files[0]
-    reachable = set()
-    stack = [root_revision]
-
-    while stack:
-        current = stack.pop()
-        if current in reachable:
-            raise ValueError("Se ha detectado un bucle en las referencias de revisiones.")
-        reachable.add(current)
-
-        # Agregar las revisiones conectadas hacia abajo
-        for rev, down_revs in revision_map.items():
-            if down_revs and current in down_revs:
-                stack.append(rev)
-
-        # Depuración: mostrar la revisión actual y las siguientes alcanzables
-        print(f"Procesando revisión: {current} -> next_revisions: {revision_map.get(current)}")
-
-    # Validar que todas las revisiones sean alcanzables
+    # Verificar que el número de revisiones y down_revisions únicas difiera en exactamente 1
     all_revisions = set(revision_map.keys())
-    if reachable != all_revisions:
-        unreachable = all_revisions - reachable
-        raise ValueError(f"Las siguientes revisiones no son alcanzables desde la raíz: {unreachable}")
+    difference = len(all_revisions) - len(all_down_revisions)
 
-    print("Validación completada con éxito. Todas las revisiones forman una cadena o grafo continuo.")
+    if difference != 1:
+        raise ValueError(
+            "Error en la cadena de migraciones, compruebe la sucesión de down_revisions. Debe acabar en un archivo " +
+            "HEAD (down_revision = None)."
+        )
+
+    print("Validación completada con éxito. La lista de revisiones y down_revisions cumple con la condición.")
 
 
 if __name__ == "__main__":

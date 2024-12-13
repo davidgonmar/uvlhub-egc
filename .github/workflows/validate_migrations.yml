@@ -1,9 +1,6 @@
 name: Validate Migrations
 
 on:
-  push:
-    branches:
-      - g1/task_52/migration_WF # Rama de prueba
   pull_request:
     branches:
       - main
