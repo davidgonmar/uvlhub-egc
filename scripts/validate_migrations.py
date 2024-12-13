@@ -41,7 +41,7 @@ def validate_migrations():
                         down_revision = None
                 else:
                     # Si no está en formato tupla, lo tratamos como una cadena simple
-                    down_revision = (down_revision_str,)
+                    down_revision = (down_revision_str.strip("'"),)  # Eliminar comillas extra
                     print(f"down_revision (cadena simple): {down_revision}")  # Depuración
             else:
                 down_revision = None
