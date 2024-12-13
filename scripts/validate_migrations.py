@@ -39,6 +39,7 @@ def validate_migrations():
 
         revision_map[revision_id] = down_revision
 
+        # Solo agregar a no_revise_files si realmente no tiene down_revision
         if down_revision is None:
             no_revise_files.append(file)
 
