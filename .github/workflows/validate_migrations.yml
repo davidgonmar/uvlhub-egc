@@ -27,4 +27,4 @@ jobs:
         pip install -r requirements.txt
 
     - name: Validate migration structure
-      run: python validate_migrations.py
+      run: python scripts/validate_migrations.py
