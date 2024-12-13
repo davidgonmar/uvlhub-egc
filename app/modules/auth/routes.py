@@ -324,7 +324,7 @@ def authorize_orcid():
 
     orcid_id = user_info['sub']
     full_profile = current_app.orcid_service.get_orcid_full_profile(orcid_id, token)
- 
+
     affiliation_group = full_profile.get('activities-summary', {}).get('employments', {}).get('affiliation-group', [])
     if affiliation_group:
         employment_summary = affiliation_group[0].get('summaries', [{}])[0].get('employment-summary', {})
