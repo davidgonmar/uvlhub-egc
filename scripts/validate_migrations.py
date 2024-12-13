@@ -22,7 +22,7 @@ def validate_migrations():
         revision_id = revision.group(1)
 
         # Extraer down_revision, permitiendo tuplas o None
-        revises = re.search(r"down_revision\s*=\s*'([\w\d, ()]*)'", content)
+        revises = re.search(r"down_revision\s*=\s*(\([^\)]*\)|'[\w\d, ]+')", content)
         if revises:
             down_revision_str = revises.group(1).strip()
             print(f"Procesando archivo: {file} - down_revision_str: {down_revision_str}")  # Depuración
