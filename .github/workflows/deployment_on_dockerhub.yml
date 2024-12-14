@@ -32,16 +32,16 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
-        run: docker build -t davidgonmar/uvlhub-egc:v1.0 -f docker/images/Dockerfile.prod .
+        run: docker build -t cargarmar18/uvlhub-egc:v1.0 -f docker/images/Dockerfile.prod .
         env:
           DOCKER_CLI_EXPERIMENTAL: enabled
 
       - name: Push Docker image to Docker Hub
-        run: docker push davidgonmar/uvlhub-egc:v1.0
+        run: docker push cargarmar18/uvlhub-egc:v1.0
 
       - name: Tag and push latest
         run: |
-          docker tag davidgonmar/uvlhub-egc:v1.0 davidgonmar/uvlhub-egc:latest
-          docker push davidgonmar/uvlhub-egc:latest
+          docker tag cargarmar18/uvlhub-egc:v1.0 cargarmar18/uvlhub-egc:latest
+          docker push cargarmar18/uvlhub-egc:latest
         env:
           DOCKER_CLI_EXPERIMENTAL: enabled
