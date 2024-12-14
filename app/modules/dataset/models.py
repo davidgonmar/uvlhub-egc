@@ -139,6 +139,8 @@ class DataSet(db.Model):
             'total_size_in_bytes': self.get_file_total_size(),
             'total_size_in_human_format': self.get_file_total_size_for_human(),
             'average_rating': self.get_average_rating(),
+            'user': {'id': self.user.id,
+                     'is_developer': self.user.is_developer} if self.user else None
         }
 
     def __repr__(self):
