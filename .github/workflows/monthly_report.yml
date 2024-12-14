@@ -24,7 +24,7 @@ jobs:
           # Calculate the last day of the previous month
           end_date=$(date -d "$start_date +1 month -1 day" +%Y-%m-%d)
 
-          #Set an environment variable with the date range
+          # Set an environment variable with the date range
           echo "START_DATE=$start_date" >> "$GITHUB_ENV"
           echo "END_DATE=$end_date" >> "$GITHUB_ENV"
 
@@ -34,8 +34,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           START_DATE: ${{ env.START_DATE }}
           END_DATE: ${{ env.END_DATE }}
-          ORGANIZATION: Jamon-Hub
-          SPONSOR_INFO: "true"
+          REPOSITORY: davidgonmar/uvlhub-egc
+          SPONSOR_INFO: "false"
 
       - name: Create issue
         uses: peter-evans/create-issue-from-file@v5
@@ -43,4 +43,4 @@ jobs:
           title: Monthly contributor report
           token: ${{ secrets.GITHUB_TOKEN }}
           content-filepath: ./contributors.md
-          assignees: Luis Mellado Diaz
+          assignees: davidgonmar

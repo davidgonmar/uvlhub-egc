@@ -22,8 +22,9 @@ COPY app/ ./app
 COPY core/ ./core
 COPY migrations/ ./migrations
 
-# Copy requirements.txt into the working directory /app
+# Copy requirements.txt and setup.py into the working directory /app
 COPY requirements.txt .
+COPY setup.py .
 
 # Removes cache at the build stage
 RUN find . -type d -name "__pycache__" -exec rm -r {} + && \
@@ -45,6 +46,9 @@ RUN pip install --no-cache-dir --upgrade pip
 
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
+
+# Install Rosemary
+RUN pip install .
 
 # Expose port 80
 EXPOSE 80
