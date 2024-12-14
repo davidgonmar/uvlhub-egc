@@ -96,11 +96,6 @@
                                     style="border-radius: 5px;">
                                     <i data-feather="eye"></i> View
                                 </button>
-
-                                <button onclick="deleteUploadedFile('{{ file.id }}')" class="btn btn-danger btn-sm"
-                                    style="border-radius: 5px;">
-                                    <i data-feather="trash-2"></i> Delete
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -121,16 +116,16 @@
                 border: 2px dashed #ccc; 
                 border-radius: 10px; 
                 text-align: center; 
-                height: 250px;">
+                height: 300px;">
                     <!-- Texto del Dropzone -->
                     <div class="dz-message" style="margin-bottom: 20px;">
-                        <h1 style="font-size: 24px; margin: 0; color: #333;">Drag & drop files here</h1>
-                        <p style="font-size: 16px; margin: 5px 0; color: #777;">or click to select files</p>
+                        <h1 style="font-size: 16px; margin: 0; color: #333;">Drag & drop files here</h1>
+                        <p style="font-size: 13px; margin: 5px 0; color: #777;">or click to select files</p>
                     </div>
 
                     <!-- Formulario del Dropzone -->
                     <form action="/dataset/file/upload" class="dropzone" id="myDropzone"
-                        style="width: 100%; max-width: 400px;"></form>
+                        style="width: 75%; max-width: 250px;"></form>
 
                     <!-- Mensajes de alerta -->
                     <div id="alerts" style="display: none; color: red; margin-top: 10px;"></div>
@@ -198,15 +193,6 @@
                     h4Element.textContent = response.filename;
                     listItem.appendChild(h4Element);
 
-                    // Botón para eliminar
-                    let removeButton = document.createElement('button');
-                    removeButton.innerHTML = 'Delete model';
-                    removeButton.classList.add("remove-button", "btn", "btn-outline-danger", "btn-sm");
-
-                    removeButton.addEventListener('click', function () {
-                        deleteFile(response.filename);
-                    });
-
                     listItem.appendChild(removeButton);
                     fileList.appendChild(listItem);
                 });
@@ -221,56 +207,6 @@
                 });
             }
         });
-
-        // Función para eliminar archivos
-        function deleteFile(filename) {
-            if (confirm('Are you sure you want to delete this file?')) {
-                fetch("/dataset/file/delete", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ file: filename })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            alert(data.message);
-                            location.reload(); // Recargar para reflejar la eliminación
-                        } else if (data.error) {
-                            alert(data.error);
-                        }
-                    })
-                    .catch(error => console.error("Error deleting file:", error));
-            }
-        }
-
-        function deleteUploadedFile(fileId) {
-            if (confirm('Are you sure you want to delete this file?')) {
-                fetch("/file/delete", {  // Make sure the endpoint matches your delete route
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ file_id: fileId })  // Send file_id in the request
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.message);
-                            // Remove the file from the DOM by selecting its parent container
-                            const fileElement = document.getElementById(`file-${fileId}`);
-                            if (fileElement) {
-                                fileElement.remove();  // Remove the element from the list
-                            }
-                        } else if (data.error) {
-                            alert(data.error);
-                        }
-                    })
-                    .catch(error => console.error("Error deleting file:", error));
-            }
-        }
-
 
         function updateDataset(isPublish) {
             const datasetId = "{{ dataset.id }}"; // Asumimos que la ID del dataset se pasa desde el servidor.
