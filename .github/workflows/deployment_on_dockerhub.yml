@@ -10,7 +10,7 @@
 name: Publish image in Docker Hub
 
 on:
-  pull request:
+  pull_request:
     types: [closed]
     branches:
       - main
