@@ -53,7 +53,7 @@ El presente documento tiene como objetivo sintetizar los aspectos clave del proy
 | [Barrera Garrancho, María del Carmen](https://github.com/Playeira01) | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
 | [García Martínez, Carlos](https://github.com/Cargarmar18)            | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
 | [García Sebastián, Javier](https://github.com/JaviGarcia1)           | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
-| [Meana Iturri, Claudia](https://github.com/clameaitu)               | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
+| [Meana Iturri, Claudia](https://github.com/clameaitu)               | 64    | 51      | 683   | 12   | 5     | Improve Search Queries |
 | [Pérez Gutiérrez, Lucía](https://github.com/LuciaPG)                | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
 | [Vento Conesa, Adriana](https://github.com/adrvencon)               | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
 | **TOTAL**                                       | tHH   | tXX     | tYY  | tZZ  | tII    | Descripción breve |
