@@ -18,10 +18,9 @@ class TestUi:
         close_driver(self.driver)
 
     def test_ui(self):
-        self.driver.get("http://localhost:5000/")
-        self.driver.set_window_size(1536, 816)
-        # Navegar a la página del dataset
-        self.driver.find_element(By.LINK_TEXT, "Tigers").click()
+        self.driver.get("http://localhost:5000/doi/10.1234/dataset7/")
+        self.driver.set_window_size(1920, 1080)
+        time.sleep(1)
         # Descargar el archivo
         self.driver.find_element(By.ID, "btnGroupDropExport3").click()
         download_link = self.driver.find_element(By.LINK_TEXT, "UVL")
@@ -34,6 +33,10 @@ class TestUi:
         # Abrir y cerrar el modal
         self.driver.find_element(By.CSS_SELECTOR, ".list-group-item:nth-child(4) .col-12 > .btn").click()
         time.sleep(2)
-        self.driver.find_element(By.XPATH, "/html/body/div[1]/div/main/div/div/div[2]/div[1]/div[2]/div/div/div[3]/div/div/div[1]/div/a").click()
-        self.driver.find_element(By.CSS_SELECTOR, "#fileViewerModal > div > div > div.modal-header > div > button.btn-close").click()
+        self.driver.find_element(
+            By.XPATH,
+            "/html/body/div[1]/div/main/div/div/div[2]/div[1]/div[2]/div/div/div[3]/div/div/div[1]/div/a"
+        ).click()
+        self.driver.find_element(By.CSS_SELECTOR,
+                                 "#fileViewerModal > div > div > div.modal-header > div > button.btn-close").click()
         time.sleep(1)
