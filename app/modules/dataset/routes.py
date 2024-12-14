@@ -320,6 +320,7 @@ def download_dataset(dataset_id):
 
     return resp
 
+
 @dataset_bp.route("/doi/<path:doi>/", methods=["GET"])
 def subdomain_index(doi):
 
@@ -385,138 +386,64 @@ def get_unsynchronized_dataset(dataset_id):
     return render_template("dataset/view_dataset.html", dataset=dataset)
 
 
-# DOWNLOAD ALL
-@dataset_bp.route("/dataset/download_all", methods=["GET"])
-def download_all_datasets():
-    # Obtener todos los datasets
-    datasets = dataset_service.get_all()
+def create_and_send_zip(datasets, zip_name, include_files=None, include_folders=None):
+    """
+    Crea un archivo ZIP con los datasets especificados y lo envía como respuesta.
 
+    :param datasets: Lista de datasets a incluir en el ZIP.
+    :param zip_name: Nombre del archivo ZIP.
+    :param include_files: Extensiones de archivos a incluir (ej: ['uvl']).
+    :param include_folders: Subcarpetas a incluir para otros tipos de archivos (ej: ['type_cnf']).
+    :return: Respuesta HTTP con el archivo ZIP adjunto.
+    """
     # Crear una carpeta temporal para almacenar el archivo ZIP
     temp_dir = tempfile.mkdtemp()
-    zip_path = os.path.join(temp_dir, "all_datasets.zip")
-
-    # Crear el archivo ZIP con los datasets
-    with ZipFile(zip_path, "w") as zipf:
-        for dataset in datasets:
-            file_path = f"uploads/user_{dataset.user_id}/dataset_{dataset.id}/"
-            if os.path.exists(file_path):
-                for subdir, dirs, files in os.walk(file_path):
-                    for file in files:
-                        full_path = os.path.join(subdir, file)
-                        relative_path = os.path.relpath(full_path, file_path)
-                        zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
-
-    user_cookie = request.cookies.get("download_cookie")
-    if not user_cookie:
-        user_cookie = str(uuid.uuid4())
-
-    resp = make_response(
-        send_from_directory(
-            temp_dir,
-            "all_datasets.zip",
-            as_attachment=True,
-            mimetype="application/zip",
-        )
-    )
-    resp.set_cookie("download_cookie", user_cookie)
-
-    for dataset in datasets:
-        existing_record = DSDownloadRecord.query.filter_by(
-            dataset_id=dataset.id,
-            download_cookie=user_cookie
-        ).first()
-
-        if not existing_record:
-            DSDownloadRecordService().create(
-                user_id=None,
-                dataset_id=dataset.id,
-                download_date=datetime.now(timezone.utc),
-                download_cookie=user_cookie,
-            )
-
-    shutil.rmtree(temp_dir)
-
-    return resp
-
-
-@dataset_bp.route("/dataset/download_relevant_datasets", methods=["GET"])
-def download_all_relevant_datasets():
-    criteria = session.get('explore_criteria')
-    datasets = ExploreService().filter(**criteria)
-
-    if not datasets or not isinstance(datasets, list):
-        return jsonify({"error": "No datasets provided or invalid format"}), 400
-
-    include_uvl = request.args.get("uvl", "false").lower() == "true"
-    include_cnf = request.args.get("cnf", "false").lower() == "true"
-    include_json = request.args.get("json", "false").lower() == "true"
-    include_splx = request.args.get("splx", "false").lower() == "true"
-
-    allowed_folders = []
-    allowed_extensions = []
-
-    if include_uvl:
-        allowed_extensions.append("uvl")
-    if include_cnf:
-        allowed_folders.append("type_cnf")
-        allowed_extensions.append("cnf")
-    if include_json:
-        allowed_folders.append("type_json")
-        allowed_extensions.append("json")
-    if include_splx:
-        allowed_folders.append("type_splx")
-        allowed_extensions.append("splx")
-
-    if not allowed_extensions:
-        return jsonify({"error": "No valid file types specified."}), 400
-
-    temp_dir = tempfile.mkdtemp()
-    zip_path = os.path.join(temp_dir, "all_relevant_datasets.zip")
+    zip_path = os.path.join(temp_dir, zip_name)
 
     with ZipFile(zip_path, "w") as zipf:
         for dataset in datasets:
             dataset_path = f"uploads/user_{dataset.user_id}/dataset_{dataset.id}/"
             if not os.path.exists(dataset_path):
                 print(f"Skipping missing path: {dataset_path}")
-                continue  # Skip if the directory doesn't exist
+                continue
 
-            # Handle UVL files in the root directory
-            if include_uvl:
+            # Incluir archivos específicos en la raíz del dataset
+            if include_files:
                 for file in os.listdir(dataset_path):
-                    if file.endswith(".uvl"):
+                    if any(file.endswith(f".{ext}") for ext in include_files):
                         full_path = os.path.join(dataset_path, file)
                         relative_path = os.path.relpath(full_path, dataset_path)
                         zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
 
-            # Handle other file types in subdirectories
-            allowed_folders = ["type_cnf", "type_json", "type_splx"]
-            allowed_extensions = ["cnf", "json", "splx"]
-            for folder in allowed_folders:
-                specific_path = os.path.join(dataset_path, folder)
-                if not os.path.exists(specific_path):
-                    print(f"Skipping missing folder: {specific_path}")
-                    continue
+            # Incluir archivos dentro de subcarpetas específicas
+            if include_folders:
+                for folder in include_folders:
+                    specific_path = os.path.join(dataset_path, folder)
+                    if not os.path.exists(specific_path):
+                        print(f"Skipping missing folder: {specific_path}")
+                        continue
 
-                for file in os.listdir(specific_path):
-                    if any(file.endswith(f".{ext}") for ext in allowed_extensions):
-                        full_path = os.path.join(specific_path, file)
-                        relative_path = os.path.relpath(full_path, dataset_path)
-                        zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
+                    for file in os.listdir(specific_path):
+                        if any(file.endswith(f".{ext}") for ext in include_files):
+                            full_path = os.path.join(specific_path, file)
+                            relative_path = os.path.relpath(full_path, dataset_path)
+                            zipf.write(full_path, arcname=os.path.join(str(dataset.id), relative_path))
 
-    user_cookie = request.cookies.get("download_cookie")
-    if not user_cookie:
-        user_cookie = str(uuid.uuid4())
+    # Obtener o generar la cookie de usuario
+    user_cookie = request.cookies.get("download_cookie", str(uuid.uuid4()))
 
+    # Crear la respuesta con el archivo ZIP adjunto
     resp = make_response(
         send_from_directory(
             temp_dir,
-            "all_relevant_datasets.zip",
+            zip_name,
             as_attachment=True,
             mimetype="application/zip",
         )
     )
     resp.set_cookie("download_cookie", user_cookie)
 
+    # Registrar la descarga
     for dataset in datasets:
         existing_record = DSDownloadRecord.query.filter_by(
             dataset_id=dataset.id,
@@ -531,9 +458,58 @@ def download_all_relevant_datasets():
                 download_cookie=user_cookie,
             )
 
+    # Limpiar el directorio temporal
     shutil.rmtree(temp_dir)
 
     return resp
+
+
+@dataset_bp.route("/dataset/download_all", methods=["GET"])
+def download_all_datasets():
+    # Obtener todos los datasets
+    datasets = dataset_service.get_all()
+
+    # Descargar todos los datasets como un archivo ZIP
+    return create_and_send_zip(datasets, "all_datasets.zip")
+
+
+@dataset_bp.route("/dataset/download_relevant_datasets", methods=["GET"])
+def download_all_relevant_datasets():
+    # Filtrar datasets según los criterios almacenados en la sesión
+    criteria = session.get('explore_criteria')
+    datasets = ExploreService().filter(**criteria)
+
+    if not datasets or not isinstance(datasets, list):
+        return jsonify({"error": "No datasets provided or invalid format"}), 400
+
+    # Determinar qué tipos de archivos incluir
+    include_uvl = request.args.get("uvl", "false").lower() == "true"
+    include_cnf = request.args.get("cnf", "false").lower() == "true"
+    include_json = request.args.get("json", "false").lower() == "true"
+    include_splx = request.args.get("splx", "false").lower() == "true"
+
+    # Configurar extensiones y carpetas permitidas
+    include_files = []
+    include_folders = []
+
+    if include_uvl:
+        include_files.append("uvl")
+    if include_cnf:
+        include_files.append("cnf")
+        include_folders.append("type_cnf")
+    if include_json:
+        include_files.append("json")
+        include_folders.append("type_json")
+    if include_splx:
+        include_files.append("splx")
+        include_folders.append("type_splx")
+
+    if not include_files:
+        return jsonify({"error": "No valid file types specified."}), 400
+
+    # Descargar los datasets relevantes como un archivo ZIP
+    return create_and_send_zip(datasets, "all_relevant_datasets.zip", include_files, include_folders)
+
 
 
 @dataset_bp.route("/dataset/rate", methods=["POST"])
