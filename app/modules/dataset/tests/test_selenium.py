@@ -1,6 +1,7 @@
 import os
 import time
 
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -53,6 +54,12 @@ def test_upload_dataset():
         # Open the upload dataset
         driver.get(f"{host}/dataset/upload")
         wait_for_page_to_load(driver)
+
+        # Subir el archivo directamente a Dropzone para arreglar el error al cambiar la UI
+        file_path = os.path.abspath("app/modules/dataset/uvl_examples/file1.uvl")
+        dropzone_input = driver.find_element(By.CLASS_NAME, "dz-hidden-input")
+        dropzone_input.send_keys(file_path)
+        time.sleep(3)  # Espera para que el frontend procese la subida
 
         # Find basic info and UVL model and fill values
         title_field = driver.find_element(By.NAME, "title")
@@ -130,7 +137,6 @@ def test_upload_dataset():
         # Close the browser
         close_driver(driver)
 
-from selenium.webdriver.support import expected_conditions as EC
 
 def test_downloadall():
     driver = initialize_driver()
