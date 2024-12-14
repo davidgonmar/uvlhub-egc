@@ -13,8 +13,9 @@ fm_rating_service = FMRatingService()
 def index():
     return render_template('featuremodel/index.html')
 
-@login_required
+
 @featuremodel_bp.route("/featuremodel/rate", methods=["POST"])
+@login_required
 def rate():
     data = request.get_json()
     model_id = data.get("model_id")

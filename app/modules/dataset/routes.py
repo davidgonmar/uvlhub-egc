@@ -536,8 +536,8 @@ def download_all_relevant_datasets():
     return resp
 
 
-@login_required
 @dataset_bp.route("/dataset/rate", methods=["POST"])
+@login_required
 def rate():
     data = request.get_json()
     dataset_id = data.get("dataset_id")
