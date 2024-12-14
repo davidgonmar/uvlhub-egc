@@ -48,7 +48,7 @@ Our goal is to maintain the essence of the original project while taking it to t
 - **Search Queries:** Development of advanced functionalities that allow users to make specific queries to filter and download models according to personalized criteria.  
 - **Improve UI:** Redesign and optimization of the graphical user interface to enhance the user experience. The dataset display should resemble GitHub’s layout.  
 - **Different versions of models:** Support for multiple model versions and their download in various formats.  
-- **Remember my password:** Integration of a feature that allows users to save their passwords, making it easier to access the application without re-entering credentials.  
+- **Remember my password:**  Integration of a password recovery system that allows users to securely reset their password in case they forget it, ensuring easy access to the application while maintaining account security. 
 - **Register developer:** An option for users to register as developers.  
 
 ### 🔗 **Original Project** 
@@ -71,6 +71,21 @@ You can access the deployed version of the application at the following link:
 - **[UVLHub Live](https://uvlhub-egc.onrender.com/)**
 
 This version is hosted and continuously updated to reflect the latest changes made to the project. Feel free to explore the functionality and try out the features!
+
+## 🐳 **Docker Repository**
+
+We provide a **Docker image** for the latest version of the project, making it easy to deploy and run the application. This image contains all necessary dependencies and configurations for running the application seamlessly.
+
+You can access our Docker repository and pull the latest image using the following link:
+
+- **[UVLHub Docker Repository](https://hub.docker.com/repository/docker/cargarmar18/uvlhub-egc/settings)**  
+
+### **Pulling the latest image**
+
+To pull the latest version of the Docker image, run the following command:  
+```bash
+docker pull cargarmar18/uvlhub-egc:latest
+```
 
 # UVLHub (Clon) - Proyecto EGC
 
@@ -102,7 +117,7 @@ Por último **Jamon-Hub-2** desarrollará:
 - **Search Queries**: Desarrollo de funcionalidades avanzadas que permiten a los usuarios realizar consultas específicas para filtrar y descargar modelos según criterios personalizados.
 - **Improve UI**: Rediseño y optimización de la interfaz gráfica de usuario para mejorar la experiencia del usuario. La visualización de los datasets debe ser similar a la de GitHub.
 - **Different versions of models**: Soporte para diferentes versiones de modelos y su descarga en varios formatos.
-- **Remember my password**: Integración de una funcionalidad que permite a los usuarios optar por guardar su contraseña, facilitando el acceso a la aplicación sin la necesidad de ingresarla repetidamente.
+- **Remember my password**: Integración de un sistema de recuperación de contraseña que permite a los usuarios restablecer su contraseña de manera segura en caso de olvidarla, garantizando un acceso sencillo a la aplicación sin comprometer la seguridad de la cuenta.
 - **Register developer**: Opción para que los usuarios se registren como desarrolladores.
 
 ### 🔗 **Proyecto Original**  
@@ -125,3 +140,18 @@ Puedes acceder a la versión desplegada de la aplicación en el siguiente enlace
 - **[UVLHub en Vivo](https://uvlhub-egc.onrender.com/)**
 
 Esta versión está hospedada y actualizada continuamente para reflejar los últimos cambios realizados en el proyecto. ¡No dudes en explorar la funcionalidad y probar las características!
+
+## 🐳 **Repositorio de Docker**
+
+Proporcionamos una **imagen Docker** con la última versión del proyecto, lo que facilita desplegar y ejecutar la aplicación. Esta imagen contiene todas las dependencias y configuraciones necesarias para ejecutar la aplicación sin problemas.
+
+Puedes acceder a nuestro repositorio de Docker y descargar la última imagen utilizando el siguiente enlace:
+
+- **[Repositorio de Docker de UVLHub](https://hub.docker.com/repository/docker/cargarmar18/uvlhub-egc/settings)**  
+
+### **Descargar la última imagen**
+
+Para descargar la última versión de la imagen Docker, ejecuta el siguiente comando:  
+```bash
+docker pull cargarmar18/uvlhub-egc:latest
+```

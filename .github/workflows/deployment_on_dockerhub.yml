@@ -10,8 +10,11 @@
 name: Publish image in Docker Hub
 
 on:
-  release:
-    types: [published]
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - build
 
 jobs:
   push_to_registry:
@@ -28,16 +31,16 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
-        run: docker build --build-arg VERSION_TAG=${{ github.event.release.tag_name }} -t drorganvidez/uvlhub:${{ github.event.release.tag_name }} -f docker/images/Dockerfile.prod .
+        run: docker build -t cargarmar18/uvlhub-egc:v1.0 -f docker/images/Dockerfile.prod .
         env:
           DOCKER_CLI_EXPERIMENTAL: enabled
 
       - name: Push Docker image to Docker Hub
-        run: docker push drorganvidez/uvlhub:${{ github.event.release.tag_name }}
+        run: docker push cargarmar18/uvlhub-egc:v1.0
 
       - name: Tag and push latest
         run: |
-          docker tag drorganvidez/uvlhub:${{ github.event.release.tag_name }} drorganvidez/uvlhub:latest
-          docker push drorganvidez/uvlhub:latest
+          docker tag cargarmar18/uvlhub-egc:v1.0 cargarmar18/uvlhub-egc:latest
+          docker push cargarmar18/uvlhub-egc:latest
         env:
           DOCKER_CLI_EXPERIMENTAL: enabled
