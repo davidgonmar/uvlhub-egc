@@ -21,6 +21,7 @@ WORKDIR /app
 COPY app/ ./app
 COPY core/ ./core
 COPY migrations/ ./migrations
+COPY rosemary/ ./rosemary
 
 # Copy requirements.txt and setup.py into the working directory /app
 COPY requirements.txt .
