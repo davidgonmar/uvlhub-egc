@@ -1,4 +1,4 @@
-name: Run Render Job
+name: Run Seeders on Render
 
 on:
   workflow_dispatch:
@@ -14,5 +14,5 @@ jobs:
               --header "Authorization: Bearer ${{ secrets.RENDER_API_TOKEN }}" \
               --header "Content-Type: application/json" \
               --data-raw "{
-                  \"startCommand\": \"rosemary seed --reset\"
+                  \"startCommand\": \"rosemary db:seed --reset\"
               }"
