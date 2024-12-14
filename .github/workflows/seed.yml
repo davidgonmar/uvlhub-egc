@@ -1,4 +1,4 @@
-name: Run Render Job
+name: Run Seeders on Render
 
 on:
   workflow_dispatch:
