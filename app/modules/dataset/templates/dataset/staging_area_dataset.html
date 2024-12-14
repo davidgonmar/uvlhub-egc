@@ -102,36 +102,6 @@
                     {% endfor %}
                     {% endfor %}
                 </ul>
-
-
-
-                <!-- Dropzone Form -->
-
-                <div id="dropzone-container" style="
-                display: flex; 
-                flex-direction: column; 
-                align-items: center; 
-                justify-content: center; /* Centra el contenido verticalmente */
-                padding: 20px; 
-                border: 2px dashed #ccc; 
-                border-radius: 10px; 
-                text-align: center; 
-                height: 300px;">
-                    <!-- Texto del Dropzone -->
-                    <div class="dz-message" style="margin-bottom: 20px;">
-                        <h1 style="font-size: 16px; margin: 0; color: #333;">Drag & drop files here</h1>
-                        <p style="font-size: 13px; margin: 5px 0; color: #777;">or click to select files</p>
-                    </div>
-
-                    <!-- Formulario del Dropzone -->
-                    <form action="/dataset/file/upload" class="dropzone" id="myDropzone"
-                        style="width: 75%; max-width: 250px;"></form>
-
-                    <!-- Mensajes de alerta -->
-                    <div id="alerts" style="display: none; color: red; margin-top: 10px;"></div>
-                </div>
-
-
             </div>
         </div>
     </div>
@@ -164,50 +134,6 @@
     </div>
 
     <script>
-        // Configuración de Dropzone
-        let dropzone = new Dropzone("#myDropzone", {
-            url: "/dataset/file/upload",
-            paramName: 'file',
-            maxFilesize: 10,
-            acceptedFiles: '.uvl',
-            init: function () {
-                let fileList = document.getElementById('file-list');
-                let dropzoneText = document.getElementById('dropzone-text');
-                let alerts = document.getElementById('alerts');
-
-                // Evento cuando se agrega un archivo
-                this.on('addedfile', function (file) {
-                    let ext = file.name.split('.').pop();
-                    if (ext !== 'uvl') {
-                        this.removeFile(file);
-                        let alert = document.createElement('p');
-                        alert.textContent = 'Invalid file extension: ' + file.name;
-                        alerts.appendChild(alert);
-                        alerts.style.display = 'block';
-                    }
-                });
-
-                // Evento cuando un archivo se carga con éxito
-                this.on('success', function (file, response) {
-                    let listItem = document.createElement('li');
-                    let h4Element = document.createElement('h4');
-                    h4Element.textContent = response.filename;
-                    listItem.appendChild(h4Element);
-
-                    fileList.appendChild(listItem);
-                });
-
-                // Evento de error
-                this.on('error', function (file, response) {
-                    console.error("Error uploading file: ", response);
-                    let alert = document.createElement('p');
-                    alert.textContent = 'UVL not valid: ' + file.name;
-                    alerts.appendChild(alert);
-                    alerts.style.display = 'block';
-                });
-            }
-        });
-
         function updateDataset(isPublish) {
             const datasetId = "{{ dataset.id }}"; // Asumimos que la ID del dataset se pasa desde el servidor.
             const formData = {
