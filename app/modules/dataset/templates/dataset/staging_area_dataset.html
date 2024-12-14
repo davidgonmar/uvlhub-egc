@@ -166,6 +166,7 @@
     <script>
         // Configuración de Dropzone
         let dropzone = new Dropzone("#myDropzone", {
+            url: "/dataset/file/upload",
             paramName: 'file',
             maxFilesize: 10,
             acceptedFiles: '.uvl',
@@ -193,7 +194,6 @@
                     h4Element.textContent = response.filename;
                     listItem.appendChild(h4Element);
 
-                    listItem.appendChild(removeButton);
                     fileList.appendChild(listItem);
                 });
 
