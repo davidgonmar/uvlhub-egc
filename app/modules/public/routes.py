@@ -28,9 +28,12 @@ def index():
     # Statistics: total views
     total_dataset_views = dataset_service.total_dataset_views()
     total_feature_model_views = feature_model_service.total_feature_model_views()
-
+    
     # Obtener la lista de datasets y calcular el average_rating para cada uno
     datasets = dataset_service.latest_synchronized()
+    
+    datasets = [dataset for dataset in datasets if not dataset.ds_meta_data.is_draft_mode]
+
     for dataset in datasets:
         dataset.average_rating = round(ds_rating_service.get_average_by_dataset(dataset.id) or 0.0, 2)
 

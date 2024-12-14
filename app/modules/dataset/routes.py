@@ -455,6 +455,8 @@ def download_all_datasets():
     # Obtener todos los datasets
     datasets = dataset_service.get_all()
 
+    datasets = [dataset for dataset in datasets if not dataset.ds_meta_data.is_draft_mode]
+
     # Crear una carpeta temporal para almacenar el archivo ZIP
     temp_dir = tempfile.mkdtemp()
     zip_path = os.path.join(temp_dir, "all_datasets.zip")
@@ -509,6 +511,7 @@ def download_all_datasets():
 def download_all_relevant_datasets():
     criteria = session.get("explore_criteria")
     datasets = ExploreService().filter(**criteria)
+    datasets = [dataset for dataset in datasets if not dataset.ds_meta_data.is_draft_mode]
 
     if not datasets or not isinstance(datasets, list):
         return jsonify({"error": "No datasets provided or invalid format"}), 400
