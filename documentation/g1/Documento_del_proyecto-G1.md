@@ -27,7 +27,9 @@
 
 
 
-# Documento del proyecto
+# DOCUMENTO DEL PROYECTO
+
+## jamon-hub-1
 
 El presente documento tiene como objetivo sintetizar los aspectos clave del proyecto elegido para su desarrollo, en relación con los temas abordados durante las clases. En él, se identifican claramente los miembros del equipo, los grupos a los que pertenecen, el curso académico, y el nombre del proyecto, siguiendo la política de nomenclatura establecida. 
 
@@ -64,6 +66,8 @@ El presente documento tiene como objetivo sintetizar los aspectos clave del proy
     - [5. Despliegue](#5-despliegue)
     - [6. Mantenimiento](#6-mantenimiento)
 8. [Conclusiones y trabajo futuro](#8-conclusiones-y-trabajo-futuro)
+    - [Conclusiones](#conclusiones)
+    - [Trabajo futuro](#trabajo-futuro)
 
 
 
@@ -75,12 +79,12 @@ El presente documento tiene como objetivo sintetizar los aspectos clave del proy
 
 | Miembro del equipo                                                        | Horas | Commits | LoC         | Test | Issues | Work Item         |
 |---------------------------------------------------------------------------|-------|---------|-------------|------|--------|-------------------|
-| [Castillo Cebolla, Rafael](https://github.com/rafcasceb)                  | 54    | 29      | +2008  -327 | 10   | 5      | Sign-up validation: to complete the sign-up process, a code is sent via email for verification. |
-| [González Martínez, David](https://github.com/davidgonmar)                | HH    | XX      | YY          | ZZ   | II     | Descripción breve |
-| [Flores de Francisco, Daniel](https://github.com/DanielFloresDeFrancisco) | HH    | XX      | YY          | ZZ   | II     | Descripción breve |
-| [Heras Pérez, Raúl](https://github.com/raulherasperez)                    | HH    | XX      | YY          | ZZ   | II     | Descripción breve |
-| [Mellado Díaz, Luis](https://github.com/LuisMelladoDiaz)                  | HH    | XX      | YY          | ZZ   | II     | Descripción breve |
-| [Trenado González, Sergio](https://github.com/Sergiotg03)                 | HH    | XX      | YY          | ZZ   | II     | Descripción breve |
+| [Castillo Cebolla, Rafael](https://github.com/rafcasceb)                  | 65    | 36      | +2122  -470 | 10   | 6      | **Sign-up validation:** to complete the sign-up process, a code is sent to the user via email for verification. |
+| [González Martínez, David](https://github.com/davidgonmar)                | HH    | XX      | YY          | ZZ   | II     | **Rate Datasets/Models:** users can provide a rating to datasets and models.|
+| [Flores de Francisco, Daniel](https://github.com/DanielFloresDeFrancisco) | 62    | 36      | +1602  -618 | 11   | 8      | **AI integration:** an OpenAI chatbot for users to discuss with it about UVL. |
+| [Heras Pérez, Raúl](https://github.com/raulherasperez)                    | HH    | XX      | YY          | ZZ   | II     | **Advanced search:** to filter datasets and models, users can select specific advanced filters. |
+| [Mellado Díaz, Luis](https://github.com/LuisMelladoDiaz)                  | 37    | 35      | +1394  -327 | 14   | 9      | **Download all datasets:** users can download all datasets in all formats in a zip. |
+| [Trenado González, Sergio](https://github.com/Sergiotg03)                 | HH    | XX      | YY          | ZZ   | II     | **Multiple login:** users can sign up with their ORCID, GitHub and Google accounts. |
 | **TOTAL**                                                                 | tHH   | tXX     | tYY         | tZZ  | tII    | --- |
 
 A continuación se detallan las fuentes para obtener las métricas clave del proyecto:
@@ -319,7 +323,17 @@ En esta sección se enumerarán los cambios desarrollados para el proyecto desde
 
 - **fakenodo:** para este WI, ambos grupos han trabajado en desarrollar un stub que simula la funcionalidad de la API de Zenodo. Se ha creado un módulo enteramente nuevo llamado `fakenodo`, en el que se ha implementado Fakenodo, de forma prácticamente análoga al módulo `zenodo`. También se han reemplazado las llamadas y menciones del módulo `datasets` al módulo `zenodo` por unas al módulo `fakenodo`.
 
-- **workflows:** el *workflow* del *lint* ha sido eliminado, los de *commits* y *tests* han sido mejorado para comprobar nuevos aspectos, y se ha creado uno nuevo para el análisis de la calidad del código mediante Codacy.
+- **workflows:**
+  - El *workflow* de *lint* ha sido eliminado.
+  - El *workflow* de *commits* ha sido mejorado para comprobar nuevos aspectos.
+  - El *workflow* de test ha sido mejorado para incluir, por ejemplo, el *coverage* de los tests en las *pull requests*.
+  - El *workflow* de despliegue en Docker Hub ha sido mejorado para poder desplegar correctamente.
+  - Se ha creado un *workflow* para analizar el código mediante Codacy.
+  - Se ha creado un *workflow* para el despliegue de Render, lo que provee con la capacidad de customización del proceso.
+  - Se ha creado un *workflow* que realiza un informe mensual del trabajo realizado por el equipo. Crea una *issue* para que un miembro lo revise.
+  - Se ha creado un *workflow* que realiza, al ejecutarse, un informe histórico del trabajo realizado por el equipo a lo largo del proyecto. Crea una *issue* para que un miembro lo revise.
+  - Se ha creado un *workflow* que realiza un análisis de las dependencias, produciendo un grafo de dependencias y un informe del uso de las dependencias. El resultado se puede consultar accediendo a la ejecución correspondiente del *workflow* en la pestaña de GitHub Actions.
+
 - **.env:** se han necesitado nuevas variables de entorno por lo que los desarrolladores han actualizado su archivo `.env`.
 - **vagrant:** se han aplicado algunas mejoras para prevenir cambios innecesarios en contraseñas y simplificar la configuración, y también cambiar la variable de entorno para hacerla compatible con Flask Run.
 - **documentation:** se ha creado una nueva carpeta que contiene el acta fundacional, el diario del equipo y el documento del proyecto de ambos subgrupos del proyecto.
@@ -811,4 +825,19 @@ Este cambio es muy simple, por lo que el mantenimiento consiste en asegurarse de
 
 ## 8. Conclusiones y trabajo futuro
 
-Se enunciarán algunas conclusiones y se presentará un apartado sobre las mejoras que se proponen para el futuro (curso siguiente) y que no han sido desarrolladas en el sistema que se entrega.
+### Conclusiones
+
+El desarrollo del proyecto ha sido una experiencia enriquecedora y gratificante tanto a nivel técnico como colaborativo. Durante este proceso, hemos logrado implementar funcionalidades que mejoran significativamente la experiencia del usuario y la funcionalidad del la aplicación original, UVLHub. Entre los logros funcionales principales destacan la integración del chatbot de inteligencia artificial, la mejora en las opciones de búsqueda avanzada, y la implementación de un sistema de validación robusto para registros y accesos múltiples.
+
+Estos avances han sido posibles gracias al cuidado trabajo de gestión y la cooperación entre los subgrupos Jamon-Hub-1 y Jamon-Hub-2. A pesar de las complejidades inherentes a la integración de diferentes equipos, se logró establecer una comunicación efectiva y una visión común del producto final. Esto nos permitió abordar de manera conjunta problemas críticos como la implementación de Fakenodo y la gestión de conflictos en los módulos comúnes.
+
+Sin embargo, el proyecto también ha presentado desafíos, en especial en la ya mencionada gestión de conflictos entre tareas y la integración de software externo a la arquitectura existente. Sobreponernos a estas dificultades nos han permitido aprender y mejorar nuestras habilidades en la resolución de problemas, así como en la planificación y priorización de tareas, sobre todo desde el punto de vista de la evolución y la gestión de la configuración.
+
+
+### Trabajo futuro
+
+A continuación se exponen cuatro posibles mejoras que se proponen para el futuro y que no han sido desarrolladas en este proyecto:
+ 1. **Sistema de recomendaciones por IA:** integrar un modelo de inteligencia artificial que pueda recomendar a los usuarios determinados *datasets* y modelos en función de sus prioridades personalizadas.
+ 2. **Soporte para más formatos:** añadir nuevos formatos compatibles en los que poder transformar y exportar los modelos UVL.
+ 3. ***Feedback* de usuarios:** agregar un sistema que permita que los usuarios den *feedback* sobre los *datasets* y los modelos y sobre la aplicación de UVLHub en sí. Esto último permitirá identificar áreas de mejora desde la perspectiva de los usuarios finales.
+ 4. **Internacionalización:** incorporar soporte de múltiples idiomas para que la aplicación sea accesible a usuarios de diferentes partes del mundo sin que el idioma sea una barrera.
