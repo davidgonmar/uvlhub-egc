@@ -20,6 +20,10 @@ def test_client(test_client):
 
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_happy_path_title(mock_filter):
+
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
+
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -31,6 +35,7 @@ def test_filter_functionality_happy_path_title(mock_filter):
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -42,6 +47,8 @@ def test_filter_functionality_happy_path_title(mock_filter):
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
+    
     # Configure the mock
     mock_filter.return_value = [mock_dataset_1, mock_dataset_2]
 
@@ -56,6 +63,8 @@ def test_filter_functionality_happy_path_title(mock_filter):
     mock_filter.assert_called_once_with(query="Dataset")
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sad_path_title(mock_filter):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -67,6 +76,7 @@ def test_filter_functionality_sad_path_title(mock_filter):
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -78,6 +88,7 @@ def test_filter_functionality_sad_path_title(mock_filter):
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = []
 
@@ -93,6 +104,9 @@ def test_filter_functionality_sad_path_title(mock_filter):
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_happy_path_tag(mock_filter):
     # Create dataset mocks
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
+    # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
         "id": 1,
@@ -103,6 +117,7 @@ def test_filter_functionality_happy_path_tag(mock_filter):
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -114,6 +129,7 @@ def test_filter_functionality_happy_path_tag(mock_filter):
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_1]
 
@@ -128,6 +144,9 @@ def test_filter_functionality_happy_path_tag(mock_filter):
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sad_path_tag(mock_filter):
     # Create dataset mocks
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
+    # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
         "id": 1,
@@ -138,6 +157,7 @@ def test_filter_functionality_sad_path_tag(mock_filter):
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -149,6 +169,7 @@ def test_filter_functionality_sad_path_tag(mock_filter):
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = []
 
@@ -164,6 +185,9 @@ def test_filter_functionality_sad_path_tag(mock_filter):
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_happy_path_description(mock_filter):
     # Create dataset mocks
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
+    # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
         "id": 1,
@@ -174,6 +198,7 @@ def test_filter_functionality_happy_path_description(mock_filter):
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -185,6 +210,7 @@ def test_filter_functionality_happy_path_description(mock_filter):
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_2]
 
@@ -199,6 +225,8 @@ def test_filter_functionality_happy_path_description(mock_filter):
 
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sad_path_description(mock_filter):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -210,6 +238,7 @@ def test_filter_functionality_sad_path_description(mock_filter):
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -221,6 +250,7 @@ def test_filter_functionality_sad_path_description(mock_filter):
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = []
 
@@ -235,6 +265,8 @@ def test_filter_functionality_sad_path_description(mock_filter):
     
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_happy_path_author(mock_filter):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -246,6 +278,7 @@ def test_filter_functionality_happy_path_author(mock_filter):
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -257,6 +290,7 @@ def test_filter_functionality_happy_path_author(mock_filter):
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_2]
 
@@ -271,6 +305,8 @@ def test_filter_functionality_happy_path_author(mock_filter):
 
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_sad_path_author(mock_filter):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -282,6 +318,7 @@ def test_filter_functionality_sad_path_author(mock_filter):
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -293,6 +330,7 @@ def test_filter_functionality_sad_path_author(mock_filter):
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = []
 
@@ -307,6 +345,8 @@ def test_filter_functionality_sad_path_author(mock_filter):
     
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_no_input(mock_filter):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -318,6 +358,7 @@ def test_filter_functionality_no_input(mock_filter):
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -329,6 +370,7 @@ def test_filter_functionality_no_input(mock_filter):
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_1, mock_dataset_2]
 
@@ -346,6 +388,8 @@ def test_filter_functionality_no_input(mock_filter):
 # Tecnique "Valores límite"
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_number_dataset_is_not_above_reality(mock_filter):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -357,6 +401,7 @@ def test_filter_functionality_number_dataset_is_not_above_reality(mock_filter):
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -368,6 +413,7 @@ def test_filter_functionality_number_dataset_is_not_above_reality(mock_filter):
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_1, mock_dataset_2]
 
@@ -495,7 +541,9 @@ def test_filter_functionality_radom_insertion(mock_filter):
 # Technique "Partición Equivalente"
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_search_queries_functionality_using_the_route_post_happy_path(mock_filter, test_client):
-   
+
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -507,6 +555,7 @@ def test_search_queries_functionality_using_the_route_post_happy_path(mock_filte
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -518,6 +567,7 @@ def test_search_queries_functionality_using_the_route_post_happy_path(mock_filte
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
 
     # Configure the repository mock to return the datasets
     mock_filter.return_value = [mock_dataset_1]
@@ -597,6 +647,8 @@ def test_search_queries_functionality_using_the_route_post_sad_path(mock_filter,
 
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality__the_route_post_happy_path_title(mock_filter, test_client):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -608,6 +660,7 @@ def test_filter_functionality__the_route_post_happy_path_title(mock_filter, test
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -619,6 +672,7 @@ def test_filter_functionality__the_route_post_happy_path_title(mock_filter, test
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_1, mock_dataset_2]
 
@@ -693,6 +747,8 @@ def test_filter_functionality__the_route_post_sad_path_title(mock_filter, test_c
     
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality__the_route_post_happy_path_tag(mock_filter, test_client):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -704,6 +760,7 @@ def test_filter_functionality__the_route_post_happy_path_tag(mock_filter, test_c
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -715,6 +772,7 @@ def test_filter_functionality__the_route_post_happy_path_tag(mock_filter, test_c
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_2]
 
@@ -788,6 +846,8 @@ def test_filter_functionality__the_route_sad_happy_path_tag(mock_filter, test_cl
        
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality__the_route_happy_happy_path_description(mock_filter, test_client):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -799,6 +859,7 @@ def test_filter_functionality__the_route_happy_happy_path_description(mock_filte
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -810,6 +871,7 @@ def test_filter_functionality__the_route_happy_happy_path_description(mock_filte
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_1, mock_dataset_2]
 
@@ -884,6 +946,8 @@ def test_filter_functionality__the_route_happy_sad_path_description(mock_filter,
     
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality__the_route_happy_happy_path_author(mock_filter, test_client):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -895,6 +959,7 @@ def test_filter_functionality__the_route_happy_happy_path_author(mock_filter, te
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -906,6 +971,7 @@ def test_filter_functionality__the_route_happy_happy_path_author(mock_filter, te
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_2]
 
@@ -979,6 +1045,8 @@ def test_filter_functionality__the_route_sad_happy_path_author(mock_filter, test
 
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_no_input_the_route_post(mock_filter, test_client):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -990,6 +1058,7 @@ def test_filter_functionality_no_input_the_route_post(mock_filter, test_client):
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -1001,6 +1070,7 @@ def test_filter_functionality_no_input_the_route_post(mock_filter, test_client):
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_1, mock_dataset_2]
 
@@ -1030,6 +1100,8 @@ def test_filter_functionality_no_input_the_route_post(mock_filter, test_client):
 
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_number_dataset_is_not_above_reality_post_route(mock_filter, test_client):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -1041,6 +1113,7 @@ def test_filter_functionality_number_dataset_is_not_above_reality_post_route(moc
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -1052,6 +1125,7 @@ def test_filter_functionality_number_dataset_is_not_above_reality_post_route(moc
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_1, mock_dataset_2]
 
@@ -1079,6 +1153,8 @@ def test_filter_functionality_number_dataset_is_not_above_reality_post_route(moc
     
 @patch('app.modules.explore.services.ExploreService.filter')  # Mock the specific method
 def test_filter_functionality_number_dataset_is_not_less_than_reality_for_a_input_post_route(mock_filter, test_client):
+    mock_ds_meta_data = MagicMock()
+    mock_ds_meta_data.is_draft_mode = False
     # Create dataset mocks
     mock_dataset_1 = MagicMock()
     mock_dataset_1.to_dict.return_value = {
@@ -1090,6 +1166,7 @@ def test_filter_functionality_number_dataset_is_not_less_than_reality_for_a_inpu
         "tags": ["tag1", "tag2"],
         "created_at": "2023-01-01",
     }
+    mock_dataset_1.ds_meta_data = mock_ds_meta_data
 
     mock_dataset_2 = MagicMock()
     mock_dataset_2.to_dict.return_value = {
@@ -1101,6 +1178,7 @@ def test_filter_functionality_number_dataset_is_not_less_than_reality_for_a_inpu
         "tags": ["tag3"],
         "created_at": "2023-02-01",
     }
+    mock_dataset_2.ds_meta_data = mock_ds_meta_data
     # Configure the mock
     mock_filter.return_value = [mock_dataset_1]
 

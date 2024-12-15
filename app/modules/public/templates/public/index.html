@@ -12,6 +12,7 @@
             <!-- Primero, mostrar datasets subidos por desarrolladores -->
             {% for dataset in datasets %}
                 {% if dataset.user.is_developer %}
+                    {% if not dataset.ds_meta_data.is_draft_mode %}
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between">
@@ -107,12 +108,14 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
 
             <!-- Luego, mostrar datasets no subidos por desarrolladores -->
-            {% for dataset in datasets %}
+            {% for dataset in datasets if not dataset.is_draft_mode %}
                 {% if not dataset.user.is_developer %}
+                    {% if not dataset.ds_meta_data.is_draft_mode %}
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between">
@@ -207,6 +210,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
             

@@ -126,34 +126,19 @@ class ExploreRepository(BaseRepository):
         min_size = convert_to_bytes(min_size, size_unit) if min_size is not None else None
         max_size = convert_to_bytes(max_size, size_unit) if max_size is not None else None
 
-        # Depuración
-        print(f"Min Size: {min_size} bytes, Max Size: {max_size} bytes, Size Unit: {size_unit}")
-
         # Obtener todos los resultados y filtrar por tamaño usando get_file_total_size()
-        # Después de la consulta inicial y la ordenación:
         filtered_datasets = []
         for dataset in datasets.all():
             # Obtener el tamaño total usando el método definido
             total_size = dataset.get_file_total_size()
 
-            # Asegúrate de que los datos se impriman para depuración
-            print(f"Dataset ID: {dataset.id}, Total size: {total_size} bytes")
-
             # Validar el rango del tamaño
             if min_size is not None and total_size <= min_size:
-                print(f"Excluido por ser menor al mínimo ({min_size} bytes).")
                 continue
             if max_size is not None and total_size >= max_size:
-                print(f"Excluido por ser mayor al máximo ({max_size} bytes).")
                 continue
 
             # Si pasa las condiciones, añadirlo a la lista final
             filtered_datasets.append(dataset)
-
-        # Imprimir resumen del filtrado
-        print(f"Total datasets mostrados: {len(filtered_datasets)}")
-
-        for Dataset in datasets:
-            print("Total size: " + str(Dataset.get_file_total_size()))
 
         return filtered_datasets
