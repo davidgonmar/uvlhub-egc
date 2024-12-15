@@ -77,15 +77,17 @@ El presente documento tiene como objetivo sintetizar los aspectos clave del proy
 
 ## 1. Indicadores del proyecto
 
-| Miembro del equipo                                                        | Horas | Commits | LoC         | Test | Issues | Work Item         |
-|---------------------------------------------------------------------------|-------|---------|-------------|------|--------|-------------------|
-| [Castillo Cebolla, Rafael](https://github.com/rafcasceb)                  | 65    | 36      | +2122  -470 | 10   | 6      | **Sign-up validation:** to complete the sign-up process, a code is sent to the user via email for verification. |
-| [González Martínez, David](https://github.com/davidgonmar)                | HH    | XX      | YY          | ZZ   | II     | **Rate Datasets/Models:** users can provide a rating to datasets and models.|
-| [Flores de Francisco, Daniel](https://github.com/DanielFloresDeFrancisco) | 62    | 36      | +1602  -618 | 11   | 8      | **AI integration:** an OpenAI chatbot for users to discuss with it about UVL. |
-| [Heras Pérez, Raúl](https://github.com/raulherasperez)                    | HH    | XX      | YY          | ZZ   | II     | **Advanced search:** to filter datasets and models, users can select specific advanced filters. |
-| [Mellado Díaz, Luis](https://github.com/LuisMelladoDiaz)                  | 37    | 35      | +1394  -327 | 14   | 9      | **Download all datasets:** users can download all datasets in all formats in a zip. |
-| [Trenado González, Sergio](https://github.com/Sergiotg03)                 | HH    | XX      | YY          | ZZ   | II     | **Multiple login:** users can sign up with their ORCID, GitHub and Google accounts. |
-| **TOTAL**                                                                 | tHH   | tXX     | tYY         | tZZ  | tII    | --- |
+| Miembro del equipo                                                        | Horas | Commits | LoC          | Test | Issues | Work Item         |
+|---------------------------------------------------------------------------|-------|---------|--------------|------|--------|-------------------|
+| [Castillo Cebolla, Rafael](https://github.com/rafcasceb)                  | 67    | 35      | +2250  -588  | 10   | 6      | **Sign-up validation:** to complete the sign-up process, a code is sent to the user via email for verification. |
+| [González Martínez, David](https://github.com/davidgonmar)                | 35    | 55      | +2457  -1928 | 19   | 7      | **Rate Datasets/Models:** users can provide a rating to datasets and models.|
+| [Flores de Francisco, Daniel](https://github.com/DanielFloresDeFrancisco) | 62    | 36      | +1602  -618  | 11   | 8      | **AI integration:** an OpenAI chatbot for users to discuss with it about UVL. |
+| [Heras Pérez, Raúl](https://github.com/raulherasperez)                    | 40    | 48      | +1881  -1042 | 26   | 6      | **Advanced search:** to filter datasets and models, users can select specific advanced filters. |
+| [Mellado Díaz, Luis](https://github.com/LuisMelladoDiaz)                  | 37    | 35      | +1394  -327  | 14   | 9      | **Download all datasets:** users can download all datasets in all formats in a zip. |
+| [Trenado González, Sergio](https://github.com/Sergiotg03)                 | 44    | 32      | +1643  -679  | 13   | 5      | **Multiple login:** users can sign up with their ORCID, GitHub and Google accounts. |
+| **TOTAL**                                                                 | 285   | 241     | +11227  -5152| 93   | 41     | --- |
+
+> En los *insigths* de GitHub se podrá apreciar que David González tiene más líneas de código debido a su commit inicial para cargar el repositorio entero.
 
 A continuación se detallan las fuentes para obtener las métricas clave del proyecto:
 
@@ -330,9 +332,12 @@ En esta sección se enumerarán los cambios desarrollados para el proyecto desde
   - El *workflow* de despliegue en Docker Hub ha sido mejorado para poder desplegar correctamente.
   - Se ha creado un *workflow* para analizar el código mediante Codacy.
   - Se ha creado un *workflow* para el despliegue de Render, lo que provee con la capacidad de customización del proceso.
+  - Se ha creado un *workflow* que popula la base de datos en Render al ser ejecutado.
+  - Se ha creado un *workflow* que revisa que la cadena de migraciones sea válida.
   - Se ha creado un *workflow* que realiza un informe mensual del trabajo realizado por el equipo. Crea una *issue* para que un miembro lo revise.
   - Se ha creado un *workflow* que realiza, al ejecutarse, un informe histórico del trabajo realizado por el equipo a lo largo del proyecto. Crea una *issue* para que un miembro lo revise.
   - Se ha creado un *workflow* que realiza un análisis de las dependencias, produciendo un grafo de dependencias y un informe del uso de las dependencias. El resultado se puede consultar accediendo a la ejecución correspondiente del *workflow* en la pestaña de GitHub Actions.
+  - Se ha instalado un *workflow* que usa un bot de OpenAI para analizar las *pull requests* y proporcionar una descripción extremadamente certera y una dificultad de revisión.
 
 - **.env:** se han necesitado nuevas variables de entorno por lo que los desarrolladores han actualizado su archivo `.env`.
 - **vagrant:** se han aplicado algunas mejoras para prevenir cambios innecesarios en contraseñas y simplificar la configuración, y también cambiar la variable de entorno para hacerla compatible con Flask Run.
