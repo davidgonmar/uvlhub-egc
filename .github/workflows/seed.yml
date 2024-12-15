@@ -10,9 +10,9 @@ jobs:
     steps:
       - name: Trigger Render Job
         run: |
-          curl --request POST "${{ secrets.RENDER_SERVICE_URL }}" \
-              --header "Authorization: Bearer ${{ secrets.RENDER_API_TOKEN }}" \
-              --header "Content-Type: application/json" \
-              --data-raw "{
-                  \"startCommand\": \"echo 'y' | rosemary db:seed --reset\"
-              }"
+          curl --request POST "https://api.render.com/v1/services/srv-cskf2f3tq21c73dnlmgg/jobs" \
+               --header "Authorization: Bearer rnd_Dz9r5zVtA5xdO4tFsu47DMykcMmW" \
+               --header "Content-Type: application/json" \
+               --data-raw '{
+                   "startCommand": "rosemary db:seed --reset --yes"
+               }'
