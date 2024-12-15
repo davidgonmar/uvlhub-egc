@@ -27,20 +27,22 @@
         - [Fase de despliegue](#fase-de-despliegue)  
         - [Fase de mantenimiento](#fase-de-mantenimiento)
     - [Ejercicio de Cambio Propuesto](#3-ejercicio-de-cambio-propuesto)  
-7. [Entorno de Desarrollo](#entorno-de-desarrollo)  
+6. [Entorno de Desarrollo](#entorno-de-desarrollo)  
     - [Entornos de desarrollo utilizados](#entorno-de-desarrollo-utilizado)  
     - [Métodos de instalación](#métodos-de-instalación)  
         - [Instalación manual](#1-instalación-manual)  
         - [Instalación con Docker](#2-instalación-con-docker)  
         - [Instalación con Vagrant](#3-instalación-con-vagrant)
-8. [Ejercicio de Propuesta de Cambio](#ejercicio-de-propuesta-de-cambio)  
+7. [Ejercicio de Propuesta de Cambio](#ejercicio-de-propuesta-de-cambio)  
    - [Planificación](#1-planificación)  
    - [Desarrollo](#2-desarrollo)  
    - [Pruebas](#3-pruebas)  
    - [Creación de la Pull Request](#4-creación-de-la-pull-request)  
    - [Despliegue](#5-despliegue)  
    - [Mantenimiento](#6-mantenimiento)
-9. [Conclusiones y Trabajo Futuro](#conclusiones-y-trabajo-futuro)  
+8. [Conclusiones y Trabajo Futuro](#conclusiones-y-trabajo-futuro) 
+    - [Conclusiones](#conclusiones)
+    - [Trabajo futuro](#trabajo-futuro)
 
 ---
 
@@ -265,7 +267,21 @@ En esta sección se enumerarán los cambios desarrollados para el proyecto desde
 
 - **fakenodo:** para este WI, ambos grupos han trabajado en desarrollar un stub que simula la funcionalidad de la API de Zenodo. Se ha creado un módulo enteramente nuevo llamado `fakenodo`, en el que se ha implementado Fakenodo, de forma prácticamente análoga al módulo `zenodo`. También se han reemplazado las llamadas y menciones del módulo `datasets` al módulo `zenodo` por unas al módulo `fakenodo`.
 
-- **workflows:** el *workflow* del *lint* ha sido eliminado, los de *commits* y *tests* han sido mejorado para comprobar nuevos aspectos, y se ha creado uno nuevo para el análisis de la calidad del código mediante Codacy.
+- **workflows:**
+  - El *workflow* de *lint* ha sido eliminado.
+  - El *workflow* de *commits* ha sido mejorado para comprobar nuevos aspectos.
+  - El *workflow* de test ha sido mejorado para incluir, por ejemplo, el *coverage* de los tests en las *pull requests*.
+  - El *workflow* de despliegue en Docker Hub ha sido mejorado para poder desplegar correctamente.
+  - Se ha creado un *workflow* para analizar el código mediante Codacy.
+  - Se ha creado un *workflow* para el despliegue de Render, lo que provee con la capacidad de customización del proceso.
+  - Se ha creado un *workflow* que popula la base de datos en Render al ser ejecutado.
+  - Se ha creado un *workflow* que revisa que la cadena de migraciones sea válida.
+  - Se ha creado un *workflow* que realiza un informe mensual del trabajo realizado por el equipo. Crea una *issue* para que un miembro lo revise.
+  - Se ha creado un *workflow* que realiza, al ejecutarse, un informe histórico del trabajo realizado por el equipo a lo largo del proyecto. Crea una *issue* para que un miembro lo revise.
+  - Se ha creado un *workflow* que realiza un análisis de las dependencias, produciendo un grafo de dependencias y un informe del uso de las dependencias. El resultado se puede consultar accediendo a la ejecución correspondiente del *workflow* en la pestaña de GitHub Actions.
+  - Se ha instalado un *workflow* que usa un bot de OpenAI para analizar las *pull requests* y proporcionar una descripción extremadamente certera y una dificultad de revisión.
+  - Se ha creado un *workflow* que etiqueta automáticamente las PRs nuevas basándose en los datos de la *pull request* y sus *commits*.
+
 - **.env:** se han necesitado nuevas variables de entorno por lo que los desarrolladores han actualizado su archivo `.env`.
 - **vagrant:** se han aplicado algunas mejoras para prevenir cambios innecesarios en contraseñas y simplificar la configuración, y también cambiar la variable de entorno para hacerla compatible con Flask Run.
 - **documentation:** se ha creado una nueva carpeta que contiene el acta fundacional, el diario del equipo y el documento del proyecto de ambos subgrupos del proyecto.
@@ -733,7 +749,20 @@ Los cambios se reflejarán automáticamente en el entorno de producción despué
 
 Este cambio es muy simple, por lo que el mantenimiento consiste en asegurarse de que el mensaje de bienvenida siga funcionando correctamente. Si más adelante se decide modificar el mensaje, el estilo o cualquier aspecto relacionado, se puede editar directamente el archivo `base_html.html`. Todo esto tendría que gestionarse a través de una incidencia. El proceso es similar a este, pero con otras plantillas de issues y ramas.
 
-
 ## Conclusiones y Trabajo Futuro
 
-Se enunciarán algunas conclusiones y se presentará un apartado sobre las mejoras que se proponen para el futuro (curso siguiente) y que no han sido desarrolladas en el sistema que se entrega.
+### Conclusiones
+
+El desarrollo de este proyecto ha resultado ser una experiencia enriquecedora tanto a nivel técnico como colaborativo. A lo largo del proceso, hemos conseguido implementar mejoras significativas respecto a la funcionalidad y experiencia de usuario de la aplicación original, UVLHub. Entre los aspectos más destacados se encuentra la optimización de las opciones de búsqueda avanzada, que representan un salto cualitativo en comparación con la versión original, y la integración coordinada de work items desarrollados por ambos subgrupos. Ejemplos de esta integración incluyen la vinculación entre la búsqueda avanzada y las funcionalidades de descarga en múltiples formatos, así como la incorporación del área de staging y su cohesión con otros elementos del proyecto.
+
+El éxito de estas implementaciones ha sido posible gracias a una gestión eficiente y una comunicación constante entre los equipos Jamon-Hub-1 y Jamon-Hub-2. A pesar de los desafíos asociados con la integración de work items provenientes de diferentes equipos, logramos coordinar los esfuerzos de forma efectiva y mantener una visión unificada del producto final. Esto nos permitió superar obstáculos como la conciliación de dependencias en módulos comunes y la adaptación de software externo dentro de la arquitectura existente.
+
+Sin embargo, el proyecto también ha presentado desafíos, en especial en la ya mencionada gestión de conflictos entre tareas y la integración de software externo a la arquitectura existente. Sobreponernos a estas dificultades nos han permitido aprender y mejorar nuestras habilidades en la resolución de problemas, así como en la planificación y priorización de tareas, sobre todo desde el punto de vista de la evolución y la gestión de la configuración.
+
+### Trabajo futuro
+
+A continuación se exponen cuatro posibles mejoras que se proponen para el futuro y que no han sido desarrolladas en este proyecto:
+1. **Sistemas de recomendación colaborativos:** implementar un modelo que sugiera *datasets* y modelos a los usuarios en función de valoraciones previas y de similitudes con sus preferencias, fomentando una experiencia más personalizada y eficiente.
+2. **Internacionalización:** incorporar soporte para múltiples idiomas, facilitando el acceso a la aplicación a usuarios de distintas regiones y eliminando barreras lingüísticas.
+3. **Expansión del staging area:** mejorar las funcionalidades de edición en el área de *staging*, permitiendo acciones como el borrado dinámico de modelos o *datasets* completos, así como la gestión avanzada de versiones.
+4. **Funcionalidades ampliadas para usuarios desarrolladores:** agregar más opciones específicas y avanzadas para usuarios con roles de desarrollador.
