@@ -57,7 +57,7 @@ El presente documento tiene como objetivo sintetizar los aspectos clave del proy
 | [García Sebastián, Javier](https://github.com/JaviGarcia1)           | 55    | 27      | +1172 -1217   | 9   | 9     | Register Developer: option to register as a developer on the site, added checkmark and tag certifying the role and priority to developer uploaded datasets |
 | [Meana Iturri, Claudia](https://github.com/clameaitu)               | 64    | 51      | +1865 -1182   | 12   | 5     | Improve Search Queries: changed search to static, can now download all datasets in a zip that appear in a search query |
 | [Pérez Gutiérrez, Lucía](https://github.com/LuciaPG)                | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
-| [Vento Conesa, Adriana](https://github.com/adrvencon)               | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
+| [Vento Conesa, Adriana](https://github.com/adrvencon)               | 67    | 72      | +2672 -986  | 18 | 6 | Remember My Password: creation of a functionality that allows users to modify their passwords in case of forgetfulness or other reasons. |
 | **TOTAL**                                       | tHH   | tXX     | tYY  | tZZ  | tII    | Descripción breve |
 
 A continuación se detallan las fuentes para obtener las métricas clave del proyecto:
