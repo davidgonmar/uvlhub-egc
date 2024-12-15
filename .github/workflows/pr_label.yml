@@ -1,0 +1,96 @@
+name: Auto Label PR
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Auto Label PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            (async () => {
+              const pr = context.payload.pull_request;
+
+              if (!pr) {
+                console.log("No pull request data found.");
+                return;
+              }
+
+              const prTitle = pr.title ? pr.title.toLowerCase() : "";
+              const branchName = pr.head && pr.head.ref ? pr.head.ref.toLowerCase() : "";
+
+              console.log("PR Title:", prTitle || "No title provided");
+              console.log("Branch Name:", branchName || "No branch name provided");
+
+              // Obtener archivos modificados
+              try {
+                const changedFiles = await github.rest.pulls.listFiles({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr.number,
+                });
+
+                console.log("Changed Files:", changedFiles.data);
+
+                let labelsToAdd = [];
+
+                // Etiquetar por tipo de actividad
+                if (branchName.includes("task")) {
+                  labelsToAdd.push("task");
+                } else if (branchName.includes("incidence")) {
+                  labelsToAdd.push("incidence");
+                }
+
+                // Etiquetar por tipo de cambio
+                if (prTitle.includes("feat")) {
+                  labelsToAdd.push("feat");
+                } else if (prTitle.includes("fix")) {
+                  labelsToAdd.push("fix");
+                } else if (prTitle.includes("refactor")) {
+                  labelsToAdd.push("refactor");
+                } else if (prTitle.includes("style")) {
+                  labelsToAdd.push("style");
+                } else if (prTitle.includes("test")) {
+                  labelsToAdd.push("test");
+                } else if (prTitle.includes("database")) {
+                  labelsToAdd.push("database");
+                } else if (prTitle.includes("build")) {
+                  labelsToAdd.push("build");
+                } else if (prTitle.includes("hotfix")) {
+                  labelsToAdd.push("hotfix");
+                }
+
+                // Etiquetar por área del sistema
+                const fileExtensions = changedFiles.data.map(file => file.filename.split('.').pop());
+                if (fileExtensions.some(ext => ["html", "js", "css"].includes(ext))) {
+                  labelsToAdd.push("frontend");
+                } else if (fileExtensions.some(ext => ["py", "java", "rb"].includes(ext))) {
+                  labelsToAdd.push("backend");
+                }
+
+                // Eliminar etiquetas duplicadas
+                labelsToAdd = [...new Set(labelsToAdd)];
+
+                console.log("Labels to Add:", labelsToAdd);
+
+                // Aplicar las etiquetas si hay alguna para añadir
+                if (labelsToAdd.length > 0) {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: pr.number,
+                    labels: labelsToAdd,
+                  });
+                }
+              } catch (error) {
+                console.error("Error fetching changed files:", error);
+              }
+            })();

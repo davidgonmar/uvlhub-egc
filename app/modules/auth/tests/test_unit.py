@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
+import os
 import pytest
-from flask import url_for
+from flask import url_for, Flask
 
 from app.modules.auth.services import AuthenticationService
 from app.modules.auth.repositories import UserRepository, SignUpVerificationTokenRepository
@@ -645,3 +646,250 @@ def test_reset_password_form_render_initial(test_client):
     assert b'<form' in response.data
     assert b'name="password"' in response.data
     assert b'name="confirm_password"' in response.data
+
+# MULTIPLE LOGIN TESTS
+
+# ORCID
+
+def test_configure_oauth():
+    app = Flask(__name__)
+    oauth_service = AuthenticationService()
+    oauth, orcid = oauth_service.configure_oauth(app)
+
+    assert oauth is not None
+    assert orcid is not None
+    assert orcid.client_id == oauth_service.client_id
+    assert orcid.client_secret == oauth_service.client_secret
+    assert orcid.authorize_url == 'https://orcid.org/oauth/authorize'
+
+def test_get_orcid_full_profile_success():
+    orcid_id = '0000-0001-2345-6789'
+    token = {'access_token': 'mock_access_token'}
+
+    orcid_service = AuthenticationService()
+
+    # Mock
+    mock_response = MagicMock()
+    mock_response.ok = True
+    mock_response.json.return_value = {
+        'activities-summary': {
+            'employments': {
+                'affiliation-group': [{
+                    'summaries': [{
+                        'employment-summary': {
+                            'organization': {'name': 'Test University'}
+                        }
+                    }]
+                }]
+            }
+        },
+        'person': {'emails': {'email': [{'email': 'test@example.com'}]}}
+    }
+
+    with patch.object(orcid_service.orcid_client, 'get', return_value=mock_response):
+        full_profile = orcid_service.get_orcid_full_profile(orcid_id, token)
+
+    assert full_profile['activities-summary']['employments']['affiliation-group'][0]['summaries'][0]['employment-summary']['organization']['name'] == 'Test University'
+    assert full_profile['person']['emails']['email'][0]['email'] == 'test@example.com'
+
+def test_orcid_login_route(test_client):
+    response = test_client.get('/orcid/login')
+
+    assert response.status_code == 302
+    assert 'Location' in response.headers
+    assert 'https://orcid.org/oauth/authorize' in response.headers['Location']
+
+
+def test_orcid_authorize_route_invalid_access(test_client):
+    response = test_client.get('/orcid/authorize')
+
+    assert response.status_code == 400
+
+# GOOGLE
+
+def test_user_creation_with_google_success(clean_database):
+    google_user_info = {
+        "email": "test@example.com",
+        "sub": "1234",
+        "given_name": "Test",
+        "family_name": "Foo"
+    }
+
+    user = AuthenticationService().get_or_create_user(google_user_info)
+
+    # 1 usuario creado
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    # info de user = info de google
+    assert user.email == google_user_info["email"]
+    assert user.google_id == google_user_info["sub"]
+
+    user_profile = user.profile
+
+    # perfil bien creado
+    assert user_profile is not None, "El perfil del usuario no fue creado"
+    assert user_profile.name == google_user_info["given_name"]
+    assert user_profile.surname == google_user_info["family_name"]
+
+    # asociación entre user y profile
+    assert user_profile.user_id == user.id
+
+def test_user_exists_with_google_data(clean_database):
+    google_user_info = {
+        "email": "existing_user@example.com",
+        "sub": "1234",
+        "given_name": "Jane",
+        "family_name": "Smith"
+    }
+
+    # crea el user
+    AuthenticationService().get_or_create_user(google_user_info)
+
+    # intenta crear el mismo user
+    user = AuthenticationService().get_or_create_user(google_user_info)
+
+    # al existir, hace un get
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    # la info es la misma
+    assert user.email == google_user_info["email"]
+    assert user.google_id == google_user_info["sub"]
+
+def test_user_creation_with_missing_google_data_error(clean_database):
+    google_user_info = {
+        "given_name": "Alice",
+        "family_name": "Wonderland"
+    }
+
+    try:
+        AuthenticationService().get_or_create_user(google_user_info)
+        assert False, "Se esperaba un error debido a los datos incompletos"
+    except ValueError as e:
+        assert str(e) == "Email and google_id are required from Google user info."
+
+def test_google_login_redirect(test_client):
+    if os.environ.get("GITHUB_ACTIONS"):  # Solo para GitHub Actions
+        pytest.skip("Skipping test due to external dependencies")
+
+    response = test_client.get(url_for('auth.google_login'))
+    assert response.status_code == 302
+    assert "https://accounts.google.com/o/oauth2/auth" in response.location
+
+#GITHUB
+
+def test_user_creation_from_github_success(clean_database):
+    github_user_info = {
+        "github_id": "github_user_123",
+        "github_email": "github_user_123@example.com",
+        "name": "GitHub",
+        "surname": "User"
+    }
+
+    user = AuthenticationService().get_or_create_user_from_github(
+        github_user_info["github_id"],
+        github_user_info["github_email"],
+        github_user_info["name"],
+        github_user_info["surname"]
+    )
+
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    assert user.email == github_user_info["github_email"]
+    assert user.github_id == github_user_info["github_id"]
+
+    user_profile = user.profile
+    assert user_profile is not None
+    assert user_profile.name == github_user_info["name"]
+    assert user_profile.surname == github_user_info["surname"]
+
+def test_user_creation_from_github_with_default_values(clean_database):
+    github_user_info = {
+        "github_id": "github_user_124",
+        "github_email": "github_user_124@example.com"
+    }
+
+    user = AuthenticationService().get_or_create_user_from_github(
+        github_user_info["github_id"],
+        github_user_info["github_email"]
+    )
+
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    assert user.email == github_user_info["github_email"]
+    assert user.github_id == github_user_info["github_id"]
+
+    user_profile = user.profile
+    assert user_profile is not None
+    assert user_profile.name == "Default Name"
+    assert user_profile.surname == "Default Surname"
+
+def test_user_creation_from_github_with_missing_email(clean_database):
+    github_user_info = {
+        "github_id": "github_user_125",
+        "name": "GitHub",
+        "surname": "User"
+    }
+
+    user = AuthenticationService().get_or_create_user_from_github(
+        github_user_info["github_id"],
+        github_email=None,
+        name=github_user_info["name"],
+        surname=github_user_info["surname"]
+    )
+
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    assert user.email == "user_github_user_125@example.com"  # default value based on github_id
+
+def test_user_creation_from_github_with_duplicate_github_id(clean_database):
+    github_user_info1 = {
+        "github_id": "github_user_126",
+        "github_email": "github_user_126@example.com",
+        "name": "First",
+        "surname": "User"
+    }
+
+    github_user_info2 = {
+        "github_id": "github_user_126",
+        "github_email": "another_user@example.com",
+        "name": "Second",
+        "surname": "User"
+    }
+
+    # 1er user
+    AuthenticationService().get_or_create_user_from_github(
+        github_user_info1["github_id"],
+        github_user_info1["github_email"],
+        github_user_info1["name"],
+        github_user_info1["surname"]
+    )
+
+    # 2o user
+    user = AuthenticationService().get_or_create_user_from_github(
+        github_user_info2["github_id"],
+        github_user_info2["github_email"],
+        github_user_info2["name"],
+        github_user_info2["surname"]
+    )
+
+    # solo 1 creado
+    assert UserRepository().count() == 1
+    assert UserProfileRepository().count() == 1
+
+    # 1er usuario devuelto
+    assert user.github_id == github_user_info1["github_id"]
+    assert user.email == github_user_info1["github_email"]
+
+def test_github_login_redirect(test_client):
+    if os.environ.get("GITHUB_ACTIONS"):  # Solo para GitHub Actions
+        pytest.skip("Skipping test due to external dependencies")
+
+    response = test_client.get(url_for('auth.github_login'))
+
+    assert response.status_code == 302
+    assert "/github" in response.location

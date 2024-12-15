@@ -190,7 +190,11 @@ function send_query(queryParam = '', publicationTypeParam = 'any', sortingParam 
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between">
-                                <h3><a href="${dataset.url}">${dataset.title}</a></h3>
+                                <h3><a href="${dataset.url}">${dataset.title}</a>
+                                ${dataset.user.is_developer ? `
+                                <i class="fa fa-check-circle text-primary" title="Verified Developer" aria-hidden="true" style="font-size: 0.8em; margin-left: 5px;"></i>
+                                ` : ''}
+                                </h3>
                                 <div>
                                     <span class="badge bg-primary" style="cursor: pointer;" onclick="set_publication_type_as_query('${dataset.publication_type}')">${dataset.publication_type}</span>
                                 </div>
