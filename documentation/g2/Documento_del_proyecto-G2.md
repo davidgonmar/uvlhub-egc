@@ -60,6 +60,15 @@ El presente documento tiene como objetivo sintetizar los aspectos clave del proy
 | [Vento Conesa, Adriana](https://github.com/adrvencon)               | 67    | 72      | +2672 -986  | 18 | 6 | Remember My Password: creation of a functionality that allows users to modify their passwords in case of forgetfulness or other reasons. |
 | **TOTAL**                                       | tHH   | tXX     | tYY  | tZZ  | tII    | Descripción breve |
 
+| **Miembro**                               | **Implicación** |
+|-------------------------------------------|-----------------|
+| Vento Conesa, Adriana                     | 10              |
+| Meana Iturri, Claudia                     | 10              |
+| Pérez Gutiérrez, Lucía                    | 10              |
+| García Martínez, Carlos                   | 10              |
+| García Sebastián, Javier                  | 10              |
+| Barrera Garrancho, María del Carmen       | 10              |
+
 A continuación se detallan las fuentes para obtener las métricas clave del proyecto:
 
 - **Horas trabajadas**: 
