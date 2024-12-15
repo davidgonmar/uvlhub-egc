@@ -4,18 +4,7 @@
 **Curso Escolar:** 2024/2025    
 **Asignatura:** Evolución y gestión de la configuración    
 
-### Miembros del equipo
-| **Miembro**                   | **Implicación** |
-|-------------------------------|-----------------|
-| Castillo Cebolla Rafael       | [10]            |
-| Flores de Francisco, Daniel   | [10]            |
-| González Martínez, David      | [10]            |
-| Heras Pérez, Raúl             | [10]            |
-| Mellado Díaz, Luis            | [10]            |
-| Trenado González, Sergio      | [10]            |
-
-
-### Enlaces de interés:
+#### Enlaces de interés:
 - **Repositorio de código:** https://github.com/davidgonmar/uvlhub-egc
 - **Sistema desplegado:** https://uvlhub-egc.onrender.com/
 
@@ -364,6 +353,7 @@ Una _issue_ representará una solicitud de cambio para el sistema. Consideraremo
  - **Incidencias:** creadas por el equipo o por usuarios para reportar un problema con el funcionamiento.
 
 Las actividades de documentación, como la actualización del 'Diario del equipo' no se representará mediante issues.
+A las issues generadas automáticamente por bots no se les aplicarán estas políticas.
 
 
 ### Roles en _issues_
@@ -393,7 +383,7 @@ Si una pull request no se acepta, e trasladará a la columna del estado _Failed 
 ### Etiquetas de _issues_
 Se usarán las siguientes etiquetas para definir un cambio:
  - Tipo de issue: `task` e `incidence`.
- - Tipo de cambio: `documentation`, `feat`, `fix`, `refactor`, `style`, `test`, `database`, `meeting`, `build` y `hotfix`.
+ - Tipo de cambio: `documentation`, `feat`, `fix`, `refactor`, `style`, `test`, `database`, `meeting`, `build`, `deployment` y `hotfix`.
  - Área del sistema: `backend` y `frontend`.
 
 

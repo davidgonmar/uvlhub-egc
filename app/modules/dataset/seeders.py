@@ -53,6 +53,7 @@ class DataSetSeeder(BaseSeeder):
                 deposition_id=1 + i,
                 title=dataset_info[i]["title"],
                 description=dataset_info[i]["description"],
+                is_draft_mode=False,
                 publication_type=PublicationType.DATA_MANAGEMENT_PLAN,
                 publication_doi=f'10.1234/dataset{i+1}',
                 dataset_doi=f'10.1234/dataset{i+1}',

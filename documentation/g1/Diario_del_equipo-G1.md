@@ -4,18 +4,7 @@
 **Curso Escolar:** 2024/2025    
 **Asignatura:** Evolución y gestión de la configuración    
 
-### Miembros del equipo
-| **Miembro**                   | **Implicación** |
-|-------------------------------|-----------------|
-| Castillo Cebolla Rafael       | [10]            |
-| Flores de Francisco, Daniel   | [10]            |
-| González Martínez, David      | [10]            |
-| Heras Pérez, Raúl             | [10]            |
-| Mellado Díaz, Luis            | [10]            |
-| Trenado González, Sergio      | [10]            |
-
-
-### Enlaces de interés:
+#### Enlaces de interés:
 - **Repositorio de código:** https://github.com/davidgonmar/uvlhub-egc
 - **Sistema desplegado:** https://uvlhub-egc.onrender.com/
 
@@ -27,13 +16,9 @@
 
 
 
-# Diario del equipo
+# DIARIO DEL EQUIPO
 
 ## jamon-hub-1
-
-**Grupo:** 1     
-**Curso Escolar:** 2024/2025    
-**Asignatura:** Evolución y gestión de la configuración   
 
 
 ---
@@ -44,7 +29,12 @@
 1. [Miembros del grupo](#1-miembros-del-grupo-en-orden-alfabético-según-apellido)
 2. [Resumen de total de reuniones](#2-resumen-de-total-de-reuniones)
 3. [Actas de acuerdos](#3-actas-de-acuerdos)
+   - [ACTA 2024-00](#acta-2024-00)
    - [ACTA 2024-01](#acta-2024-01)
+   - [ACTA 2024-02](#acta-2024-02)
+   - [ACTA 2024-03](#acta-2024-03)
+   - [ACTA 2024-04](#acta-2024-04)
+   - [ACTA 2024-05](#acta-2024-05)
 
 
 ---
@@ -63,11 +53,11 @@
 
 
 ## 2. Resumen de total de reuniones
-- **Total de reuniones (TR):** 4
+- **Total de reuniones (TR):** 6
 - **Total de reuniones presenciales (TRP):** 1
-- **Total de reuniones virtuales (TRV):** 4
+- **Total de reuniones virtuales (TRV):** 5
 - **Total de tiempo empleado en reuniones presenciales (TTRP):** 0h 40min
-- **Total de tiempo empleado en reuniones virtuales (TTRV):** 4h 30min
+- **Total de tiempo empleado en reuniones virtuales (TTRV):** 5h 10min
 
 
 ---
@@ -215,3 +205,23 @@ Esta reunión trató sobre la implementación del feedback de la segunda _milest
 - **Acuerdo 2024-04-06:** Haremos pruebas de todos los tipos, si el _work item_ lo permite.
 - **Acuerdo 2024-04-07:** Desglose en tareas de los _work items_ restantes.
 - **Acuerdo 2024-04-08:** Asignación de encargados de cada tarea.
+
+
+<br>
+
+
+### ACTA 2024-05
+**Asistentes:**
+- Castillo Cebolla, Rafael
+- Flores de Francisco, Daniel
+- González Martínez, David
+- Heras Pérez, Raúl
+- Mellado Díaz, Luis
+- Trenado González, Sergio
+
+**Introducción:**
+Esta reunión trató sobre el repaso de los requisitos y el trabajo hecho de cara a la tercera _milestone_ y el final del proyecto. También ejerció a efectos prácticos como reunión de cierre. 
+
+**Acuerdos tomados:**
+
+- **Acuerdo 2025-04-01:** Todos los objetivos se han cumplido. Podemos descansar por fin y volver a casa por Navidad.
