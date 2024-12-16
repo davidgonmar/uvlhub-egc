@@ -259,6 +259,8 @@
 
                                 show_upload_dataset();
 
+                                file.newName = response.filename;
+
                                 console.log("File uploaded: ", response);
                                 // actions when UVL model is uploaded
                                 let listItem = document.createElement('li');
@@ -356,7 +358,7 @@
 
                                         }
                                     };
-                                    xhr.send(JSON.stringify({file: file.name}));
+                                    xhr.send(JSON.stringify({file: file.newName}));
                                 }.bind(this));
 
                                 /*
