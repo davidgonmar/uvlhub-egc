@@ -8,11 +8,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Trigger Render Job
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.RENDER_SSH_KEY }}
+
+      - name: Execute Seed Command on Render via SSH
+        env:
+          SSH_USER: ${{ secrets.RENDER_SSH_USER }}
+          SSH_HOST: ${{ secrets.RENDER_SSH_HOST }}
         run: |
-          curl --request POST "${{ secrets.RENDER_SERVICE_URL }}" \
-              --header "Authorization: Bearer ${{ secrets.RENDER_API_TOKEN }}" \
-              --header "Content-Type: application/json" \
-              --data-raw "{
-                  \"startCommand\": \"echo 'y' | rosemary db:seed --reset\"
-              }"
+          ssh -t -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << EOF
+            bash -l -c "cd /app && rosemary db:seed --reset --yes"
+          EOF
