@@ -19,5 +19,5 @@ jobs:
           SSH_HOST: ${{ secrets.RENDER_SSH_HOST }}
         run: |
           ssh -t -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << EOF
-            bash -l -c "rosemary db:seed --reset --yes"
+            bash -l -c "cd /app && rosemary db:seed --reset --yes"
           EOF
