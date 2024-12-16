@@ -18,6 +18,6 @@ jobs:
           SSH_USER: ${{ secrets.RENDER_SSH_USER }}
           SSH_HOST: ${{ secrets.RENDER_SSH_HOST }}
         run: |
-          ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+          ssh -t -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
             rosemary db:seed --reset --yes
           EOF
