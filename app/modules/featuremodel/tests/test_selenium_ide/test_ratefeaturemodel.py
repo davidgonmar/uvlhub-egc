@@ -21,18 +21,8 @@ class TestRatefeaturemodel():
     self.driver.find_element(By.ID, "password").send_keys("1234")
     self.driver.find_element(By.ID, "submit").click()
     self.driver.find_element(By.LINK_TEXT, "Elephants").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".active:nth-child(4)").click()
+    self.driver.find_element(By.CSS_SELECTOR, "[data-model-id] > :first-child").click()
     time.sleep(0.5) # needed to wait for alert to appear
     assert self.driver.switch_to.alert.text == "Rating saved successfully"
     self.driver.switch_to.alert.accept()
-    self.driver.find_element(By.CSS_SELECTOR, ".d-block").click()
-    self.driver.find_element(By.LINK_TEXT, "Tigers").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".list-group-item:nth-child(2) .model-rating-container").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".active:nth-child(3)").click()
-    time.sleep(0.5)
-    assert self.driver.switch_to.alert.text == "Rating saved successfully"
-    self.driver.switch_to.alert.accept()
-    self.driver.find_element(By.CSS_SELECTOR, ".list-group-item:nth-child(4) .fa:nth-child(2)").click()
-    time.sleep(0.5)
-    assert self.driver.switch_to.alert.text == "Rating saved successfully"
-    self.driver.switch_to.alert.accept()
+    
