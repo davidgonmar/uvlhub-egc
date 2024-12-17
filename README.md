@@ -51,6 +51,10 @@ Our goal is to maintain the essence of the original project while taking it to t
 - **Remember my password:**  Integration of a password recovery system that allows users to securely reset their password in case they forget it, ensuring easy access to the application while maintaining account security. 
 - **Register developer:** An option for users to register as developers.  
 
+### 👨‍⚕️ **Warnings for Running Tests**
+
+- It is important that before running the entire test suite, particularly the interface tests, a "reset" and "seed" of the database is performed using the command **rosemay db:seed --reset**. This ensures that the tests run within a database containing the same instances used during the tests. (This is especially relevant for Selenium tests.)
+
 ### 🔗 **Original Project** 
 
 - The original UVLHub project is available here: [UVLHub](https://www.uvlhub.io)
@@ -119,6 +123,10 @@ Por último **Jamon-Hub-2** desarrollará:
 - **Different versions of models**: Soporte para diferentes versiones de modelos y su descarga en varios formatos.
 - **Remember my password**: Integración de un sistema de recuperación de contraseña que permite a los usuarios restablecer su contraseña de manera segura en caso de olvidarla, garantizando un acceso sencillo a la aplicación sin comprometer la seguridad de la cuenta.
 - **Register developer**: Opción para que los usuarios se registren como desarrolladores.
+
+### 👨‍⚕️ **Warnings para los ejecutar pruebas** 
+
+- Es importante que antes de ejecutar todo el banco de pruebas, en particular las de interfaz, se haga un "reset" y "seed" de la DB usando el comando **rosemay db:seed --reset**. Esto asegura que las pruebas se ejecutan dentro de una base de datos con las mismas instancias con las que se hicieron las pruebas. (Afecta en particular a las pruebas de selenium)
 
 ### 🔗 **Proyecto Original**  
 
