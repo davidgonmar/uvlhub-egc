@@ -11,9 +11,8 @@ class TestChatbotoutofcontext():
     close_driver(self.driver)
 
   def test_chatbotoutofcontext(self):
-    self.driver.get("http://127.0.0.1:5000/")
+    self.driver.get("http://127.0.0.1:5000/chatbot")
     self.driver.set_window_size(1920, 1048)
-    self.driver.find_element(By.LINK_TEXT, "Romeo").click()
     self.driver.find_element(By.ID, "chatInput").click()
     self.driver.find_element(By.ID, "chatInput").send_keys("Hola Romeo, hablame de las elecciones de EEUU")
     self.driver.find_element(By.CSS_SELECTOR, "button").click()
