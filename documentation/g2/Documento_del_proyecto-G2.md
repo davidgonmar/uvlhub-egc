@@ -52,7 +52,7 @@ El presente documento tiene como objetivo sintetizar los aspectos clave del proy
 
 | Miembro del equipo                             | Horas | Commits | LoC  | Test | Issues | Work Item         |
 |------------------------------------------------|-------|---------|------|------|--------|-------------------|
-| [Barrera Garrancho, María del Carmen](https://github.com/Playeira01) | HH    | XX      | YY   | ZZ   | II     | Descripción breve |
+| [Barrera Garrancho, María del Carmen](https://github.com/Playeira01) | 63    | 89      | +2064 -296   | 30  |  	8    | Different versions of models: during the upload process of UVL files, the system must convert them into all other formats supported by the platform. |
 | [García Martínez, Carlos](https://github.com/Cargarmar18)            | 61    | 33      | +2300 -282   | 6   | 5     | Staging area: system to store datasets before publishing them to the public |
 | [García Sebastián, Javier](https://github.com/JaviGarcia1)           | 55    | 27      | +1172 -1217   | 9   | 9     | Register Developer: option to register as a developer on the site, added checkmark and tag certifying the role and priority to developer uploaded datasets |
 | [Meana Iturri, Claudia](https://github.com/clameaitu)               | 64    | 51      | +1865 -1182   | 12   | 5     | Improve Search Queries: changed search to static, can now download all datasets in a zip that appear in a search query |
