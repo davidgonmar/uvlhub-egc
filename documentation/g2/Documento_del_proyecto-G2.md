@@ -58,7 +58,7 @@ El presente documento tiene como objetivo sintetizar los aspectos clave del proy
 | [Meana Iturri, Claudia](https://github.com/clameaitu)               | 64    | 51      | +1865 -1182   | 12   | 5     | Improve Search Queries: changed search to static, can now download all datasets in a zip that appear in a search query |
 | [Pérez Gutiérrez, Lucía](https://github.com/LuciaPG)                | 65   | 57     | +1664  -939 | 18   | 10     | Improve UI: changes position of elements to make the view dataset more familiar to new users|
 | [Vento Conesa, Adriana](https://github.com/adrvencon)               | 67    | 72      | +2672 -986  | 18 | 6 | Remember My Password: creation of a functionality that allows users to modify their passwords in case of forgetfulness or other reasons. |
-| **TOTAL**                                       | tHH   | tXX     | tYY  | tZZ  | tII    | Descripción breve |
+| **TOTAL**                                       | 375   | 329     | +11737 -4902 | 93  | 43    | It has been a challenging task, but it was accomplished with great success. |
 
 | **Miembro**                               | **Implicación** |
 |-------------------------------------------|-----------------|
