@@ -18,7 +18,7 @@
 [English](#uvlhub-clone---egc-project) | [Español](#uvlhub-clon---proyecto-egc)
 
 
-# UVLHub (Clone) - EGC Project
+# UVLHub (Clone) - EGC Exam
 
 ## 🌟 **About this Project** 
 
